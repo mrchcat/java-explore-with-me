@@ -34,15 +34,15 @@ public class Request {
     private long id;
 
     @Column(name = "application", nullable = false)
-    String application;
+    private String application;
 
     @Column(name = "uri", nullable = false)
-    String uri;
+    private String uri;
 
     @Column(name = "ip", nullable = false)
-    InetAddress ip;
+    private InetAddress ip;
 
     @Column(name = "timestamp", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    LocalDateTime timestamp;
+    private LocalDateTime timestamp;
 }
