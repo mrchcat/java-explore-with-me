@@ -5,7 +5,7 @@ import com.github.mrchcat.explorewithme.model.Request;
 
 public class RequestMapper {
 
-    public static Request toRequest(RequestCreateDTO createDTO){
+    public static Request toRequest(RequestCreateDTO createDTO) {
         return Request.builder()
                 .application(createDTO.getApp())
                 .uri(createDTO.getUri().toLowerCase())

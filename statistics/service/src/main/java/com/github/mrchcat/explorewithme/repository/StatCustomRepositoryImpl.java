@@ -23,17 +23,17 @@ public class StatCustomRepositoryImpl implements StatCustomRepository {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<RequestStatisticDTO> query = builder.createQuery(RequestStatisticDTO.class);
         Root<Request> root = query.from(Request.class);
-        if(unique){
+        if (unique) {
             query.multiselect(root.get("application"), root.get("uri"), builder.countDistinct(root.get("ip")));
-        } else{
+        } else {
             query.multiselect(root.get("application"), root.get("uri"), builder.count(root));
         }
         Predicate betweenDates = builder.between(root.get("timestamp"), start, end);
         if (uris == null) {
             query.where(betweenDates);
         } else {
-            Predicate inUrisList=root.get("uri").in(Arrays.asList(uris));
-            query.where(builder.and(betweenDates,inUrisList));
+            Predicate inUrisList = root.get("uri").in(Arrays.asList(uris));
+            query.where(builder.and(betweenDates, inUrisList));
         }
         query.groupBy(root.get("application"), root.get("uri"));
         return em.createQuery(query).getResultList();
