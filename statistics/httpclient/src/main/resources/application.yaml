@@ -1,7 +1,7 @@
 server:
   port: 8080
 
-ewm-statistic-service:
+stats-server:
   url: http://localhost:9090
 
 logging:

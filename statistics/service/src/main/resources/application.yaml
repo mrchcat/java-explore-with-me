@@ -5,9 +5,9 @@ spring:
   sql:
     init.mode: always
   datasource:
-    url: jdbc:postgresql://localhost:5432/ewm-statistic
-    username: dbuser
-    password: 12345
+#    url: jdbc:postgresql://localhost:5432/ewm-statistic
+#    username: dbuser
+#    password: 12345
     driverClassName: org.postgresql.Driver
   jpa:
     hibernate:

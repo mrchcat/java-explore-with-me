@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.mrchcat.explorewithme.RequestCreateDTO;
 import com.github.mrchcat.explorewithme.RequestStatisticDTO;
 import com.github.mrchcat.explorewithme.service.StatService;
@@ -35,7 +34,7 @@ public class StatController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestStatisticDTO> getRequests(@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+    public List<RequestStatisticDTO> getRequestStatistic(@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                                  @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                  @RequestParam(name = "uris", required = false) String[] uris,
                                                  @RequestParam(name = "unique", required = false,
