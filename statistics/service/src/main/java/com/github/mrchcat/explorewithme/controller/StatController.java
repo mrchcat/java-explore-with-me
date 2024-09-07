@@ -1,11 +1,13 @@
 package com.github.mrchcat.explorewithme.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.mrchcat.explorewithme.RequestCreateDTO;
 import com.github.mrchcat.explorewithme.RequestStatisticDTO;
 import com.github.mrchcat.explorewithme.service.StatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -32,11 +35,13 @@ public class StatController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestStatisticDTO> getRequests(@RequestParam LocalDateTime start,
-                                                 @RequestParam LocalDateTime end,
-                                                 @RequestParam(required = false) String[] uris,
-                                                 @RequestParam(required = false, defaultValue = "false") boolean unique) {
-        log.info("received request to get ");
+    public List<RequestStatisticDTO> getRequests(@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                                 @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                                 @RequestParam(name = "uris", required = false) String[] uris,
+                                                 @RequestParam(name = "unique", required = false,
+                                                         defaultValue = "false") boolean unique) {
+        log.info("received request for request statistics with parameters: start={},end={}, uris={},unique={}",
+                start, end, Arrays.toString(uris),unique);
         return statService.getRequestStatistic(start, end, uris, unique);
     }
 

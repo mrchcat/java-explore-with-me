@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -7,7 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -15,16 +18,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class RequestCreateDTO {
     @NotBlank
-    String app;
+    private String app;
     @NotBlank
-    String uri;
+    private String uri;
     @NotNull
-    InetAddress ip;
-    @NotNull
-    @PastOrPresent
-    LocalDateTime timestamp;
+    private InetAddress ip;
+    @PastOrPresent(message = "time can not be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 }

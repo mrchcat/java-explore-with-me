@@ -1,15 +1,13 @@
 package com.github.mrchcat.explorewithme.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -44,7 +43,7 @@ public class Request {
     @Column(name = "ip", nullable = false)
     InetAddress ip;
 
-    @Column(name = "time", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime timestamp;
 }

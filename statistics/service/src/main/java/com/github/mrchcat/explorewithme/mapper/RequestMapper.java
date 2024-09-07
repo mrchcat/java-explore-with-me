@@ -7,6 +7,7 @@ public class RequestMapper {
 
     public static Request toRequest(RequestCreateDTO createDTO){
         return Request.builder()
+                .application(createDTO.getApp())
                 .uri(createDTO.getUri())
                 .ip(createDTO.getIp())
                 .timestamp(createDTO.getTimestamp())

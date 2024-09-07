@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StatServiceImp implements StatService {
+public class StatServiceImpl implements StatService {
     public final StatRepository statRepository;
 
     @Override
@@ -22,6 +22,6 @@ public class StatServiceImp implements StatService {
 
     @Override
     public List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
-        return statRepository.getRequests(start, end, uris, unique);
+        return statRepository.getRequestStatistic(start, end, uris, unique);
     }
 }

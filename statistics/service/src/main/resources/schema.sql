@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS requests (
   application varchar NOT NULL,
   uri varchar NOT NULL,
   ip inet NOT NULL,
-  time timestamp NOT NULL
+  timestamp timestamp NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_requests_timestamp_uri ON requests(time,uri);
+CREATE INDEX IF NOT EXISTS idx_requests_timestamp_uri ON requests(timestamp,uri);
