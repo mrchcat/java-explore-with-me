@@ -19,7 +19,10 @@ public class StatCustomRepositoryImpl implements StatCustomRepository {
     @PersistenceContext
     EntityManager em;
 
-    public List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
+    public List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start,
+                                                         LocalDateTime end,
+                                                         String[] uris,
+                                                         boolean unique) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<RequestStatisticDTO> query = builder.createQuery(RequestStatisticDTO.class);
         Root<Request> root = query.from(Request.class);

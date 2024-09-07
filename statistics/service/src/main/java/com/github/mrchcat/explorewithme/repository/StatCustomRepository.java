@@ -6,5 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatCustomRepository {
-    List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique);
+    List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start,
+                                                  LocalDateTime end,
+                                                  String[] uris,
+                                                  boolean unique);
 }

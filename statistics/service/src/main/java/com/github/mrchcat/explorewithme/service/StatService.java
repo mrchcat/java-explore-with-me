@@ -10,6 +10,8 @@ public interface StatService {
 
     void addRequest(RequestCreateDTO createDTO);
 
-    List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique);
-
+    List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start,
+                                                  LocalDateTime end,
+                                                  String[] uris,
+                                                  boolean unique);
 }

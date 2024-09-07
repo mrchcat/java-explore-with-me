@@ -34,13 +34,14 @@ public class StatController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestStatisticDTO> getRequestStatistic(@RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                                 @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                                 @RequestParam(name = "uris", required = false) String[] uris,
-                                                 @RequestParam(name = "unique", required = false,
-                                                         defaultValue = "false") boolean unique) {
+    public List<RequestStatisticDTO> getRequestStatistic(
+            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+            @RequestParam(name = "uris", required = false) String[] uris,
+            @RequestParam(name = "unique", required = false,
+                    defaultValue = "false") boolean unique) {
         log.info("received request for request statistics with parameters: start={},end={}, uris={},unique={}",
-                start, end, Arrays.toString(uris),unique);
+                start, end, Arrays.toString(uris), unique);
         return statService.getRequestStatistic(start, end, uris, unique);
     }
 }

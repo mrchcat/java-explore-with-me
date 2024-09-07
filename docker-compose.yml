@@ -36,10 +36,8 @@ services:
 #    ports:
 #      - "8080:8080"
 
-networks:
-  backend:
-
-
 #  ewm-db:
 #    image: postgres:16.1
 
+networks:
+  backend:
