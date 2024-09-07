@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+ewm-statistic-service:
+  url: http://localhost:9090
+
+logging:
+  level:
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.zalando.logbook: TRACE
