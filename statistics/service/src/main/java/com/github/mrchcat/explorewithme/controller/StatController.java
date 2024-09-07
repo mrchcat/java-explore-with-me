@@ -43,6 +43,4 @@ public class StatController {
                 start, end, Arrays.toString(uris),unique);
         return statService.getRequestStatistic(start, end, uris, unique);
     }
-
-    //
 }
