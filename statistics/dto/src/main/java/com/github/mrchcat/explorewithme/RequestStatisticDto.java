@@ -13,7 +13,7 @@ import lombok.ToString;
 @Builder
 @EqualsAndHashCode
 @AllArgsConstructor
-public class RequestStatisticDTO {
+public class RequestStatisticDto {
     private String app;
     private String uri;
     private long hits;

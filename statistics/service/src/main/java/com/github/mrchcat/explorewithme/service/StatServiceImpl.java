@@ -1,7 +1,7 @@
 package com.github.mrchcat.explorewithme.service;
 
-import com.github.mrchcat.explorewithme.RequestCreateDTO;
-import com.github.mrchcat.explorewithme.RequestStatisticDTO;
+import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.mapper.RequestMapper;
 import com.github.mrchcat.explorewithme.model.Request;
 import com.github.mrchcat.explorewithme.repository.StatRepository;
@@ -21,14 +21,14 @@ public class StatServiceImpl implements StatService {
 
     @Override
     @Transactional
-    public void addRequest(RequestCreateDTO createDTO) {
-        Request savedRequest = statRepository.save(RequestMapper.toRequest(createDTO));
+    public void addRequest(RequestCreateDto createDto) {
+        Request savedRequest = statRepository.save(RequestMapper.toRequest(createDto));
         log.info("{} saved ", savedRequest);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start,
+    public List<RequestStatisticDto> getRequestStatistic(LocalDateTime start,
                                                          LocalDateTime end,
                                                          String[] uris,
                                                          boolean unique) {

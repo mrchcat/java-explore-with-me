@@ -1,6 +1,6 @@
 package com.github.mrchcat.explorewithme.repository;
 
-import com.github.mrchcat.explorewithme.RequestStatisticDTO;
+import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.model.Request;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,12 +19,12 @@ public class StatCustomRepositoryImpl implements StatCustomRepository {
     @PersistenceContext
     EntityManager em;
 
-    public List<RequestStatisticDTO> getRequestStatistic(LocalDateTime start,
+    public List<RequestStatisticDto> getRequestStatistic(LocalDateTime start,
                                                          LocalDateTime end,
                                                          String[] uris,
                                                          boolean unique) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<RequestStatisticDTO> query = builder.createQuery(RequestStatisticDTO.class);
+        CriteriaQuery<RequestStatisticDto> query = builder.createQuery(RequestStatisticDto.class);
         Root<Request> root = query.from(Request.class);
         if (unique) {
             query.multiselect(root.get("application"), root.get("uri"), builder.countDistinct(root.get("ip")));

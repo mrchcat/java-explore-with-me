@@ -1,7 +1,7 @@
 package com.github.mrchcat.explorewithme.controller;
 
-import com.github.mrchcat.explorewithme.RequestCreateDTO;
-import com.github.mrchcat.explorewithme.RequestStatisticDTO;
+import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.service.StatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class StatController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addRequest(@RequestBody @Valid RequestCreateDTO createDTO) {
-        log.info("received request to add {}", createDTO);
-        statService.addRequest(createDTO);
+    public void addRequest(@RequestBody @Valid RequestCreateDto createDto) {
+        log.info("received request to add {}", createDto);
+        statService.addRequest(createDto);
     }
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestStatisticDTO> getRequestStatistic(
+    public List<RequestStatisticDto> getRequestStatistic(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
             @RequestParam(name = "uris", required = false) String[] uris,

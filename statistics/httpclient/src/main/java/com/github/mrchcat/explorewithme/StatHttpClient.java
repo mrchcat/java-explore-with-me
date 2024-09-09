@@ -23,7 +23,7 @@ public class StatHttpClient extends BaseHttpClient {
         );
     }
 
-    public void getRequestStatistic(RequestCreateDTO createDTO) {
+    public void getRequestStatistic(RequestCreateDto createDTO) {
         String path = "/hit";
         post(path, createDTO);
     }

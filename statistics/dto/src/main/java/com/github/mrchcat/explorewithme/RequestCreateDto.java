@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestCreateDTO {
+public class RequestCreateDto {
     @NotBlank
     private String app;
     @NotBlank
