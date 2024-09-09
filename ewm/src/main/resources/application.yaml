@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  sql:
+    init.mode: always
+  datasource:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show_sql: true
+      jdbc: time_zone=UTC
+    properties:
+      hibernate.format_sql: true
+
+logging:
+  level:
+    org:
+      springframework:
+        orm.jpa: INFO
+        transaction: INFO
+        transaction.interceptor: INFO
+        orm.jpa.JpaTransactionManager: INFO
+      hibernate:
+        SQL: DEBUG
+        orm.jdbc.bind: TRACE
+      my: INFO
+      zalando.logbook: TRACE
+  pattern:
+    file: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"
