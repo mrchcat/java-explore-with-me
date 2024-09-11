@@ -29,9 +29,12 @@ public class StatHttpClientImpl implements StatHttpClient {
     private final String serverUrl;
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
 
-    public StatHttpClientImpl(@Value("${stats-server.url}") String serverUrl) {
+    public StatHttpClientImpl() {
+//        @Value("${stats-server.url}") String serverUrl
         this.restTemplate = new RestTemplate();
-        this.serverUrl = serverUrl;
+//        this.serverUrl = serverUrl;
+        this.serverUrl="http://stats-server:9090";
+        log.info(serverUrl);
     }
 
     @Override

@@ -38,12 +38,16 @@ services:
     container_name: ewm-server
     ports:
       - "8080:8080"
-#    depends_on:
-#      - stats-db
 #    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-statistic
-#      - SPRING_DATASOURCE_USERNAME=dbuser
-#      - SPRING_DATASOURCE_PASSWORD=12345
+#      - stats-server.url=http://localhost:9090
+#    http://stats-server:9090
+    depends_on:
+      - stats-server
+    #      - stats-db
+    #    environment:
+    #      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-statistic
+    #      - SPRING_DATASOURCE_USERNAME=dbuser
+    #      - SPRING_DATASOURCE_PASSWORD=12345
     networks:
       - ewm-backend
 
@@ -52,3 +56,5 @@ services:
 
 networks:
   ewm-backend:
+    driver: bridge
+    name: ewm
