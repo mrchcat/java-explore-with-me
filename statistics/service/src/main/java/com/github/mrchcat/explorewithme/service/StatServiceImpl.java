@@ -30,6 +30,8 @@ public class StatServiceImpl implements StatService {
     @Override
     @Transactional(readOnly = true)
     public List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto queryParams) {
-        return statRepository.getRequestStatistic(queryParams);
+        List<RequestStatisticDto> statisticDtos = statRepository.getRequestStatistic(queryParams);
+        log.info("{}", statisticDtos);
+        return statisticDtos;
     }
 }

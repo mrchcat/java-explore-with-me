@@ -2,21 +2,21 @@ package com.github.mrchcat.explorewithme;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,13 +26,12 @@ import java.util.Optional;
 @Slf4j
 public class StatHttpClientImpl implements StatHttpClient {
     private final RestTemplate restTemplate;
+    private final String serverUrl;
+    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
 
-    public StatHttpClientImpl(@Value("${stats-server.url}") String serverUrl,
-                              RestTemplateBuilder restTemplateBuilder) {
-        restTemplate = restTemplateBuilder
-                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
-                .build();
+    public StatHttpClientImpl(@Value("${stats-server.url}") String serverUrl) {
+        this.restTemplate = new RestTemplate();
+        this.serverUrl = serverUrl;
     }
 
     @Override
@@ -41,27 +40,34 @@ public class StatHttpClientImpl implements StatHttpClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         var request = new HttpEntity<>(createDTO, headers);
         try {
-            restTemplate.postForObject("/hit", request, Object.class);
+            URI url = UriComponentsBuilder
+                    .fromUriString(serverUrl)
+                    .path("/hit")
+                    .build()
+                    .toUri();
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            log.info("addRequest {} sent", createDTO);
         } catch (HttpStatusCodeException e) {
-            log.error("Statistical service con not add data {}. Response with code {} and body",
-                    createDTO, e.getStatusCode(), e.getResponseBodyAsByteArray());
+            log.error("Statistical service can not add data {}. Response with code {} and body {}",
+                    createDTO, e.getStatusCode(), e.getResponseBodyAs(String.class));
+        } catch (ResourceAccessException e) {
+            log.error("Statistical service service is unavailable");
         }
     }
 
     @Override
     public List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto qp) throws IOException {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.add("start", qp.start.toString());
-        queryParams.add("end", qp.end.toString());
+        queryParams.add("start", qp.start.format(formatter));
+        queryParams.add("end", qp.end.format(formatter));
         queryParams.addAll("uris", List.of(qp.uris));
         queryParams.add("unique", Boolean.toString(qp.unique));
-
         URI url = UriComponentsBuilder
-                .fromPath("/stats")
+                .fromUriString(serverUrl)
+                .path("/stats")
                 .queryParams(queryParams)
-                .build()
+                .build(true)
                 .toUri();
-
         try {
             RequestStatisticDto[] response = restTemplate.getForObject(url, RequestStatisticDto[].class);
             return Optional.ofNullable(response)
@@ -71,8 +77,11 @@ public class StatHttpClientImpl implements StatHttpClient {
             log.error("""
                     Statistical service did not answer for get request with parameters {}.
                     Response with code {} and body {}
-                    """, queryParams, e.getStatusCode(), e.getResponseBodyAsByteArray());
+                    """, queryParams, e.getStatusCode(), e.getResponseBodyAs(String.class));
             throw new IOException(e.getStatusCode().toString());
+        } catch (ResourceAccessException e) {
+            log.error("Statistical service service is unavailable");
+            throw new IOException("Statistical service service is unavailable");
         }
     }
 }

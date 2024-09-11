@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+stats-server:
+    url: http://localhost:9090
+
+logging:
+  level:
+    org:
+      my: INFO
+      zalando.logbook: TRACE
+  pattern:
+    file: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"

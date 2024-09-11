@@ -13,7 +13,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
     networks:
-      - backend
+      - ewm-backend
 
   stats-db:
     image: postgres:16.1
@@ -30,14 +30,25 @@ services:
       interval: 5s
       retries: 10
     networks:
-      - backend
+      - ewm-backend
 
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
+  ewm-service:
+    build: ewm-service/
+    image: ewm-server
+    container_name: ewm-server
+    ports:
+      - "8080:8080"
+#    depends_on:
+#      - stats-db
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-statistic
+#      - SPRING_DATASOURCE_USERNAME=dbuser
+#      - SPRING_DATASOURCE_PASSWORD=12345
+    networks:
+      - ewm-backend
 
 #  ewm-db:
 #    image: postgres:16.1
 
 networks:
-  backend:
+  ewm-backend:
