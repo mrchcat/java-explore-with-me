@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme.controller;
 
 import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.service.StatService;
 import jakarta.validation.Valid;
@@ -40,8 +41,15 @@ public class StatController {
             @RequestParam(name = "uris", required = false) String[] uris,
             @RequestParam(name = "unique", required = false,
                     defaultValue = "false") boolean unique) {
-        log.info("received request for request statistics with parameters: start={},end={}, uris={},unique={}",
-                start, end, Arrays.toString(uris), unique);
-        return statService.getRequestStatistic(start, end, uris, unique);
+
+        RequestQueryParamDto queryParams = RequestQueryParamDto.builder()
+                .start(start)
+                .end(end)
+                .uris(uris)
+                .unique(unique)
+                .build();
+
+        log.info("received request for request statistics with parameters: {}",queryParams);
+        return statService.getRequestStatistic(queryParams);
     }
 }

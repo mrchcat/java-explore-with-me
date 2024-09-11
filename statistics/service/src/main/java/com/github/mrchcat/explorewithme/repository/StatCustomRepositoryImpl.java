@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme.repository;
 
+import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.model.Request;
 import jakarta.persistence.EntityManager;
@@ -19,25 +20,22 @@ public class StatCustomRepositoryImpl implements StatCustomRepository {
     @PersistenceContext
     EntityManager em;
 
-    public List<RequestStatisticDto> getRequestStatistic(LocalDateTime start,
-                                                         LocalDateTime end,
-                                                         String[] uris,
-                                                         boolean unique) {
+    public List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto qp) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<RequestStatisticDto> query = builder.createQuery(RequestStatisticDto.class);
         Root<Request> root = query.from(Request.class);
-        if (unique) {
+        if (qp.isUnique()) {
             query.multiselect(root.get("application"), root.get("uri"), builder.countDistinct(root.get("ip")));
             query.orderBy(builder.desc(builder.countDistinct(root.get("ip"))));
         } else {
             query.multiselect(root.get("application"), root.get("uri"), builder.count(root));
             query.orderBy(builder.desc(builder.count(root)));
         }
-        Predicate betweenDates = builder.between(root.get("timestamp"), start, end);
-        if (uris == null) {
+        Predicate betweenDates = builder.between(root.get("timestamp"), qp.getStart(), qp.getEnd());
+        if (qp.getUris() == null) {
             query.where(betweenDates);
         } else {
-            Predicate inUrisList = root.get("uri").in(Arrays.asList(uris));
+            Predicate inUrisList = root.get("uri").in(Arrays.asList(qp.getUris()));
             query.where(builder.and(betweenDates, inUrisList));
         }
         query.groupBy(root.get("application"), root.get("uri"));

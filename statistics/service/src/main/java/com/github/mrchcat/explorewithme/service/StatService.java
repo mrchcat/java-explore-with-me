@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme.service;
 
 import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 
 import java.time.LocalDateTime;
@@ -10,8 +11,5 @@ public interface StatService {
 
     void addRequest(RequestCreateDto createDto);
 
-    List<RequestStatisticDto> getRequestStatistic(LocalDateTime start,
-                                                  LocalDateTime end,
-                                                  String[] uris,
-                                                  boolean unique);
+    List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto queryParams);
 }

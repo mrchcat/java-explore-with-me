@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme.service;
 
 import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.mapper.RequestMapper;
 import com.github.mrchcat.explorewithme.model.Request;
@@ -28,10 +29,7 @@ public class StatServiceImpl implements StatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RequestStatisticDto> getRequestStatistic(LocalDateTime start,
-                                                         LocalDateTime end,
-                                                         String[] uris,
-                                                         boolean unique) {
-        return statRepository.getRequestStatistic(start, end, uris, unique);
+    public List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto queryParams) {
+        return statRepository.getRequestStatistic(queryParams);
     }
 }
