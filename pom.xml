@@ -7,12 +7,17 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<name>Explore With Me</name>
+	<url>https://github.com/mrchcat/java-explore-with-me</url>
 
-	<groupId>ru.practicum</groupId>
+	<modules>
+        <module>statistics</module>
+        <module>ewm-service</module>
+    </modules>
+
+    <groupId>com.github.mrchcat</groupId>
 	<artifactId>explore-with-me</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -52,13 +57,6 @@
 							<phase>compile</phase>
 						</execution>
 					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>10.3</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
@@ -148,29 +146,6 @@
 		</pluginManagement>
 	</build>
 	<profiles>
-		<profile>
-			<id>check</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-checkstyle-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>com.github.spotbugs</groupId>
-						<artifactId>spotbugs-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-			<reporting>
-				<plugins>
-					<plugin>
-						<groupId>com.github.spotbugs</groupId>
-						<artifactId>spotbugs-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</reporting>
-		</profile>
 		<profile>
 			<id>coverage</id>
 			<build>
