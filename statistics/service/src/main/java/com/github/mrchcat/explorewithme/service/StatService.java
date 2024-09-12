@@ -4,7 +4,6 @@ import com.github.mrchcat.explorewithme.RequestCreateDto;
 import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatService {

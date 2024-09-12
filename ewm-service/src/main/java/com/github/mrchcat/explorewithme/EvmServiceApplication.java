@@ -1,10 +1,10 @@
 package com.github.mrchcat.explorewithme;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,14 +13,15 @@ import java.util.List;
 
 @Slf4j
 @SpringBootApplication
+@Controller
 public class EvmServiceApplication {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         var context = SpringApplication.run(EvmServiceApplication.class, args);
-        testService(context);
+        handMadeClientTest(context);
     }
 
-    private static void testService(ConfigurableApplicationContext context) throws IOException {
+    private static void handMadeClientTest(ConfigurableApplicationContext context) throws IOException, InterruptedException {
         StatHttpClient client = context.getBean(StatHttpClient.class);
         RequestCreateDto createDto1 = RequestCreateDto.builder()
                 .app("myapp1")

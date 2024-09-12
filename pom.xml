@@ -15,6 +15,7 @@
 	<modules>
         <module>statistics</module>
         <module>ewm-service</module>
+        <module>gateway</module>
     </modules>
 
     <groupId>com.github.mrchcat</groupId>

@@ -1,12 +1,10 @@
 package com.github.mrchcat.explorewithme;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -16,25 +14,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Controller
 @Slf4j
 public class StatHttpClientImpl implements StatHttpClient {
     private final RestTemplate restTemplate;
     private final String serverUrl;
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
 
-    public StatHttpClientImpl() {
+    public StatHttpClientImpl() throws URISyntaxException, IOException, InterruptedException {
 //        @Value("${stats-server.url}") String serverUrl
         this.restTemplate = new RestTemplate();
 //        this.serverUrl = serverUrl;
-        this.serverUrl="http://stats-server:9090";
-        log.info(serverUrl);
+//        this.serverUrl="http://stats-server:9090";
+        this.serverUrl="http://statistics:9090";
     }
 
     @Override
@@ -48,7 +47,8 @@ public class StatHttpClientImpl implements StatHttpClient {
                     .path("/hit")
                     .build()
                     .toUri();
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            log.info("URL к которому обращаемся {}",url);
+            restTemplate.postForEntity(url, request, Object.class);
             log.info("addRequest {} sent", createDTO);
         } catch (HttpStatusCodeException e) {
             log.error("Statistical service can not add data {}. Response with code {} and body {}",
@@ -71,6 +71,7 @@ public class StatHttpClientImpl implements StatHttpClient {
                 .queryParams(queryParams)
                 .build(true)
                 .toUri();
+        log.info("URL к которому обращаемся {}",url);
         try {
             RequestStatisticDto[] response = restTemplate.getForObject(url, RequestStatisticDto[].class);
             return Optional.ofNullable(response)

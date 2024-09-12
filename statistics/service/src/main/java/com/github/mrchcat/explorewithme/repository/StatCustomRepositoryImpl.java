@@ -11,7 +11,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
