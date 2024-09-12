@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,15 +21,12 @@ import java.util.List;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class StatHttpClientImpl implements StatHttpClient {
     private final RestTemplate restTemplate;
-    private final String serverUrl;
+    @Value("${statserver.url}")
+    private String serverUrl;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
-
-    public StatHttpClientImpl(@Value("${statserver.url}") String serverUrl, RestTemplate restTemplate) {
-        this.serverUrl = serverUrl;
-        this.restTemplate = restTemplate;
-    }
 
     @Override
     public void addRequest(RequestCreateDto createDTO) {
