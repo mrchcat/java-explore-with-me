@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,14 +26,11 @@ import java.util.Optional;
 public class StatHttpClientImpl implements StatHttpClient {
     private final RestTemplate restTemplate;
     private final String serverUrl;
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd%20HH:mm:ss");
 
-    public StatHttpClientImpl() throws URISyntaxException, IOException, InterruptedException {
-//        @Value("${stats-server.url}") String serverUrl
+    public StatHttpClientImpl(@Value("${statserver.url}") String serverUrl) {
         this.restTemplate = new RestTemplate();
-//        this.serverUrl = serverUrl;
-//        this.serverUrl="http://stats-server:9090";
-        this.serverUrl="http://statistics:9090";
+        this.serverUrl = serverUrl;
     }
 
     @Override
@@ -47,9 +44,8 @@ public class StatHttpClientImpl implements StatHttpClient {
                     .path("/hit")
                     .build()
                     .toUri();
-            log.info("URL к которому обращаемся {}",url);
             restTemplate.postForEntity(url, request, Object.class);
-            log.info("addRequest {} sent", createDTO);
+
         } catch (HttpStatusCodeException e) {
             log.error("Statistical service can not add data {}. Response with code {} and body {}",
                     createDTO, e.getStatusCode(), e.getResponseBodyAs(String.class));
@@ -71,12 +67,12 @@ public class StatHttpClientImpl implements StatHttpClient {
                 .queryParams(queryParams)
                 .build(true)
                 .toUri();
-        log.info("URL к которому обращаемся {}",url);
         try {
             RequestStatisticDto[] response = restTemplate.getForObject(url, RequestStatisticDto[].class);
             return Optional.ofNullable(response)
                     .map(Arrays::asList)
                     .orElseGet(Collections::emptyList);
+
         } catch (HttpStatusCodeException e) {
             log.error("""
                     Statistical service did not answer for get request with parameters {}.

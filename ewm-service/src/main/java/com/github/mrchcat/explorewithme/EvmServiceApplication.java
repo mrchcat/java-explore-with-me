@@ -16,12 +16,12 @@ import java.util.List;
 @Controller
 public class EvmServiceApplication {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         var context = SpringApplication.run(EvmServiceApplication.class, args);
         handMadeClientTest(context);
     }
 
-    private static void handMadeClientTest(ConfigurableApplicationContext context) throws IOException, InterruptedException {
+    private static void handMadeClientTest(ConfigurableApplicationContext context) throws IOException {
         StatHttpClient client = context.getBean(StatHttpClient.class);
         RequestCreateDto createDto1 = RequestCreateDto.builder()
                 .app("myapp1")
@@ -47,18 +47,18 @@ public class EvmServiceApplication {
         RequestQueryParamDto query1 = RequestQueryParamDto.builder()
                 .start(LocalDateTime.of(2022, 1, 1, 1, 1))
                 .end(LocalDateTime.of(2025, 1, 1, 1, 1))
-                .uris(new String[]{"/myuri1","/myuri2"})
+                .uris(new String[]{"/myuri1", "/myuri2"})
                 .unique(true)
                 .build();
         List<RequestStatisticDto> result1 = client.getRequestStatistic(query1);
-        log.info("{}",result1);
+        log.info("{}", result1);
         RequestQueryParamDto query2 = RequestQueryParamDto.builder()
                 .start(LocalDateTime.of(2022, 1, 1, 1, 1))
                 .end(LocalDateTime.of(2025, 1, 1, 1, 1))
-                .uris(new String[]{"/myuri1","/myuri2"})
+                .uris(new String[]{"/myuri1", "/myuri2"})
                 .unique(false)
                 .build();
         List<RequestStatisticDto> result2 = client.getRequestStatistic(query2);
-        log.info("{}",result2);
+        log.info("{}", result2);
     }
 }
