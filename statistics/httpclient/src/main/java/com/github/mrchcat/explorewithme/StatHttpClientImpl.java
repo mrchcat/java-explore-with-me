@@ -2,9 +2,13 @@ package com.github.mrchcat.explorewithme;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@Component
 @Slf4j
 public class StatHttpClientImpl implements StatHttpClient {
     private final RestTemplate restTemplate;
@@ -38,19 +42,16 @@ public class StatHttpClientImpl implements StatHttpClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         var request = new HttpEntity<>(createDTO, headers);
-        try {
             URI url = UriComponentsBuilder
                     .fromUriString(serverUrl)
                     .path("/hit")
                     .build()
                     .toUri();
-            restTemplate.postForEntity(url, request, Object.class);
-
-        } catch (HttpStatusCodeException e) {
-            log.error("Statistical service can not add data {}. Response with code {} and body {}",
-                    createDTO, e.getStatusCode(), e.getResponseBodyAs(String.class));
-        } catch (ResourceAccessException e) {
-            log.error("Statistical service service is unavailable");
+        try {
+            restTemplate.exchange(url, HttpMethod.POST,request,Object.class);
+        } catch (Exception e) {
+            log.error("Statistical service can not add data {}. Stacktrace: {}",
+                    createDTO, e.getStackTrace());
         }
     }
 
@@ -67,21 +68,17 @@ public class StatHttpClientImpl implements StatHttpClient {
                 .queryParams(queryParams)
                 .build(true)
                 .toUri();
+        ParameterizedTypeReference<List<RequestStatisticDto>> ptr = new ParameterizedTypeReference<>() {
+        };
         try {
-            RequestStatisticDto[] response = restTemplate.getForObject(url, RequestStatisticDto[].class);
-            return Optional.ofNullable(response)
-                    .map(Arrays::asList)
-                    .orElseGet(Collections::emptyList);
-
-        } catch (HttpStatusCodeException e) {
+            var responseEntity =restTemplate.exchange(url, HttpMethod.GET,null,ptr);
+            return responseEntity.getBody();
+        } catch (Exception e) {
             log.error("""
                     Statistical service did not answer for get request with parameters {}.
-                    Response with code {} and body {}
-                    """, queryParams, e.getStatusCode(), e.getResponseBodyAs(String.class));
-            throw new IOException(e.getStatusCode().toString());
-        } catch (ResourceAccessException e) {
-            log.error("Statistical service service is unavailable");
-            throw new IOException("Statistical service service is unavailable");
+                    Stacktrace: {}
+                    """, queryParams, e.getStackTrace());
+            throw new IOException(e.getMessage());
         }
     }
 }

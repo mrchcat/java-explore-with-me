@@ -6,11 +6,11 @@ import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@Log4j
+@Slf4j
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
@@ -28,7 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto updateCategory(long catId, CategoryCreateDto createDto) {
-        Category updatedCategory = categoryRepository.updateById(CategoryMapper.toEntity(catId, createDto));
+//        Category updatedCategory = categoryRepository.updateById(CategoryMapper.toEntity(catId, createDto));
+        Category updatedCategory=new Category();
         return CategoryMapper.toDTO(updatedCategory);
     }
 }

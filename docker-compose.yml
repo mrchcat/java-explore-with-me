@@ -33,6 +33,23 @@ services:
     networks:
       - backend
 
+  dbmain:
+    image: postgres:16.1
+    container_name: postgres-ewm-main
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=ewm-service
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+    networks:
+      - backend
+
   service:
     build: ewm-service/
     image: ewm-server
@@ -40,13 +57,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      dbmain:
+        condition: service_healthy
       statistics:
         condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbmain:5432/ewm-service
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
     networks:
       - backend
-
-#  ewm-db:
-#    image: postgres:16.1
 
 networks:
   backend:
