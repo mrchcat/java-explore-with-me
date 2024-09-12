@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-//    @Query("""
-//            UPDATE Category AS ctg
-//            SET name=:category.name
-//            WHERE ctg.id=category.id
-//            """)
-//    Category updateById(Category category);
+    @Query("""
+            UPDATE Category AS ctg
+            SET ctg.name=:#{#upd.name}
+            WHERE ctg.id=:#{#upd.id}
+            """)
+    Category updateById(Category upd);
 }

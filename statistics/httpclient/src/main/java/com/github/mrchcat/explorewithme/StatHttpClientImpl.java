@@ -35,6 +35,7 @@ public class StatHttpClientImpl implements StatHttpClient {
     public StatHttpClientImpl(@Value("${statserver.url}") String serverUrl) {
         this.restTemplate = new RestTemplate();
         this.serverUrl = serverUrl;
+        log.info("serverUrl={}",serverUrl);
     }
 
     @Override

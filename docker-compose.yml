@@ -1,6 +1,6 @@
 services:
 
-  db:
+  db-stat:
     image: postgres:16.1
     container_name: postgres-statistics
     ports:
@@ -24,24 +24,26 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      db:
+      db-stat:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ewm-statistic
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-stat:5432/ewm-statistic
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
     networks:
       - backend
 
-  dbmain:
+  db-serv:
     image: postgres:16.1
     container_name: postgres-ewm-main
     ports:
-      - "5433:5432"
+      - "5435:5432"
     environment:
       - POSTGRES_DB=ewm-service
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=mcat
+      - POSTGRES_PASSWORD=54321
+
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -57,14 +59,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      dbmain:
+      db-stat:
         condition: service_healthy
       statistics:
         condition: service_started
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbmain:5432/ewm-service
-      - SPRING_DATASOURCE_USERNAME=dbuser
-      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-serv:5432/ewm-service
+      - SPRING_DATASOURCE_USERNAME=mcat
+      - SPRING_DATASOURCE_PASSWORD=54321
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
+      - STATSERVER_URL=http://statistics:9090
     networks:
       - backend
 

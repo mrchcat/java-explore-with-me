@@ -4,8 +4,8 @@ server:
 spring:
   sql:
     init.mode: always
-  datasource:
-    driverClassName: org.postgresql.Driver
+#  datasource:
+#    driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: none

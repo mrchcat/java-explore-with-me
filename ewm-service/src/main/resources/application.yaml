@@ -1,14 +1,16 @@
 server:
   port: 8080
 
-statserver:
-  url: http://statistics:9090
-
 spring:
   sql:
     init.mode: always
-  datasource:
-    driverClassName: org.postgresql.Driver
+#  datasource:
+#    #    потом удалить
+#    url: jdbc:postgresql://localhost:5435/ewm-service
+#    username: mcat
+#    password: 54321
+#    driverClassName: org.postgresql.Driver
+#    #    потом удалить
   jpa:
     hibernate:
       ddl-auto: none
