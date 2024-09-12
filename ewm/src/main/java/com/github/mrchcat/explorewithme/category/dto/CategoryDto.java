@@ -1,18 +1,15 @@
 package com.github.mrchcat.explorewithme.category.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
-public class CategoryCreateDTO {
+public class CategoryDto {
+    private long id;
     private String name;
 }
