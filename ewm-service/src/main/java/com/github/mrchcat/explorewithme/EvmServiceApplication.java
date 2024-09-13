@@ -18,7 +18,7 @@ public class EvmServiceApplication {
 
     public static void main(String[] args) throws IOException {
         var context = SpringApplication.run(EvmServiceApplication.class, args);
-        handMadeClientTest(context);
+//        handMadeClientTest(context);
     }
 
     private static void handMadeClientTest(ConfigurableApplicationContext context) throws IOException {

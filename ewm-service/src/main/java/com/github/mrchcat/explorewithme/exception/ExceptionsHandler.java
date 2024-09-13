@@ -1,14 +1,14 @@
 package com.github.mrchcat.explorewithme.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -23,43 +23,56 @@ public class ExceptionsHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-        log.info(ex.getMessage());
-        return new ErrorResponse(BAD_REQUEST,
-                "Incorrectly made request.",
-                ex.getMessage(),
-                LocalDateTime.now());
+        String defaultMessage=ex.getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining("; "));
+        log.error(ex.getMessage());
+        return ErrorResponse.builder()
+                .status(BAD_REQUEST)
+                .reason("Incorrectly made request.")
+                .message(defaultMessage)
+                .errors(ex.getStackTrace())
+                .build();
     }
 
     @ResponseStatus(CONFLICT)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorResponse handleDataIntegrityExceptions(DataIntegrityViolationException ex) {
-        log.info(ex.getMessage());
-        return new ErrorResponse(CONFLICT,
-                "Integrity constraint has been violated.",
-                ex.getMessage(),
-                LocalDateTime.now());
+    @ExceptionHandler(DataIntegrityException.class)
+    public ErrorResponse handleDataIntegrityExceptions(DataIntegrityException ex) {
+        log.error(ex.getMessage());
+        return ErrorResponse.builder()
+                .status(CONFLICT)
+                .reason("Integrity constraint has been violated.")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
     }
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(ObjectNotFoundException.class)
     public ErrorResponse handleDataIntegrityExceptions(ObjectNotFoundException ex) {
-        log.info(ex.getMessage());
-        return new ErrorResponse(NOT_FOUND,
-                "The required object was not found.",
-                ex.getMessage(),
-                LocalDateTime.now());
+        log.error(ex.getMessage());
+        return ErrorResponse.builder()
+                .status(NOT_FOUND)
+                .reason("The required object was not found.")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
     }
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorResponse handleInternalServerException(Exception ex) {
-        log.info("{}", ex.getMessage());
-        return new ErrorResponse(INTERNAL_SERVER_ERROR,
-                "Unrecognized exception",
-                Arrays.toString(ex.getStackTrace()),
-                LocalDateTime.now());
+    public ErrorResponse handleOtherExceptions(Exception ex) {
+        log.error("{}", ex.getMessage());
+        return ErrorResponse.builder()
+                .status(INTERNAL_SERVER_ERROR)
+                .reason("Internal error")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
     }
-
-
 }
 

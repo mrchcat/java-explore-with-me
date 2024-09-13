@@ -38,8 +38,7 @@ public class StatController {
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
             @RequestParam(name = "uris", required = false) String[] uris,
-            @RequestParam(name = "unique", required = false,
-                    defaultValue = "false") boolean unique) {
+            @RequestParam(name = "unique", required = false, defaultValue = "false") boolean unique) {
 
         RequestQueryParamDto queryParams = RequestQueryParamDto.builder()
                 .start(start)
@@ -48,7 +47,7 @@ public class StatController {
                 .unique(unique)
                 .build();
 
-        log.info("received request for request statistics with parameters: {}",queryParams);
+        log.info("received request for request statistics with parameters: {}", queryParams);
         return statService.getRequestStatistic(queryParams);
     }
 }

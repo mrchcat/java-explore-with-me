@@ -4,6 +4,8 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryCreateDto;
 import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.service.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class CategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(HttpServletRequest request,
-                                      @RequestBody CategoryCreateDto createDto) {
+                                      @RequestBody @Valid CategoryCreateDto createDto) {
         log.info("Admin API: received request to create category {}", createDto);
         return categoryService.createCategory(createDto);
     }
@@ -40,9 +42,7 @@ public class CategoryController {
     @PatchMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(@PathVariable(value = "categoryId", required = true) long categoryId,
-                                      @RequestBody CategoryCreateDto updateDto) {
+                                      @RequestBody @Valid CategoryCreateDto updateDto) {
         return categoryService.updateCategory(categoryId, updateDto);
     }
-
-
 }

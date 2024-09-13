@@ -6,10 +6,20 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
+//    @Query("""
+//            UPDATE Category AS ctg
+//            SET ctg.name=:#{#upd.name}
+//            WHERE ctg.id=:#{#upd.id}
+//            """)
+//    Category updateById(Category upd);
+
+    boolean existsByName(String name);
+
     @Query("""
-            UPDATE Category AS ctg
-            SET ctg.name=:#{#upd.name}
-            WHERE ctg.id=:#{#upd.id}
+            SELECT CASE WHEN COUNT(ctg)>0 THEN TRUE ELSE FALSE END
+            FROM Category AS ctg
+            WHERE ctg.id!=:id AND ctg.name=:name
             """)
-    Category updateById(Category upd);
+    boolean existsByNameExclId(long id, String name);
+
 }
