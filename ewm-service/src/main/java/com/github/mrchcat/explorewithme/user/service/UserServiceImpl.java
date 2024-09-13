@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserCreateDto createDto) {
         isEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
+        log.info("{} added}", savedUser);
         return UserMapper.toDto(savedUser);
     }
 
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(long userId) {
         isIdExists(userId);
         userRepository.deleteById(userId);
+        log.info("User with id={} deleted",userId);
     }
 
     @Override
