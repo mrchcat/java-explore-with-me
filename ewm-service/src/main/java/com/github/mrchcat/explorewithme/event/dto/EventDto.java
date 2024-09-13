@@ -5,9 +5,21 @@ import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import com.github.mrchcat.explorewithme.user.dto.UserShortDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class EventDto {
     private long id;
     private String title;
