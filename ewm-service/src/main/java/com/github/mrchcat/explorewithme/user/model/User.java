@@ -1,4 +1,4 @@
-package com.github.mrchcat.explorewithme.category.model;
+package com.github.mrchcat.explorewithme.user.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,13 +20,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "categories")
-public class Category {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "name", nullable = false)
     private String name;
 }
