@@ -1,8 +1,11 @@
 package com.github.mrchcat.explorewithme.category.repository;
 
 import com.github.mrchcat.explorewithme.category.model.Category;
+import com.github.mrchcat.explorewithme.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
@@ -21,5 +24,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             WHERE ctg.id!=:id AND ctg.name=:name
             """)
     boolean existsByNameExclId(long id, String name);
+
+    @Query(value = """
+            SELECT *
+            FROM categories
+            LIMIT :size
+            OFFSET :from
+            """, nativeQuery = true)
+    List<Category> getAllCategories(long from, long size);
 
 }

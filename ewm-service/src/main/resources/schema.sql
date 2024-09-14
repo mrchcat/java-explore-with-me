@@ -31,7 +31,7 @@ CREATE TABLE events (
   published_on TIMESTAMP,
   state VARCHAR NOT NULL,
   CONSTRAINT fk_events_category_id FOREIGN KEY (category_id) REFERENCES categories(id),
-  CONSTRAINT fk_events_initiator_id FOREIGN KEY (initiator_id) REFERENCES "users" ("id")
+  CONSTRAINT fk_events_initiator_id FOREIGN KEY (initiator_id) REFERENCES users(id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);

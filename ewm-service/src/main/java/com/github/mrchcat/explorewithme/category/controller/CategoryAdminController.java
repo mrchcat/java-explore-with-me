@@ -3,9 +3,7 @@ package com.github.mrchcat.explorewithme.category.controller;
 import com.github.mrchcat.explorewithme.category.dto.CategoryCreateDto;
 import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.service.CategoryService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryController {
+public class CategoryAdminController {
     private final CategoryService categoryService;
 
     @PostMapping

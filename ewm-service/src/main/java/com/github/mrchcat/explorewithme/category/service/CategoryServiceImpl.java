@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +43,20 @@ public class CategoryServiceImpl implements CategoryService {
         Category updatedCategory = categoryRepository.save(CategoryMapper.toEntity(catId, createDto));
         log.info("Category updated to {}", updatedCategory);
         return CategoryMapper.toDTO(updatedCategory);
+    }
+
+    @Override
+    public List<CategoryDto> getAllCategories(long from, long size) {
+        List<Category> categories = categoryRepository.getAllCategories(from, size);
+        return categories.stream().map(CategoryMapper::toDTO).toList();
+    }
+
+    @Override
+    public CategoryDto getCategoryById(long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ObjectNotFoundException(
+                        String.format("Category with id=%d was not found", categoryId)));
+        return CategoryMapper.toDTO(category);
     }
 
     private void isNameUnique(String name) {
