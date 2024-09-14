@@ -25,16 +25,16 @@ public class EventUpdateDto {
     @NotBlank(message = "title can not be empty")
     private String title;
 
-    @Length(min=20, max=2000,message ="Annotation must have size 20-2000 signs.")
+    @Length(min = 20, max = 2000, message = "Annotation must have size 20-2000 signs.")
     private String annotation;
 
-    @Length(min=20, max=7000,message ="Description must have size 20-7000 signs.")
+    @Length(min = 20, max = 7000, message = "Description must have size 20-7000 signs.")
     private String description;
 
     @NotNull(message = "category can not be empty")
     private long category;
 
-    @NotNull (message = "event can not be empty")
+    @NotNull(message = "event can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
@@ -44,7 +44,7 @@ public class EventUpdateDto {
     private Long participantLimit;
 
     @JsonSetter(nulls = Nulls.SKIP)
-    private Boolean requestModeration=true;
+    private Boolean requestModeration = true;
 
     private EventStateAction stateAction;
 }

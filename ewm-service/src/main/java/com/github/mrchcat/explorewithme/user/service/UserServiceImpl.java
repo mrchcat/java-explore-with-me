@@ -56,9 +56,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers(List<Long> userIds, long from, long size) {
         List<User> users;
-        if(userIds==null||userIds.isEmpty()){
-            users=userRepository.getAllUsers(from, size);
-        } else{
+        if (userIds == null || userIds.isEmpty()) {
+            users = userRepository.getAllUsers(from, size);
+        } else {
             users = userRepository.getSelectedUsers(userIds, from, size);
         }
         return users.stream()

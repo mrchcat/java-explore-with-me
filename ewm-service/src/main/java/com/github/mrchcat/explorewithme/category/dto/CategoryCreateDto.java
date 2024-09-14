@@ -11,6 +11,6 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class CategoryCreateDto {
-    @NotBlank(message="Field: name. Error: must not be blank. Value: null")
+    @NotBlank(message = "Field: name. Error: must not be blank. Value: null")
     private String name;
 }
