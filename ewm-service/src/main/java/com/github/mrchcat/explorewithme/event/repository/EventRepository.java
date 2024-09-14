@@ -1,7 +1,6 @@
 package com.github.mrchcat.explorewithme.event.repository;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
-import com.github.mrchcat.explorewithme.user.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

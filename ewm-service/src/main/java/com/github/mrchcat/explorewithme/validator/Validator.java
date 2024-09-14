@@ -25,7 +25,7 @@ public class Validator {
     private final EventRepository eventRepository;
     private static final Duration TIME_GAP_USER = Duration.ofHours(2);
     private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
-    private static final List<EventState> PERMITTED_STATUS = {CANCELED, PENDING};
+    private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
 
 
     public void isEventHasCorrectStatusToUpdate(EventState state) {
@@ -38,12 +38,12 @@ public class Validator {
         throw new RulesViolationException(message);
     }
 
-    public void isDateNotTooEarlyUser(LocalDateTime eventDate){
-        isDateNotTooEarly(eventDate,TIME_GAP_USER);
+    public void isDateNotTooEarlyUser(LocalDateTime eventDate) {
+        isDateNotTooEarly(eventDate, TIME_GAP_USER);
     }
 
-    public void isDateNotTooEarlyAdmin(LocalDateTime eventDate){
-        isDateNotTooEarly(eventDate,TIME_GAP_ADMIN);
+    public void isDateNotTooEarlyAdmin(LocalDateTime eventDate) {
+        isDateNotTooEarly(eventDate, TIME_GAP_ADMIN);
     }
 
     private void isDateNotTooEarly(LocalDateTime eventDate, Duration gap) {

@@ -3,7 +3,6 @@ package com.github.mrchcat.explorewithme.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.event.model.EventStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import jakarta.validation.constraints.NotBlank;

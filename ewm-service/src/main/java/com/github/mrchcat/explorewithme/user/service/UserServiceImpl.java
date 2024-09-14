@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.user.service;
 
-import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.dto.UserCreateDto;
 import com.github.mrchcat.explorewithme.user.dto.UserDto;

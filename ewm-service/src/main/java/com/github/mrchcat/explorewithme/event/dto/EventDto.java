@@ -1,7 +1,6 @@
 package com.github.mrchcat.explorewithme.event.dto;
 
 import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
-import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import com.github.mrchcat.explorewithme.user.dto.UserShortDto;

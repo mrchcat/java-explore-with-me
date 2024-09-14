@@ -17,10 +17,7 @@ import com.github.mrchcat.explorewithme.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor

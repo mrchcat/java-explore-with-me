@@ -34,7 +34,7 @@ public class EventAdminController {
     @ResponseStatus(HttpStatus.OK)
     EventDto updateEvent(@PathVariable(name = "eventId", required = true) long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
-        log.info("Admin API: received request to update event id={}", eventId, updateDto);
+        log.info("Admin API: received request to update event id={} with {}", eventId, updateDto);
         return eventService.updateEventByAdmin(eventId, updateDto);
     }
 
@@ -62,10 +62,5 @@ public class EventAdminController {
                 .build();
         return eventService.getAllEventDtoByQuery(searchDto);
     }
-
-
 }
 
-
-
-}
