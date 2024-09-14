@@ -34,7 +34,7 @@ public class EventPrivateController {
     EventDto createEvent(@PathVariable(name = "userId") long userId,
                          @RequestBody @Valid EventCreateDto createDto) {
         log.info("Private API: received request from user id={} to create {}", userId, createDto);
-        return eventService.createEvent(userId, createDto);
+        return eventService.create(userId, createDto);
     }
 
     @PatchMapping("/{userId}/events/{eventId}")
@@ -43,7 +43,7 @@ public class EventPrivateController {
                          @PathVariable(name = "eventId") long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
         log.info("Private API: received request from user id={} to update {}", userId, updateDto);
-        return eventService.updateEventByUser(userId, eventId,updateDto);
+        return eventService.updateByUser(userId, eventId,updateDto);
     }
 
     @GetMapping("/{userId}/events")
@@ -54,7 +54,7 @@ public class EventPrivateController {
             @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
         log.info("Private API: received request from user id={} to get all his events with parameters from={} size={}",
                 userId, from, size);
-        return eventService.getAllShortEventDtoByUser(userId, from, size);
+        return eventService.getAllShortDtoByUser(userId, from, size);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
@@ -62,7 +62,7 @@ public class EventPrivateController {
     EventDto getEventByIdByUser(@PathVariable(name = "userId") long userId,
                                 @PathVariable(name = "eventId") long eventId) {
         log.info("Private API: received request from user id={} to get event with id={}", userId,eventId);
-        return eventService.getEventDtoByIdByUser(userId, eventId);
+        return eventService.getDtoByIdAndUser(userId, eventId);
     }
 
 }

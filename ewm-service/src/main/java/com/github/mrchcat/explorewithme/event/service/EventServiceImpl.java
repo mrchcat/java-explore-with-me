@@ -37,7 +37,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     @Override
-    public EventDto createEvent(long userId, EventCreateDto createDto) {
+    public EventDto create(long userId, EventCreateDto createDto) {
         validator.isDateNotTooEarlyUser(createDto.getEventDate());
         Event mappedEvent = eventMapper.toEntity(userId, createDto);
         Event savedEvent = eventRepository.save(mappedEvent);
@@ -46,9 +46,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto updateEventByUser(long userId, long eventId, EventUpdateDto updateDto) {
+    public EventDto updateByUser(long userId, long eventId, EventUpdateDto updateDto) {
         validator.isDateNotTooEarlyUser(updateDto.getEventDate());
-        Event oldEvent = getEventById(eventId);
+        Event oldEvent = getById(eventId);
         validator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
         EventStateAction statusAction = updateDto.getStateAction();
@@ -65,9 +65,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto updateEventByAdmin(long eventId, EventUpdateDto updateDto) {
+    public EventDto updateByAdmin(long eventId, EventUpdateDto updateDto) {
         validator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
-        Event oldEvent = getEventById(eventId);
+        Event oldEvent = getById(eventId);
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
         EventState newState = getNewState(oldEvent, updateDto);
         mappedEvent.setState(newState);
@@ -91,14 +91,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getAllShortEventDtoByUser(long userId, long from, long size) {
+    public List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size) {
         validator.isUserIdExists(userId);
         List<Event> events = eventRepository.getAllEventsByUserId(userId, from, size);
         return eventMapper.toShortDto(events);
     }
 
     @Override
-    public EventDto getEventDtoByIdByUser(long userId, long eventId) {
+    public EventDto getDtoByIdAndUser(long userId, long eventId) {
         validator.isUserIdExists(userId);
         Optional<Event> eventOptional = eventRepository.getEventByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
@@ -109,7 +109,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event getEventById(long eventId) {
+    public Event getById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
             String message = String.format("Event with id=%d was not found", eventId);
             return new ObjectNotFoundException(message);
@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getAllEventDtoByQuery(EventSearchDto query) {
+    public List<EventDto> getAllByQuery(EventSearchDto query) {
         List<Event> events = eventRepository.getAllEventDtoByQuery(query);
         return eventMapper.toDto(events);
     }

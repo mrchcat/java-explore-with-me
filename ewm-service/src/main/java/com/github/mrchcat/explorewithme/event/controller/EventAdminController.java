@@ -35,7 +35,7 @@ public class EventAdminController {
     EventDto updateEvent(@PathVariable(name = "eventId") long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
         log.info("Admin API: received request to update event id={} with {}", eventId, updateDto);
-        return eventService.updateEventByAdmin(eventId, updateDto);
+        return eventService.updateByAdmin(eventId, updateDto);
     }
 
     @GetMapping
@@ -60,7 +60,7 @@ public class EventAdminController {
                 .from(from)
                 .size(size)
                 .build();
-        return eventService.getAllEventDtoByQuery(searchDto);
+        return eventService.getAllByQuery(searchDto);
     }
 }
 

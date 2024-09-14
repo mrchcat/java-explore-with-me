@@ -11,18 +11,18 @@ import java.util.List;
 
 public interface EventService {
 
-    EventDto createEvent(long userId, EventCreateDto createDto);
+    EventDto create(long userId, EventCreateDto createDto);
 
-    EventDto updateEventByUser(long userId, long eventId, EventUpdateDto createDto);
+    EventDto updateByUser(long userId, long eventId, EventUpdateDto createDto);
 
-    EventDto updateEventByAdmin(long eventId, EventUpdateDto updateDtoto);
+    EventDto updateByAdmin(long eventId, EventUpdateDto updateDtoto);
 
-    List<EventShortDto> getAllShortEventDtoByUser(long userId, long from, long size);
+    List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size);
 
-    EventDto getEventDtoByIdByUser(long userId, long eventId);
+    EventDto getDtoByIdAndUser(long userId, long eventId);
 
-    Event getEventById(long eventId);
+    Event getById(long eventId);
 
-    List<EventDto> getAllEventDtoByQuery(EventSearchDto query);
+    List<EventDto> getAllByQuery(EventSearchDto query);
 
 }

@@ -33,6 +33,7 @@ public class ErrorHandler {
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(defaultMessage)
+                .timestamp(LocalDateTime.now())
                 .errors(ex.getStackTrace())
                 .build();
     }
