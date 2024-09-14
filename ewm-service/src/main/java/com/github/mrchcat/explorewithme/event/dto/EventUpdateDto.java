@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.github.mrchcat.explorewithme.category.model.Category;
+import com.github.mrchcat.explorewithme.event.model.EventStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class EventCreateDto {
+public class EventUpdateDto {
 
     @NotBlank(message = "title can not be empty")
     private String title;
@@ -30,8 +30,8 @@ public class EventCreateDto {
     @Length(min=20, max=7000,message ="Description must have size 20-7000 signs.")
     private String description;
 
-    @NotNull (message = "category can not be empty")
-    private Long category;
+    @NotNull(message = "category can not be empty")
+    private long category;
 
     @NotNull (message = "event can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -44,4 +44,6 @@ public class EventCreateDto {
 
     @JsonSetter(nulls = Nulls.SKIP)
     private Boolean requestModeration=true;
+
+    private EventStateAction stateAction;
 }

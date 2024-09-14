@@ -39,7 +39,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable(value = "userId") @Positive long userId) {
+    public void deleteUser(@PathVariable(value = "userId") @Positive long userId) {
         log.info("Admin API: received request to delete user id={}", userId);
         userService.deleteUser(userId);
     }

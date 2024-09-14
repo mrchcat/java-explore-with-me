@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 public class EventShortDto {
     private long id;
     private String title;
-    private String description;
     private String annotation;
     private CategoryDto category;
     private LocalDateTime eventDate;

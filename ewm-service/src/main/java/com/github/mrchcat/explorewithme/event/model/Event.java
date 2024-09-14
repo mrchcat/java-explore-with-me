@@ -64,13 +64,13 @@ public class Event {
     private Location location;
 
     @Column(name = "paid")
-    private boolean paid;
+    private Boolean paid;
 
     @Column(name = "participant_limit")
-    private long participantLimit;
+    private Long participantLimit;
 
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,5 +86,5 @@ public class Event {
     private LocalDateTime publishedOn;
 
     @Enumerated(EnumType.STRING)
-    private EventState state;
+    private EventState state = EventState.PENDING;
 }

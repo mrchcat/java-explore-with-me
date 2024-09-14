@@ -40,7 +40,7 @@ public class ErrorHandler {
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DataIntegrityException.class)
     public ErrorResponse handleDataIntegrityExceptions(DataIntegrityException ex) {
-        log.error(ex.getMessage());
+        log.info(ex.getMessage());
         return ErrorResponse.builder()
                 .status(CONFLICT)
                 .reason("Integrity constraint has been violated.")
@@ -52,8 +52,8 @@ public class ErrorHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ErrorResponse handleDataIntegrityExceptions(ObjectNotFoundException ex) {
-        log.error(ex.getMessage());
+    public ErrorResponse handleObjectNotFoundException(ObjectNotFoundException ex) {
+        log.info(ex.getMessage());
         return ErrorResponse.builder()
                 .status(NOT_FOUND)
                 .reason("The required object was not found.")
@@ -65,7 +65,7 @@ public class ErrorHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ErrorResponse handleMethodArgumentTypeMismatchExceptionExceptions(MethodArgumentTypeMismatchException ex) {
+    public ErrorResponse handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException ex) {
         log.error(ex.getMessage());
         return ErrorResponse.builder()
                 .status(BAD_REQUEST)
@@ -75,6 +75,20 @@ public class ErrorHandler {
                 .errors(ex.getStackTrace())
                 .build();
     }
+
+    @ResponseStatus(CONFLICT)
+    @ExceptionHandler(RulesViolationException.class)
+    public ErrorResponse handleRulesViolationExceptions(RulesViolationException ex) {
+        log.error(ex.getMessage());
+        return ErrorResponse.builder()
+                .status(CONFLICT)
+                .reason("For the requested operation the conditions are not met")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
+    }
+
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)

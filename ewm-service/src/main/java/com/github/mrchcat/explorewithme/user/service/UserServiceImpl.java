@@ -7,21 +7,24 @@ import com.github.mrchcat.explorewithme.user.dto.UserDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
+import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final Validator validator;
 
     @Override
     public UserDto createUser(UserCreateDto createDto) {
-        isEmailUnique(createDto.getEmail());
+        validator.isUserEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
         log.info("{} added}", savedUser);
         return UserMapper.toDto(savedUser);
@@ -29,9 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(long userId) {
-        isIdExists(userId);
+        validator.isUserIdExists(userId);
         userRepository.deleteById(userId);
-        log.info("User with id={} deleted",userId);
+        log.info("User with id={} deleted", userId);
     }
 
     @Override
@@ -50,17 +53,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
-    private void isEmailUnique(String email) {
-        if (userRepository.existsByEmail(email)) {
-            String message = String.format("Email=[%s] is not unique for user", email);
-            throw new DataIntegrityException(message);
-        }
-    }
-
-    private void isIdExists(long userId) {
-        if (!userRepository.existsById(userId)) {
+    @Override
+    public User getUserById(long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.orElseThrow(() -> {
             String message = String.format("User with id=%d was not found", userId);
-            throw new ObjectNotFoundException(message);
-        }
+            return new ObjectNotFoundException(message);
+        });
     }
 }
