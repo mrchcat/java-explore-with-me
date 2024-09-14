@@ -2,6 +2,7 @@ package com.github.mrchcat.explorewithme.event.service;
 
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
+import com.github.mrchcat.explorewithme.event.dto.EventSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
@@ -14,9 +15,7 @@ import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.service.UserService;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,6 @@ import java.util.Optional;
 import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
-import static com.github.mrchcat.explorewithme.event.model.EventStateAction.CANCEL_REVIEW;
 import static com.github.mrchcat.explorewithme.event.model.EventStateAction.PUBLISH_EVENT;
 import static com.github.mrchcat.explorewithme.event.model.EventStateAction.SEND_TO_REVIEW;
 
@@ -113,5 +111,11 @@ public class EventServiceImpl implements EventService {
             String message = String.format("Event with id=%d was not found", eventId);
             return new ObjectNotFoundException(message);
         });
+    }
+
+    @Override
+    public List<EventDto> getAllEventDtoByQuery(EventSearchDto query) {
+        List<Event> events = eventRepository.getAllEventDtoByQuery(query);
+        return eventMapper.toDto(events);
     }
 }

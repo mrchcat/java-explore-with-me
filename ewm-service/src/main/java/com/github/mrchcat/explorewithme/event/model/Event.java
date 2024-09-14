@@ -82,6 +82,7 @@ public class Event {
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "published_on", nullable = false)
     private LocalDateTime publishedOn;
 

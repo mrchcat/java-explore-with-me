@@ -2,6 +2,7 @@ package com.github.mrchcat.explorewithme.event.service;
 
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
+import com.github.mrchcat.explorewithme.event.dto.EventSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.model.Event;
@@ -21,4 +22,7 @@ public interface EventService {
     EventDto getEventDtoByIdByUser(long userId, long eventId);
 
     Event getEventById(long eventId);
+
+    List<EventDto> getAllEventDtoByQuery(EventSearchDto query);
+
 }
