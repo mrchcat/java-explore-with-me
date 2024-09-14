@@ -15,6 +15,7 @@ import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.service.UserService;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import static com.github.mrchcat.explorewithme.event.model.EventStateAction.PUBL
 import static com.github.mrchcat.explorewithme.event.model.EventStateAction.SEND_TO_REVIEW;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
@@ -39,6 +41,7 @@ public class EventServiceImpl implements EventService {
         validator.isDateNotTooEarlyUser(createDto.getEventDate());
         Event mappedEvent = eventMapper.toEntity(userId, createDto);
         Event savedEvent = eventRepository.save(mappedEvent);
+        log.info("Created event {}",savedEvent);
         return eventMapper.toDto(savedEvent);
     }
 
@@ -48,7 +51,6 @@ public class EventServiceImpl implements EventService {
         Event oldEvent = getEventById(eventId);
         validator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
-
         EventStateAction statusAction = updateDto.getStateAction();
         EventState newState;
         if (statusAction == null || statusAction.equals(SEND_TO_REVIEW)) {
@@ -57,8 +59,8 @@ public class EventServiceImpl implements EventService {
             newState = CANCELED;
         }
         mappedEvent.setState(newState);
-
         Event updatedEvent = eventRepository.save(mappedEvent);
+        log.info("User id={} updated event {}",userId, updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
 
@@ -70,6 +72,7 @@ public class EventServiceImpl implements EventService {
         EventState newState = getNewState(oldEvent, updateDto);
         mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
+        log.info("Admin updated event {}", updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
 

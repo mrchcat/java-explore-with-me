@@ -32,7 +32,7 @@ public class EventAdminController {
 
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    EventDto updateEvent(@PathVariable(name = "eventId", required = true) long eventId,
+    EventDto updateEvent(@PathVariable(name = "eventId") long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
         log.info("Admin API: received request to update event id={} with {}", eventId, updateDto);
         return eventService.updateEventByAdmin(eventId, updateDto);

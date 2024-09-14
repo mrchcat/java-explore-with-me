@@ -47,11 +47,13 @@ public class UserController {
     public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Long> ids,
                                   @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Long from,
                                   @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
-        if (ids != null) {
-            log.info("Admin API: received request get selected users with id={}", ids);
-            return userService.getSelectedUsers(ids);
-        }
-        log.info("Admin API: received request get all users with parameters from={}, size={}", from, size);
-        return userService.getAllUsers(from, size);
+//        TODO уточнить условия выборки
+//        if (ids != null) {
+//            log.info("Admin API: received request get selected users with id={}", ids);
+//            return userService.getSelectedUsers(ids);
+//        }
+//        log.info("Admin API: received request get all users with parameters from={}, size={}", from, size);
+//        return userService.getAllUsers(from, size);
+        return userService.getAllUsers(ids, from, size);
     }
 }

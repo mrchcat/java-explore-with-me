@@ -31,7 +31,7 @@ public class EventPrivateController {
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    EventDto createEvent(@PathVariable(name = "userId", required = true) long userId,
+    EventDto createEvent(@PathVariable(name = "userId") long userId,
                          @RequestBody @Valid EventCreateDto createDto) {
         log.info("Private API: received request from user id={} to create {}", userId, createDto);
         return eventService.createEvent(userId, createDto);
@@ -39,8 +39,8 @@ public class EventPrivateController {
 
     @PatchMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    EventDto updateEvent(@PathVariable(name = "userId", required = true) long userId,
-                         @PathVariable(name = "eventId", required = true) long eventId,
+    EventDto updateEvent(@PathVariable(name = "userId") long userId,
+                         @PathVariable(name = "eventId") long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
         log.info("Private API: received request from user id={} to update {}", userId, updateDto);
         return eventService.updateEventByUser(userId, eventId,updateDto);
@@ -49,7 +49,7 @@ public class EventPrivateController {
     @GetMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.OK)
     List<EventShortDto> getAllEventsByUser(
-            @PathVariable(name = "userId", required = true) long userId,
+            @PathVariable(name = "userId") long userId,
             @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Long from,
             @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
         log.info("Private API: received request from user id={} to get all his events with parameters from={} size={}",
@@ -59,8 +59,8 @@ public class EventPrivateController {
 
     @GetMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    EventDto getEventByIdByUser(@PathVariable(name = "userId", required = true) long userId,
-                                @PathVariable(name = "eventId", required = true) long eventId) {
+    EventDto getEventByIdByUser(@PathVariable(name = "userId") long userId,
+                                @PathVariable(name = "eventId") long eventId) {
         log.info("Private API: received request from user id={} to get event with id={}", userId,eventId);
         return eventService.getEventDtoByIdByUser(userId, eventId);
     }

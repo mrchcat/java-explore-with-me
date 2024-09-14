@@ -1,16 +1,22 @@
 package com.github.mrchcat.explorewithme.event.dto;
 
 import com.github.mrchcat.explorewithme.event.model.EventState;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
 @Getter
 @Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class EventSearchDto {
     List<Long> userIds;
     List<EventState> states;
