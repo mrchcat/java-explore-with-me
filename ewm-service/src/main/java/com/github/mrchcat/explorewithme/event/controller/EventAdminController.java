@@ -1,7 +1,7 @@
 package com.github.mrchcat.explorewithme.event.controller;
 
-import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.service.EventService;

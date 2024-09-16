@@ -69,6 +69,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=54321
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - STATSERVER_URL=http://statistics:9090
+      - APP_NAME=ewm-main-service;
     networks:
       - backend
 

@@ -21,6 +21,7 @@ import com.github.mrchcat.explorewithme.validator.Validator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,8 @@ public class EventServiceImpl implements EventService {
     private final Validator validator;
     private final EventMapper eventMapper;
     private final StatHttpClient statHttpClient;
+    @Value("${app.name}")
+    private String APP_NAME;
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
@@ -164,7 +167,7 @@ public class EventServiceImpl implements EventService {
     public EventShortDto getShortDtoById(long eventId) {
         EventState state = PUBLISHED;
         Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
-            String message = String.format("Event with id=%d and status=%d was not found", eventId, state);
+            String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
         return eventMapper.toShortDto(event);
@@ -179,7 +182,7 @@ public class EventServiceImpl implements EventService {
             log.error("RemoteAddress {} can not converted to InetAdress", remoteAddress);
         }
         RequestCreateDto statRequest = RequestCreateDto.builder()
-                .app("ewm-main-service")
+                .app(APP_NAME)
                 .uri(request.getRequestURI())
                 .ip(ip)
                 .timestamp(LocalDateTime.now())

@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.validator;
 
-import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
