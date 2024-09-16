@@ -36,23 +36,6 @@ public class UserServiceImpl implements UserService {
         log.info("User with id={} deleted", userId);
     }
 
-//    @Override
-//    public List<UserDto> getSelectedUsers(List<Long> userIds) {
-//        List<User> users = userRepository.findAllById(userIds);
-//        return users.stream()
-//                .map(UserMapper::toDto)
-//                .toList();
-//    }
-
-//    @Override
-//    public List<UserDto> getAllUsers(long from, long size) {
-//        List<User> users = userRepository.getAllUsers(from, size);
-//        return users.stream()
-//                .map(UserMapper::toDto)
-//                .toList();
-//    }
-
-
     @Override
     public List<UserDto> getAllUsers(List<Long> userIds, long from, long size) {
         List<User> users;
@@ -61,9 +44,7 @@ public class UserServiceImpl implements UserService {
         } else {
             users = userRepository.getSelectedUsers(userIds, from, size);
         }
-        return users.stream()
-                .map(UserMapper::toDto)
-                .toList();
+        return UserMapper.toDto(users);
     }
 
     @Override
@@ -74,6 +55,5 @@ public class UserServiceImpl implements UserService {
             return new ObjectNotFoundException(message);
         });
     }
-
 
 }

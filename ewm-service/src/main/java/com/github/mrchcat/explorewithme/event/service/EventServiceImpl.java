@@ -100,6 +100,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
         validator.isUserIdExists(userId);
+        log.info("Validator отработал успешно");
         Optional<Event> eventOptional = eventRepository.getEventByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
             String message = String.format("Event with id=%d for user with id=%d was not found", eventId, userId);

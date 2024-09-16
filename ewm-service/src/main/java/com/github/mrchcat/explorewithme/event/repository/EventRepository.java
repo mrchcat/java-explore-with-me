@@ -21,8 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventCustom
     @Query(value = """
             SELECT e
             FROM Event AS e
-            WHERE e.id=:eventId AND e.initiator=:userId
+            WHERE e.id=:eventId AND e.initiator.id=:userId
             """)
     Optional<Event> getEventByIdByUserId(long userId, long eventId);
-
 }

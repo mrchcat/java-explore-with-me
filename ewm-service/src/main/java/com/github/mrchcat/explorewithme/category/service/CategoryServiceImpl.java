@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories(long from, long size) {
         List<Category> categories = categoryRepository.getAllCategories(from, size);
-        return categories.stream().map(CategoryMapper::toDTO).toList();
+        return CategoryMapper.toDTO(categories);
     }
 
     @Override

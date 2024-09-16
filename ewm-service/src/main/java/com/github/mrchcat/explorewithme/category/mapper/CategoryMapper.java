@@ -4,6 +4,8 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryCreateDto;
 import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.model.Category;
 
+import java.util.List;
+
 public class CategoryMapper {
 
     public static CategoryDto toDTO(Category category) {
@@ -12,6 +14,11 @@ public class CategoryMapper {
                 .name(category.getName())
                 .build();
     }
+
+    public static List<CategoryDto> toDTO(List<Category> categories) {
+        return categories.stream().map(CategoryMapper::toDTO).toList();
+    }
+
 
     public static Category toEntity(CategoryCreateDto createDto) {
         return Category.builder()
