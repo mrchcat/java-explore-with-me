@@ -30,7 +30,7 @@ CREATE TABLE events (
   created_on TIMESTAMP NOT NULL,
   published_on TIMESTAMP,
   state VARCHAR NOT NULL,
-  CONSTRAINT fk_events_category_id FOREIGN KEY (category_id) REFERENCES categories(id),
+  CONSTRAINT fk_events_category_id FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
   CONSTRAINT fk_events_initiator_id FOREIGN KEY (initiator_id) REFERENCES users(id)
 );
 

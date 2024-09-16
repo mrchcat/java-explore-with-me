@@ -17,12 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EventSearchDto {
+public class EventAdminSearchDto {
     List<Long> userIds;
     List<EventState> states;
     List<Long> categoryIds;
     LocalDateTime start;
     LocalDateTime end;
-    Integer from;
-    Integer size;
 }

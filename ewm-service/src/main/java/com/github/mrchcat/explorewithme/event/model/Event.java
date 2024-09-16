@@ -2,6 +2,7 @@ package com.github.mrchcat.explorewithme.event.model;
 
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.user.model.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

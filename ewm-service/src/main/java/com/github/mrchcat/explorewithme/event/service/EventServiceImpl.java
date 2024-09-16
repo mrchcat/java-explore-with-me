@@ -1,12 +1,16 @@
 package com.github.mrchcat.explorewithme.event.service;
 
+import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.StatHttpClient;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
-import com.github.mrchcat.explorewithme.event.dto.EventSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
+import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.model.EventStateAction;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
@@ -14,10 +18,16 @@ import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.service.UserService;
 import com.github.mrchcat.explorewithme.validator.Validator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +45,14 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final Validator validator;
     private final EventMapper eventMapper;
+    private final StatHttpClient statHttpClient;
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
         validator.isDateNotTooEarlyUser(createDto.getEventDate());
         Event mappedEvent = eventMapper.toEntity(userId, createDto);
         Event savedEvent = eventRepository.save(mappedEvent);
-        log.info("Created event {}",savedEvent);
+        log.info("Created event {}", savedEvent);
         return eventMapper.toDto(savedEvent);
     }
 
@@ -60,7 +71,7 @@ public class EventServiceImpl implements EventService {
         }
         mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
-        log.info("User id={} updated event {}",userId, updatedEvent);
+        log.info("User id={} updated event {}", userId, updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
 
@@ -90,18 +101,18 @@ public class EventServiceImpl implements EventService {
         };
     }
 
-    @Override
-    public List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size) {
-        validator.isUserIdExists(userId);
-        List<Event> events = eventRepository.getAllEventsByUserId(userId, from, size);
-        return eventMapper.toShortDto(events);
-    }
+//    @Override
+//    public List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size) {
+//        validator.isUserIdExists(userId);
+//        List<Event> events = eventRepository.getAllEventsByUserId(userId, from, size);
+//        return eventMapper.toShortDto(events);
+//    }
 
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
         validator.isUserIdExists(userId);
         log.info("Validator отработал успешно");
-        Optional<Event> eventOptional = eventRepository.getEventByIdByUserId(userId, eventId);
+        Optional<Event> eventOptional = eventRepository.getByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
             String message = String.format("Event with id=%d for user with id=%d was not found", eventId, userId);
             return new ObjectNotFoundException(message);
@@ -118,8 +129,62 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getAllByQuery(EventSearchDto query) {
-        List<Event> events = eventRepository.getAllEventDtoByQuery(query);
+    public List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable) {
+        validator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
         return eventMapper.toDto(events);
     }
+
+    @Override
+    public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
+        validator.isUserIdExists(userId);
+        List<Event> events = eventRepository.getAllByUserId(userId, pageable);
+        return eventMapper.toShortDto(events);
+    }
+
+    @Override
+    public List<EventShortDto> getAllByQuery(EventPublicSearchDto query,
+                                             Pageable pageable,
+                                             EventSortAttribute sort,
+                                             HttpServletRequest request) {
+        validator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
+        List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
+        var comparator = switch (sort) {
+            case VIEWS -> Comparator.comparingLong(EventShortDto::getViews);
+            case EVENT_DATE -> Comparator.comparing(EventShortDto::getEventDate);
+        };
+        comparator.reversed();
+        eventShortDtoList.sort(comparator);
+        sendToStatService(request);
+        return eventShortDtoList;
+    }
+
+    @Override
+    public EventShortDto getShortDtoById(long eventId) {
+        EventState state = PUBLISHED;
+        Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
+            String message = String.format("Event with id=%d and status=%d was not found", eventId, state);
+            return new ObjectNotFoundException(message);
+        });
+        return eventMapper.toShortDto(event);
+    }
+
+    private void sendToStatService(HttpServletRequest request) {
+        String remoteAddress = request.getRemoteAddr();
+        InetAddress ip = null;
+        try {
+            ip = InetAddress.getByName(remoteAddress);
+        } catch (UnknownHostException e) {
+            log.error("RemoteAddress {} can not converted to InetAdress", remoteAddress);
+        }
+        RequestCreateDto statRequest = RequestCreateDto.builder()
+                .app("ewm-main-service")
+                .uri(request.getRequestURI())
+                .ip(ip)
+                .timestamp(LocalDateTime.now())
+                .build();
+        statHttpClient.addRequest(statRequest);
+    }
+
 }

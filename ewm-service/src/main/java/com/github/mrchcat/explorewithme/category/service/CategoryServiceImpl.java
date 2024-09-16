@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(long catId) {
         validator.isCategoryIdExists(catId);
-//        TODO добавить проверку на отсутствие связанных задач
+        validator.isAnyLinkedEventsForCategory(catId);
         categoryRepository.deleteById(catId);
         log.info("Category with id={} deleted", catId);
     }

@@ -2,11 +2,16 @@ package com.github.mrchcat.explorewithme.event.service;
 
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
-import com.github.mrchcat.explorewithme.event.dto.EventSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.model.Event;
+import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.net.InetAddress;
 import java.util.List;
 
 public interface EventService {
@@ -17,12 +22,19 @@ public interface EventService {
 
     EventDto updateByAdmin(long eventId, EventUpdateDto updateDtoto);
 
-    List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size);
+    List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable);
 
     EventDto getDtoByIdAndUser(long userId, long eventId);
 
     Event getById(long eventId);
 
-    List<EventDto> getAllByQuery(EventSearchDto query);
+    List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable);
+
+    List<EventShortDto> getAllByQuery(EventPublicSearchDto query,
+                                      Pageable pageable,
+                                      EventSortAttribute sort,
+                                      HttpServletRequest request);
+
+    EventShortDto getShortDtoById(long eventId);
 
 }

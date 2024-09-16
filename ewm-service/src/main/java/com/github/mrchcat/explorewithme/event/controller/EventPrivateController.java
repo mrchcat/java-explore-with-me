@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,25 +46,26 @@ public class EventPrivateController {
                          @PathVariable(name = "eventId") long eventId,
                          @RequestBody @Valid EventUpdateDto updateDto) {
         log.info("Private API: received request from user id={} to update {}", userId, updateDto);
-        return eventService.updateByUser(userId, eventId,updateDto);
+        return eventService.updateByUser(userId, eventId, updateDto);
     }
 
     @GetMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.OK)
     List<EventShortDto> getAllEventsByUser(
             @PathVariable(name = "userId") long userId,
-            @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Long from,
-            @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
+            @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Integer size) {
         log.info("Private API: received request from user id={} to get all his events with parameters from={} size={}",
                 userId, from, size);
-        return eventService.getAllShortDtoByUser(userId, from, size);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        return eventService.getAllShortDtoByUser(userId, pageable);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     EventDto getEventByIdByUser(@PathVariable(name = "userId") long userId,
                                 @PathVariable(name = "eventId") long eventId) {
-        log.info("Private API: received request from user id={} to get event with id={}", userId,eventId);
+        log.info("Private API: received request from user id={} to get event with id={}", userId, eventId);
         return eventService.getDtoByIdAndUser(userId, eventId);
     }
 

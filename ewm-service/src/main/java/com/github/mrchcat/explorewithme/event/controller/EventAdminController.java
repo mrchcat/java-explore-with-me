@@ -1,14 +1,16 @@
 package com.github.mrchcat.explorewithme.event.controller;
 
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
-import com.github.mrchcat.explorewithme.event.dto.EventSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,20 +49,18 @@ public class EventAdminController {
                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                 @RequestParam(name = "rangeEnd", required = false)
                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                @RequestParam(name = "from", defaultValue = "0", required = false)
-                                @PositiveOrZero Integer from,
+                                @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                 @RequestParam(name = "size", defaultValue = "10", required = false)
-                                @PositiveOrZero Integer size) {
-        EventSearchDto searchDto = EventSearchDto.builder()
+                                @Positive Integer size) {
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        EventAdminSearchDto searchDto = EventAdminSearchDto.builder()
                 .userIds(userIds)
                 .states(states)
                 .categoryIds(categoryIds)
                 .start(start)
                 .end(end)
-                .from(from)
-                .size(size)
                 .build();
-        return eventService.getAllByQuery(searchDto);
+        return eventService.getAllByQuery(searchDto,pageable);
     }
 }
 

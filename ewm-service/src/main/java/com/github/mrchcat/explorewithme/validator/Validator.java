@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme.validator;
 
+import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
@@ -27,6 +28,29 @@ public class Validator {
     private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
 
+
+    public void isEventExist(long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            String message = String.format("Event with id=%d was not found", eventId);
+            throw new ObjectNotFoundException(message);
+        }
+
+    }
+
+
+    public void isAnyLinkedEventsForCategory(long categoryId) {
+        if (eventRepository.existsByCategory(categoryId)) {
+            String message = String.format("Category id=%d have connected events", categoryId);
+            throw new RulesViolationException(message);
+        }
+    }
+
+    public void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
+        if (start != null && finish != null && finish.isBefore(start)) {
+            String message = String.format("The dates violate order: %s must be before %s", start, finish);
+            throw new RulesViolationException(message);
+        }
+    }
 
     public void isEventHasCorrectStatusToUpdate(EventState state) {
         for (EventState allowed : PERMITTED_STATUS) {
