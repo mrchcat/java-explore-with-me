@@ -150,36 +150,45 @@ public class EventServiceImpl implements EventService {
                                              Pageable pageable,
                                              EventSortAttribute sort,
                                              HttpServletRequest request) {
+        log.info("зашли в getAllByQuery с параметрами query={} pageable={} sort={} request={}",
+                query, pageable, sort, request);
         validator.isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
+        log.info("сделали запрос в БД и получили ответ {}", events);
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
-        var comparator = switch (sort) {
-            case VIEWS -> Comparator.comparingLong(EventShortDto::getViews);
-            case EVENT_DATE -> Comparator.comparing(EventShortDto::getEventDate);
-        };
-        comparator.reversed();
-        eventShortDtoList.sort(comparator);
+        log.info("сделали список ShortDto", eventShortDtoList);
+
+        if (sort != null) {
+            var comparator = switch (sort) {
+                case VIEWS -> Comparator.comparingLong(EventShortDto::getViews).reversed();
+//                TODO проверить порядок сортировки
+                case EVENT_DATE -> Comparator.comparing(EventShortDto::getEventDate);
+            };
+            eventShortDtoList.sort(comparator);
+        }
         sendToStatService(request);
         return eventShortDtoList;
     }
 
     @Override
-    public EventShortDto getShortDtoById(long eventId) {
+    public EventShortDto getShortDtoById(long eventId, HttpServletRequest request) {
         EventState state = PUBLISHED;
         Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
             String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
+        sendToStatService(request);
         return eventMapper.toShortDto(event);
     }
 
     private void sendToStatService(HttpServletRequest request) {
+        log.info("зашли в sendToStatService {}", request);
         String remoteAddress = request.getRemoteAddr();
         InetAddress ip = null;
         try {
             ip = InetAddress.getByName(remoteAddress);
         } catch (UnknownHostException e) {
-            log.error("RemoteAddress {} can not converted to InetAdress", remoteAddress);
+            log.error("RemoteAddress {} can not be converted to InetAdress", remoteAddress);
         }
         RequestCreateDto statRequest = RequestCreateDto.builder()
                 .app(APP_NAME)
@@ -187,7 +196,7 @@ public class EventServiceImpl implements EventService {
                 .ip(ip)
                 .timestamp(LocalDateTime.now())
                 .build();
+        log.info("создали запрос {}", statRequest);
         statHttpClient.addRequest(statRequest);
     }
-
 }

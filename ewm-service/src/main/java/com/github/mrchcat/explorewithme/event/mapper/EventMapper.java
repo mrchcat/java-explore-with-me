@@ -23,14 +23,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -39,9 +39,8 @@ public class EventMapper {
     private final UserService userService;
     private final CategoryService categoryService;
     private final StatHttpClient statHttpClient;
-    private final EventPublicController eventPublicController;
     private static final boolean IS_UNIQUE_VIEWS = true;
-    private static final String PUBLIC_VIEW_URI = "/event/";
+    private static final String PUBLIC_VIEW_URI = "/events";
 
     public Event toEntity(long initiatorId, EventCreateDto ecd) {
         User initiator = userService.getUserById(initiatorId);
@@ -77,48 +76,73 @@ public class EventMapper {
         return event;
     }
 
-    List<Long> getEventIds(List<Event> events) {
-        return events.stream().map(Event::getId).toList();
+    private String makeUri(long id) {
+        return PUBLIC_VIEW_URI + "/" + id;
     }
 
-    private Map<Long, Long> getEventViews(List<Event> events) {
-        List<Long> eventsIds = getEventIds(events);
-        LocalDateTime start = events.stream()
-                .map(Event::getEventDate)
-                .min(LocalDateTime::compareTo)
-                .get();
-        Map<String, Long> UriIdMap = events.stream()
-                .collect(Collectors.toMap(e -> PUBLIC_VIEW_URI + e.getId(), Event::getId));
-        String[] uris = UriIdMap.values().toArray(String[]::new);
-
+    private Map<String, Long> getRequestFromStat(LocalDateTime start, String[] uris) {
+        log.info("зашли в getRequestFromStat c параметрами {} {}", start, Arrays.toString(uris));
         var request = RequestQueryParamDto.builder()
                 .start(start)
                 .end(LocalDateTime.now())
                 .uris(uris)
                 .unique(IS_UNIQUE_VIEWS)
                 .build();
+        log.info("Создали request {}", request);
         try {
             List<RequestStatisticDto> answer = statHttpClient.getRequestStatistic(request);
-            Map<String, Long> uriViewMap = answer.stream()
+            log.info("Ответ {}", answer);
+            return answer.stream()
                     .collect(Collectors.toMap(RequestStatisticDto::getUri, RequestStatisticDto::getHits));
-            Map<Long, Long> idViewMap = new HashMap<>();
-            for (var entry : uriViewMap.entrySet()) {
-                idViewMap.put(UriIdMap.get(entry.getKey().toLowerCase()), entry.getValue());
-            }
-            return idViewMap;
         } catch (IOException ex) {
             log.error("Stat service returned an exception for request {}", request);
-            return Collections.emptyMap();
+            return Stream.of(uris).collect(Collectors.toMap(Function.identity(), u -> 0L));
         }
     }
 
+    private long getEventViews(Event event) {
+        log.info("зашли в getEventViews c {}", event);
+        LocalDateTime start = event.getCreatedOn();
+        log.info("start= {}", start);
+        String uri = makeUri(event.getId());
+        String[] uris = new String[]{uri};
+        log.info("uris= {}", Arrays.toString(uris));
+        var uriViewsMap = getRequestFromStat(start, uris);
+        return (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0;
+    }
 
-    public EventDto toDto(Event e) {
+    private Map<Long, Long> getEventViews(List<Event> events) {
+        log.info("вошли в getEventViews c {}", events);
+        if (events.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<Long, String> IdUrisMap = events.stream()
+                .map(Event::getId)
+                .collect(Collectors.toMap(Function.identity(), this::makeUri));
+        log.info("IdUrisMap={}", IdUrisMap);
+
+        LocalDateTime start = events.stream()
+                .map(Event::getCreatedOn)
+                .min(LocalDateTime::compareTo)
+                .orElseThrow(() -> new RuntimeException("Event entity has no creation date"));
+        log.info("start={}", start);
+
+        Map<String, Long> uriViewsMap = getRequestFromStat(start, IdUrisMap.values().toArray(new String[0]));
+        log.info("uriViewsMap={}", uriViewsMap);
+
+        Map<Long, Long> idViewMap = new HashMap<>(uriViewsMap.size());
+        for (var entry : IdUrisMap.entrySet()) {
+            Long id = entry.getKey();
+            String uri = entry.getValue();
+            idViewMap.put(id, (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0);
+        }
+        log.info("idViewMap={}", idViewMap);
+        return idViewMap;
+    }
+
+    private EventDto toDtoExclViewsRequests(Event e) {
         CategoryDto categoryDto = CategoryMapper.toDTO(e.getCategory());
         UserShortDto userShortDto = UserMapper.toShortDto(e.getInitiator());
-        long views = getEventViews(e);
-//        TODO добавить количество подтвержденных событий
-        int confirmedRequests = 0;
         return EventDto.builder()
                 .id(e.getId())
                 .title(e.getTitle())
@@ -130,49 +154,39 @@ public class EventMapper {
                 .paid(e.getPaid())
                 .participantLimit(e.getParticipantLimit())
                 .requestModeration(e.getRequestModeration())
-                .confirmedRequests(confirmedRequests)
                 .createdOn(e.getCreatedOn())
                 .initiator(userShortDto)
                 .publishedOn(e.getPublishedOn())
                 .state(e.getState())
-                .views(views)
                 .build();
     }
 
-    public List<EventDto> toDto(List<Event> eventList) {
-        return eventList.stream().map(this::toDto).toList();
-
-//        Map<Long, Tuple> eventMap = mapViewsAndRequests(eventList);
-//        return eventList.stream()
-//                .map(this::toDto)
-//                .peek(dto -> {
-//                    long eventId = dto.getId();
-//                    Tuple tuple = eventMap.get(eventId);
-//                    if (tuple != null) {
-//                        dto.setConfirmedRequests(tuple.confirmedRequests);
-//                        dto.setViews(tuple.confirmedRequests);
-//                    }
-//                }).toList();
+    public EventDto toDto(Event e) {
+        log.info("зашли в toDto  ссобытием {}", e);
+        EventDto eventDto = toDtoExclViewsRequests(e);
+        log.info("сделали полуфабрикат toDtoExclViewsRequests {}", eventDto);
+        long views = getEventViews(e);
+        log.info("views= {}", views);
+        eventDto.setViews(views);
+        //        TODO добавить количество подтвержденных событий
+        int confirmedRequests = 0;
+        eventDto.setConfirmedRequests(confirmedRequests);
+        return eventDto;
     }
 
-//    private Map<Long, Tuple> mapViewsAndRequests(List<Event> eventList) {
-//        List<Long> eventIds = eventList.stream().map(Event::getId).toList();
-//        Map<Long, Tuple> map = new HashMap<>();
-////        TODO ВОзврат из базы
-//        return map;
-//    }
-//
-//    private record Tuple(Long views, Integer confirmedRequests) {
-//    }
+    public List<EventDto> toDto(List<Event> events) {
+        Map<Long, Long> idViewMap = getEventViews(events);
+        // TODO  добавить количество подтвержденных событий
+        Map<Long, Long> idRequestMap;
+        return events.stream()
+                .map(this::toDtoExclViewsRequests)
+                .peek(dto -> dto.setViews(idViewMap.get(dto.getId())))
+                .collect(Collectors.toList());
+    }
 
-
-    public EventShortDto toShortDto(Event e) {
+    private EventShortDto toShortDtoExclViewsRequests(Event e) {
         CategoryDto categoryDto = CategoryMapper.toDTO(e.getCategory());
         UserShortDto userShortDto = UserMapper.toShortDto(e.getInitiator());
-//        TODO добавить количество просмотров
-        long views = 0;
-//        TODO добавить количество подтвержденных событий
-        int confirmedRequests = 0;
         return EventShortDto.builder()
                 .id(e.getId())
                 .title(e.getTitle())
@@ -180,13 +194,39 @@ public class EventMapper {
                 .category(categoryDto)
                 .eventDate(e.getEventDate())
                 .paid(e.getPaid())
-                .confirmedRequests(confirmedRequests)
                 .initiator(userShortDto)
-                .views(views)
                 .build();
     }
 
-    public List<EventShortDto> toShortDto(List<Event> eventList) {
-        return eventList.stream().map(this::toShortDto).toList();
+    public EventShortDto toShortDto(Event e) {
+        EventShortDto eventDto = toShortDtoExclViewsRequests(e);
+        long views = getEventViews(e);
+        eventDto.setViews(views);
+        //        TODO добавить количество подтвержденных событий
+        int confirmedRequests = 0;
+        eventDto.setConfirmedRequests(confirmedRequests);
+        return eventDto;
+    }
+
+    public List<EventShortDto> toShortDto(List<Event> events) {
+        log.info("вошли в множественный toShortDto c {}", events);
+        Map<Long, Long> idViewMap = getEventViews(events);
+        log.info("получили сопоставление idViewMap {}", idViewMap);
+        // TODO  добавить количество подтвержденных событий
+        Map<Long, Long> idRequestMap;
+        return events.stream()
+                .map(this::toShortDtoExclViewsRequests)
+                .peek(dto -> dto.setViews(idViewMap.get(dto.getId())))
+                .collect(Collectors.toList());
     }
 }
+
+//    List<Long> getEventIds(List<Event> events) {
+//        return events.stream().map(Event::getId).toList();
+//    }
+
+//    private long getIdFromUri(String uri) {
+//        String prefix = PUBLIC_VIEW_URI + "/";
+//        int num = prefix.length();
+//        return Long.parseLong(uri.substring(num));
+//    }

@@ -16,6 +16,7 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventCustomRepositoryImpl implements EventCustomRepository {
@@ -80,7 +81,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
                     "%" + text.toLowerCase() + "%");
             Predicate textSearchDescription = builder.like(builder.lower(root.get("description")),
                     "%" + text.toLowerCase() + "%");
-            Predicate textSearch=builder.or(textSearchInAnnotation,textSearchDescription);
+            Predicate textSearch = builder.or(textSearchInAnnotation, textSearchDescription);
             wherePredicates.add(textSearch);
         }
 
@@ -114,9 +115,9 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
             wherePredicates.add(isPaid);
         }
 
-        List<EventState> statusList = qp.getStates();
-        if (statusList != null && !statusList.isEmpty()) {
-            Predicate inStatusList = root.get("status").in(statusList);
+        List<EventState> states = qp.getStates();
+        if (states != null && !states.isEmpty()) {
+            Predicate inStatusList = root.get("state").in(states);
             wherePredicates.add(inStatusList);
         }
 

@@ -4,6 +4,9 @@ server:
 statserver:
   url: http://localhost:9090
 
+app:
+  name: ewm-main-service
+
 spring:
   sql:
     init.mode: always

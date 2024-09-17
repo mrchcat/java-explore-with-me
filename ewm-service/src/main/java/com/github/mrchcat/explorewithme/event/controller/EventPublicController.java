@@ -62,9 +62,10 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    EventShortDto getEventById(@PathVariable(name = "eventId") long eventId) {
+    EventShortDto getEventById(HttpServletRequest request,
+                               @PathVariable(name = "eventId") long eventId) {
         log.info("PublicAPI: received request to get event id={}", eventId);
-        return eventService.getShortDtoById(eventId);
+        return eventService.getShortDtoById(eventId, request);
     }
 
 }

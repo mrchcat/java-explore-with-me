@@ -21,8 +21,10 @@ public class EventPublicSearchDto {
     String text;
     List<Long> categoryIds;
     Boolean paid;
-    LocalDateTime start=LocalDateTime.now();
+    @Builder.Default
+    LocalDateTime start = LocalDateTime.now();
     LocalDateTime end;
     Boolean onlyAvailable;
+    @Builder.Default
     List<EventState> states = List.of(EventState.PUBLISHED);
 }

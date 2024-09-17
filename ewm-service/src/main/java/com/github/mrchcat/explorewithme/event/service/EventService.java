@@ -34,6 +34,6 @@ public interface EventService {
                                       EventSortAttribute sort,
                                       HttpServletRequest request);
 
-    EventShortDto getShortDtoById(long eventId);
+    EventShortDto getShortDtoById(long eventId,HttpServletRequest request);
 
 }
