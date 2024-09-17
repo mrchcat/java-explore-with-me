@@ -48,7 +48,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final StatHttpClient statHttpClient;
     @Value("${app.name}")
-    private String APP_NAME;
+    private static String APP_NAME;
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {

@@ -7,7 +7,6 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.service.CategoryService;
-import com.github.mrchcat.explorewithme.event.controller.EventPublicController;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
@@ -116,10 +115,10 @@ public class EventMapper {
         if (events.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<Long, String> IdUrisMap = events.stream()
+        Map<Long, String> idUrisMap = events.stream()
                 .map(Event::getId)
                 .collect(Collectors.toMap(Function.identity(), this::makeUri));
-        log.info("IdUrisMap={}", IdUrisMap);
+        log.info("IdUrisMap={}", idUrisMap);
 
         LocalDateTime start = events.stream()
                 .map(Event::getCreatedOn)
@@ -127,11 +126,11 @@ public class EventMapper {
                 .orElseThrow(() -> new RuntimeException("Event entity has no creation date"));
         log.info("start={}", start);
 
-        Map<String, Long> uriViewsMap = getRequestFromStat(start, IdUrisMap.values().toArray(new String[0]));
+        Map<String, Long> uriViewsMap = getRequestFromStat(start, idUrisMap.values().toArray(new String[0]));
         log.info("uriViewsMap={}", uriViewsMap);
 
         Map<Long, Long> idViewMap = new HashMap<>(uriViewsMap.size());
-        for (var entry : IdUrisMap.entrySet()) {
+        for (var entry : idUrisMap.entrySet()) {
             Long id = entry.getKey();
             String uri = entry.getValue();
             idViewMap.put(id, (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0);
