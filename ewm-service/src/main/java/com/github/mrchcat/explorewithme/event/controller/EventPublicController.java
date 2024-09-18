@@ -42,8 +42,7 @@ public class EventPublicController {
                                      @RequestParam(name = "onlyAvailable", required = false) Boolean onlyAvailable,
                                      @RequestParam(name = "sort", required = false) EventSortAttribute sort,
                                      @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
-                                     @RequestParam(name = "size", defaultValue = "10", required = false)
-                                     @Positive Integer size) {
+                                     @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
         EventPublicSearchDto query = EventPublicSearchDto.builder()
                 .text(text)
                 .categoryIds(categoryIds)

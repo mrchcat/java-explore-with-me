@@ -37,7 +37,7 @@ public class CompilationMapper {
         if (title != null && !title.isEmpty()) {
             compilation.setTitle(title);
         }
-        Boolean isPinned = updateDto.getIsPinned();
+        Boolean isPinned = updateDto.getPinned();
         if (isPinned != null) {
             compilation.setIsPinned(isPinned);
         }
@@ -57,8 +57,16 @@ public class CompilationMapper {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
-                .isPinned(compilation.getIsPinned())
+                .pinned(compilation.getIsPinned())
                 .events(eventShortDtos)
                 .build();
     }
+
+    public List<CompilationDto> toDto(List<Compilation> compilations) {
+        return compilations.stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+
 }

@@ -6,13 +6,17 @@ import com.github.mrchcat.explorewithme.compilations.dto.CompilationUpdateDto;
 import com.github.mrchcat.explorewithme.compilations.mapper.CompilationMapper;
 import com.github.mrchcat.explorewithme.compilations.model.Compilation;
 import com.github.mrchcat.explorewithme.compilations.repository.CompilationRepository;
+import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -59,6 +63,22 @@ public class CompilationServiceImpl implements CompilationService {
             String message = String.format("Compilation with id=%d was not found", compilationId);
             return new ObjectNotFoundException(message);
         });
+    }
+
+    @Override
+    public List<CompilationDto> getAllDto(Boolean pinned, Pageable pageable) {
+        List<Compilation> compilations;
+        if (pinned == null) {
+            compilations = compilationRepository.findAll(pageable).getContent();
+        } else {
+            compilations = compilationRepository.findAllByIsPinned(pinned, pageable);
+        }
+        return compilationMapper.toDto(compilations);
+    }
+
+    @Override
+    public CompilationDto getDtoById(long compilationId) {
+        return compilationMapper.toDto(getById(compilationId));
     }
 
 }

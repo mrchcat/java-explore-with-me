@@ -24,12 +24,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             """)
     boolean existsByNameExclId(long id, String name);
 
-    @Query(value = """
-            SELECT *
-            FROM categories
-            LIMIT :size
-            OFFSET :from
-            """, nativeQuery = true)
-    List<Category> getAllCategories(long from, long size);
+//    @Query(value = """
+//            SELECT *
+//            FROM categories
+//            LIMIT :size
+//            OFFSET :from
+//            """, nativeQuery = true)
+//    List<Category> getAllCategories(long from, long size);
 
 }

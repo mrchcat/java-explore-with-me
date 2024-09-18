@@ -9,6 +9,7 @@ import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,8 +48,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAllDto(long from, long size) {
-        List<Category> categories = categoryRepository.getAllCategories(from, size);
+    public List<CategoryDto> getAllDto(Pageable pageable) {
+        List<Category> categories = categoryRepository.findAll(pageable).getContent();
         return CategoryMapper.toDTO(categories);
     }
 

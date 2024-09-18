@@ -14,5 +14,5 @@ import java.util.Set;
 public class CompilationUpdateDto {
     private String title;
     private Set<Long> events;
-    private Boolean isPinned;
+    private Boolean pinned;
 }

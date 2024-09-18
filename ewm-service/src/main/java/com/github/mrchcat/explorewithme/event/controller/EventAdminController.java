@@ -50,8 +50,7 @@ public class EventAdminController {
                                 @RequestParam(name = "rangeEnd", required = false)
                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                 @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
-                                @RequestParam(name = "size", defaultValue = "10", required = false)
-                                @Positive Integer size) {
+                                @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
         EventAdminSearchDto searchDto = EventAdminSearchDto.builder()
                 .userIds(userIds)
@@ -60,7 +59,7 @@ public class EventAdminController {
                 .start(start)
                 .end(end)
                 .build();
-        return eventService.getAllByQuery(searchDto,pageable);
+        return eventService.getAllByQuery(searchDto, pageable);
     }
 }
 

@@ -6,6 +6,7 @@ import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +53,8 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.OK)
     List<EventShortDto> getAllEventsByUser(
             @PathVariable(name = "userId") long userId,
-            @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Integer from,
-            @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Integer size) {
+            @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
+            @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
         log.info("Private API: received request from user id={} to get all his events with parameters from={} size={}",
                 userId, from, size);
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
