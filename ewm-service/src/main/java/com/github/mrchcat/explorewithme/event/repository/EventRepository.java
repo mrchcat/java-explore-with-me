@@ -48,5 +48,17 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventCustom
             """)
     long countEvents(Set<Long> eventIds);
 
+    @Query(value = """
+            SELECT CASE WHEN COUNT(e)>0 THEN TRUE ELSE FALSE END
+            FROM Event AS e
+            WHERE e.id=:eventId AND e.initiator.id=:userId
+            """)
+    boolean existByUser(long userId, long eventId);
 
+    @Query(value = """
+            SELECT CASE WHEN COUNT(e)>0 THEN TRUE ELSE FALSE END
+            FROM Event AS e
+            WHERE e.id=:eventId AND e.state=:state
+            """)
+    boolean existByIdAndState(long eventId, EventState state);
 }

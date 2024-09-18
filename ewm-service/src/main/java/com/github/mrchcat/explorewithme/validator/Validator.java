@@ -1,12 +1,13 @@
 package com.github.mrchcat.explorewithme.validator;
 
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
-import com.github.mrchcat.explorewithme.compilations.repository.CompilationRepository;
+import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
+import com.github.mrchcat.explorewithme.request.repository.RequestRepository;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -129,5 +130,4 @@ public class Validator {
             throw new ObjectNotFoundException(message);
         }
     }
-
 }

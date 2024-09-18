@@ -16,6 +16,7 @@ import com.github.mrchcat.explorewithme.event.model.EventStateAction;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.service.UserService;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,12 +68,14 @@ public class EventServiceImpl implements EventService {
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
         EventStateAction statusAction = updateDto.getStateAction();
         EventState newState;
-        if (statusAction == null || statusAction.equals(SEND_TO_REVIEW)) {
-            newState = PENDING;
-        } else {
-            newState = CANCELED;
+        if (statusAction != null) {
+            newState = switch (statusAction) {
+                case SEND_TO_REVIEW -> PENDING;
+                case CANCEL_REVIEW -> CANCELED;
+                case PUBLISH_EVENT -> throw new RulesViolationException("User do not allow to publish events");
+            };
+            mappedEvent.setState(newState);
         }
-        mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("User id={} updated event {}", userId, updatedEvent);
         return eventMapper.toDto(updatedEvent);
@@ -82,8 +85,12 @@ public class EventServiceImpl implements EventService {
     public EventDto updateByAdmin(long eventId, EventUpdateDto updateDto) {
         validator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
         Event oldEvent = getById(eventId);
+        EventState oldState = oldEvent.getState();
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
         EventState newState = getNewState(oldEvent, updateDto);
+        if (newState.equals(PUBLISHED) && oldState.equals(PENDING)) {
+            mappedEvent.setPublishedOn(LocalDateTime.now());
+        }
         mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("Admin updated event {}", updatedEvent);
@@ -103,13 +110,6 @@ public class EventServiceImpl implements EventService {
             case PUBLISH_EVENT -> PUBLISHED;
         };
     }
-
-//    @Override
-//    public List<EventShortDto> getAllShortDtoByUser(long userId, long from, long size) {
-//        validator.isUserIdExists(userId);
-//        List<Event> events = eventRepository.getAllEventsByUserId(userId, from, size);
-//        return eventMapper.toShortDto(events);
-//    }
 
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
@@ -133,7 +133,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> getById(List<Long> eventIds) {
-        return  eventRepository.findAllById(eventIds);
+        return eventRepository.findAllById(eventIds);
     }
 
     @Override
@@ -184,6 +184,20 @@ public class EventServiceImpl implements EventService {
         });
         sendToStatService(request);
         return eventMapper.toShortDto(event);
+    }
+
+    @Override
+    public void decrementParticipantLimit(Event event) {
+        long limit=event.getParticipantLimit();
+        event.setParticipantLimit(limit-1);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public void incrementParticipantLimit(Event event) {
+        long limit=event.getParticipantLimit();
+        event.setParticipantLimit(limit+1);
+        eventRepository.save(event);
     }
 
     private void sendToStatService(HttpServletRequest request) {

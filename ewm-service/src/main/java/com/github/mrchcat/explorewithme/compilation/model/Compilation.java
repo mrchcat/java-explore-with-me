@@ -1,4 +1,4 @@
-package com.github.mrchcat.explorewithme.compilations.model;
+package com.github.mrchcat.explorewithme.compilation.model;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
 import jakarta.persistence.Column;

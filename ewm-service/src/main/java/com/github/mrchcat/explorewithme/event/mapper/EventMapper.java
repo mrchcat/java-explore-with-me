@@ -220,6 +220,9 @@ public class EventMapper {
     }
 }
 
+
+
+
 //    List<Long> getEventIds(List<Event> events) {
 //        return events.stream().map(Event::getId).toList();
 //    }

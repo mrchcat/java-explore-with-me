@@ -1,10 +1,9 @@
-package com.github.mrchcat.explorewithme.compilations.service;
+package com.github.mrchcat.explorewithme.compilation.service;
 
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationCreateDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationUpdateDto;
-import com.github.mrchcat.explorewithme.compilations.model.Compilation;
-import org.springframework.data.domain.Page;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationCreateDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationUpdateDto;
+import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

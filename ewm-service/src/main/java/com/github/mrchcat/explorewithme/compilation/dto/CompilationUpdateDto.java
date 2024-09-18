@@ -1,4 +1,4 @@
-package com.github.mrchcat.explorewithme.compilations.dto;
+package com.github.mrchcat.explorewithme.compilation.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

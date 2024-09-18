@@ -1,6 +1,6 @@
-package com.github.mrchcat.explorewithme.compilations.repository;
+package com.github.mrchcat.explorewithme.compilation.repository;
 
-import com.github.mrchcat.explorewithme.compilations.model.Compilation;
+import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

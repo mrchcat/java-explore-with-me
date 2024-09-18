@@ -1,10 +1,8 @@
-package com.github.mrchcat.explorewithme.compilations.controller;
+package com.github.mrchcat.explorewithme.compilation.controller;
 
-import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationDto;
-import com.github.mrchcat.explorewithme.compilations.service.CompilationService;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationDto;
+import com.github.mrchcat.explorewithme.compilation.service.CompilationService;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

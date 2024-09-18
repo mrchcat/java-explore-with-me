@@ -38,4 +38,7 @@ public interface EventService {
 
     EventShortDto getShortDtoById(long eventId,HttpServletRequest request);
 
+    void decrementParticipantLimit(Event event);
+
+    void incrementParticipantLimit(Event event);
 }

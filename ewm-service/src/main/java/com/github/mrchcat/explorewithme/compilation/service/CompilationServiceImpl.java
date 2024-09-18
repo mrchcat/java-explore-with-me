@@ -1,15 +1,13 @@
-package com.github.mrchcat.explorewithme.compilations.service;
+package com.github.mrchcat.explorewithme.compilation.service;
 
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationCreateDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationUpdateDto;
-import com.github.mrchcat.explorewithme.compilations.mapper.CompilationMapper;
-import com.github.mrchcat.explorewithme.compilations.model.Compilation;
-import com.github.mrchcat.explorewithme.compilations.repository.CompilationRepository;
-import com.github.mrchcat.explorewithme.event.model.Event;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationCreateDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationUpdateDto;
+import com.github.mrchcat.explorewithme.compilation.mapper.CompilationMapper;
+import com.github.mrchcat.explorewithme.compilation.model.Compilation;
+import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
-import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

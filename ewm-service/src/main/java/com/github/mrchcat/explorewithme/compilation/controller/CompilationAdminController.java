@@ -1,9 +1,9 @@
-package com.github.mrchcat.explorewithme.compilations.controller;
+package com.github.mrchcat.explorewithme.compilation.controller;
 
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationCreateDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationUpdateDto;
-import com.github.mrchcat.explorewithme.compilations.service.CompilationService;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationCreateDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationUpdateDto;
+import com.github.mrchcat.explorewithme.compilation.service.CompilationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

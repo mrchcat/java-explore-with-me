@@ -43,11 +43,9 @@ public class Event {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Length(min = 20, max = 200)
     @Column(name = "annotation", nullable = false)
     private String annotation;
 
-    @Length(min = 20, max = 7000)
     @Column(name = "description", nullable = false)
     private String description;
 

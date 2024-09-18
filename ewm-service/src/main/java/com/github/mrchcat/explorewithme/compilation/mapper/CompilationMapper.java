@@ -1,9 +1,9 @@
-package com.github.mrchcat.explorewithme.compilations.mapper;
+package com.github.mrchcat.explorewithme.compilation.mapper;
 
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationCreateDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationDto;
-import com.github.mrchcat.explorewithme.compilations.dto.CompilationUpdateDto;
-import com.github.mrchcat.explorewithme.compilations.model.Compilation;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationCreateDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationDto;
+import com.github.mrchcat.explorewithme.compilation.dto.CompilationUpdateDto;
+import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
