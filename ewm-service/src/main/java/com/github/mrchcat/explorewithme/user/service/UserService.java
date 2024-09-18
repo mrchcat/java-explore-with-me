@@ -7,15 +7,15 @@ import com.github.mrchcat.explorewithme.user.model.User;
 import java.util.List;
 
 public interface UserService {
-    UserDto createUser(UserCreateDto createDto);
+    UserDto create(UserCreateDto createDto);
 
-    void deleteUser(long id);
+    void delete(long id);
 
 //    List<UserDto> getSelectedUsers(List<Long> userIds);
 //
 //    List<UserDto> getAllUsers(long from, long size);
 
-    User getUserById(long userId);
+    User getById(long userId);
 
-    List<UserDto> getAllUsers(List<Long> userIds, long from, long size);
+    List<UserDto> getAllDto(List<Long> userIds, long from, long size);
 }

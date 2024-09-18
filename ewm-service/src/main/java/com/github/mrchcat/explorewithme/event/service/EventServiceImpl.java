@@ -132,6 +132,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<Event> getById(List<Long> eventIds) {
+        return  eventRepository.findAllById(eventIds);
+    }
+
+    @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable) {
         validator.isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);

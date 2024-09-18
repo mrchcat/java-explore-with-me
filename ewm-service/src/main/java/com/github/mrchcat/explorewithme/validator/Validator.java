@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme.validator;
 
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
+import com.github.mrchcat.explorewithme.compilations.repository.CompilationRepository;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
@@ -23,9 +25,26 @@ public class Validator {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final CompilationRepository compilationRepository;
     private static final Duration TIME_GAP_USER = Duration.ofHours(2);
     private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
+
+
+    public void isCompilationExist(long compilationId) {
+        if (!compilationRepository.existsById(compilationId)) {
+            String message = String.format("Compilation with id=%d was not found", compilationId);
+            throw new ObjectNotFoundException(message);
+        }
+    }
+
+
+    public void isEventExist(Set<Long> eventIds) {
+        if (eventIds != null && !eventIds.isEmpty() && eventRepository.countEvents(eventIds) != eventIds.size()) {
+            String message = String.format("Check the list of event ids=%s, some of the events were not found", eventIds);
+            throw new ObjectNotFoundException(message);
+        }
+    }
 
 
     public void isEventExist(long eventId) {
@@ -33,9 +52,7 @@ public class Validator {
             String message = String.format("Event with id=%d was not found", eventId);
             throw new ObjectNotFoundException(message);
         }
-
     }
-
 
     public void isAnyLinkedEventsForCategory(long categoryId) {
         if (eventRepository.existsByCategory(categoryId)) {

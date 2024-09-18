@@ -32,14 +32,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody @Valid UserCreateDto createDto) {
         log.info("Admin API: received request to create user {}", createDto);
-        return userService.createUser(createDto);
+        return userService.create(createDto);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable(value = "userId") @Positive long userId) {
         log.info("Admin API: received request to delete user id={}", userId);
-        userService.deleteUser(userId);
+        userService.delete(userId);
     }
 
     @GetMapping()
@@ -47,6 +47,6 @@ public class UserController {
     public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Long> ids,
                                   @RequestParam(name = "from", defaultValue = "0", required = false) @PositiveOrZero Long from,
                                   @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
-        return userService.getAllUsers(ids, from, size);
+        return userService.getAllDto(ids, from, size);
     }
 }

@@ -22,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final Validator validator;
 
     @Override
-    public CategoryDto createCategory(CategoryCreateDto createDto) {
+    public CategoryDto create(CategoryCreateDto createDto) {
         validator.isCategoryNameUnique(createDto.getName());
         Category savedCategory = categoryRepository.save(CategoryMapper.toEntity(createDto));
         log.info("{} created", savedCategory);
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(long catId) {
+    public void delete(long catId) {
         validator.isCategoryIdExists(catId);
         validator.isAnyLinkedEventsForCategory(catId);
         categoryRepository.deleteById(catId);
@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategory(long catId, CategoryCreateDto createDto) {
+    public CategoryDto update(long catId, CategoryCreateDto createDto) {
         validator.isCategoryIdExists(catId);
         validator.isCategoryNameUniqueExclId(catId, createDto.getName());
         Category updatedCategory = categoryRepository.save(CategoryMapper.toEntity(catId, createDto));
@@ -47,18 +47,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAllCategories(long from, long size) {
+    public List<CategoryDto> getAllDto(long from, long size) {
         List<Category> categories = categoryRepository.getAllCategories(from, size);
         return CategoryMapper.toDTO(categories);
     }
 
     @Override
-    public CategoryDto getCategoryById(long categoryId) {
-        return CategoryMapper.toDTO(getRawCategoryById(categoryId));
+    public CategoryDto getDtoById(long categoryId) {
+        return CategoryMapper.toDTO(getById(categoryId));
     }
 
     @Override
-    public Category getRawCategoryById(long categoryId) {
+    public Category getById(long categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         return categoryOptional.orElseThrow(() -> {
             String message = String.format("Category with id=%d was not found", categoryId);

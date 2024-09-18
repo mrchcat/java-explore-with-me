@@ -27,21 +27,21 @@ public class CategoryAdminController {
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@RequestBody @Valid CategoryCreateDto createDto) {
         log.info("Admin API: received request to create category {}", createDto);
-        return categoryService.createCategory(createDto);
+        return categoryService.create(createDto);
     }
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable(value = "categoryId", required = true) long categoryId) {
+    public void deleteCategory(@PathVariable(value = "categoryId") long categoryId) {
         log.info("Admin API: received request to delete category id={}", categoryId);
-        categoryService.deleteCategory(categoryId);
+        categoryService.delete(categoryId);
     }
 
     @PatchMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable(value = "categoryId", required = true) long categoryId,
+    public CategoryDto updateCategory(@PathVariable(value = "categoryId") long categoryId,
                                       @RequestBody @Valid CategoryCreateDto updateDto) {
         log.info("Admin API: received request to update category id={} by {}", categoryId, updateDto);
-        return categoryService.updateCategory(categoryId, updateDto);
+        return categoryService.update(categoryId, updateDto);
     }
 }

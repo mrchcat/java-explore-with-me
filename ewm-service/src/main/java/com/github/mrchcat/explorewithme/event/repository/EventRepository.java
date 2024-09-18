@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventCustomRepository {
 
@@ -39,5 +40,13 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventCustom
             WHERE e.id=:eventId AND e.state=:state
             """)
     Optional<Event> getByIdAndStatus(long eventId, EventState state);
+
+    @Query(value = """
+            SELECT COUNT(e)
+            FROM Event AS e
+            WHERE e.id IN (:eventIds)
+            """)
+    long countEvents(Set<Long> eventIds);
+
 
 }

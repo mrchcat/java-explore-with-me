@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private final Validator validator;
 
     @Override
-    public UserDto createUser(UserCreateDto createDto) {
+    public UserDto create(UserCreateDto createDto) {
         validator.isUserEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
         log.info("{} added}", savedUser);
@@ -30,14 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(long userId) {
+    public void delete(long userId) {
         validator.isUserIdExists(userId);
         userRepository.deleteById(userId);
         log.info("User with id={} deleted", userId);
     }
 
     @Override
-    public List<UserDto> getAllUsers(List<Long> userIds, long from, long size) {
+    public List<UserDto> getAllDto(List<Long> userIds, long from, long size) {
         List<User> users;
         if (userIds == null || userIds.isEmpty()) {
             users = userRepository.getAllUsers(from, size);
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) {
+    public User getById(long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         return userOptional.orElseThrow(() -> {
             String message = String.format("User with id=%d was not found", userId);

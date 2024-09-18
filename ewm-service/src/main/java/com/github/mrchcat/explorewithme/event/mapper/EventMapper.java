@@ -42,8 +42,8 @@ public class EventMapper {
     private static final String PUBLIC_VIEW_URI = "/events";
 
     public Event toEntity(long initiatorId, EventCreateDto ecd) {
-        User initiator = userService.getUserById(initiatorId);
-        Category category = categoryService.getRawCategoryById(ecd.getCategory());
+        User initiator = userService.getById(initiatorId);
+        Category category = categoryService.getById(ecd.getCategory());
         return Event.builder()
                 .title(ecd.getTitle())
                 .annotation(ecd.getAnnotation())
@@ -64,7 +64,7 @@ public class EventMapper {
         event.setDescription(updateDto.getDescription());
         long newCategoryId = updateDto.getCategory();
         if (event.getCategory().getId() != newCategoryId) {
-            Category newCategory = categoryService.getRawCategoryById(updateDto.getCategory());
+            Category newCategory = categoryService.getById(updateDto.getCategory());
             event.setCategory(newCategory);
         }
         event.setEventDate(updateDto.getEventDate());

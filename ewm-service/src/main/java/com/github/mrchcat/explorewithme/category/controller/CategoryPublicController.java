@@ -29,14 +29,14 @@ public class CategoryPublicController {
             @RequestParam(name = "size", defaultValue = "10", required = false) @PositiveOrZero Long size) {
 
         log.info("Public API: received request get all categories with parameters from={}, size={}", from, size);
-        return categoryService.getAllCategories(from, size);
+        return categoryService.getAllDto(from, size);
     }
 
     @GetMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    CategoryDto getCategoryById(@PathVariable(name = "categoryId", required = true) long categoryId) {
+    CategoryDto getCategoryById(@PathVariable(name = "categoryId") long categoryId) {
         log.info("Public API: received request get category with id={}", categoryId);
-        return categoryService.getCategoryById(categoryId);
+        return categoryService.getDtoById(categoryId);
     }
 
 }
