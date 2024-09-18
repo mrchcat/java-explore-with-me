@@ -37,7 +37,6 @@ import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 import static com.github.mrchcat.explorewithme.event.model.EventStateAction.PUBLISH_EVENT;
-import static com.github.mrchcat.explorewithme.event.model.EventStateAction.SEND_TO_REVIEW;
 
 @Service
 @Slf4j
@@ -161,7 +160,6 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
         log.info("сделали запрос в БД и получили ответ {}", events);
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
-        log.info("сделали список ShortDto", eventShortDtoList);
 
         if (sort != null) {
             var comparator = switch (sort) {
@@ -188,15 +186,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void decrementParticipantLimit(Event event) {
-        long limit=event.getParticipantLimit();
-        event.setParticipantLimit(limit-1);
+        long limit = event.getParticipantLimit();
+        event.setParticipantLimit(limit - 1);
         eventRepository.save(event);
     }
 
     @Override
     public void incrementParticipantLimit(Event event) {
-        long limit=event.getParticipantLimit();
-        event.setParticipantLimit(limit+1);
+        long limit = event.getParticipantLimit();
+        event.setParticipantLimit(limit + 1);
         eventRepository.save(event);
     }
 

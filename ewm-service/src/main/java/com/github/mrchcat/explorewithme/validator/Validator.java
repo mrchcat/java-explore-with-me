@@ -7,7 +7,6 @@ import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
-import com.github.mrchcat.explorewithme.request.repository.RequestRepository;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

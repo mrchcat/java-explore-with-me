@@ -39,9 +39,9 @@ public class Compilation {
 
     @Builder.Default
     @Column(name = "pinned", nullable = false)
-    private Boolean isPinned=false;
+    private Boolean isPinned = false;
 
-   @ManyToMany
+    @ManyToMany
     @JoinTable(name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"))

@@ -33,7 +33,7 @@ public class RequestValidator {
 
     public void isPublishedEvent(Event event) {
         if (!event.getState().equals(PUBLISHED)) {
-            String message = String.format("Requested event must be published");
+            String message = "Requested event must be published";
             throw new RulesViolationException(message);
         }
     }

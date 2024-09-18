@@ -3,7 +3,6 @@ package com.github.mrchcat.explorewithme.category.controller;
 import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.service.CategoryService;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

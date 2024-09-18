@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.lang.Boolean.TRUE;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -57,10 +55,10 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto cancel(long userId, long requestId) {
         Request request = getByIdByUser(userId, requestId);
-        RequestStatus oldStatus=request.getStatus();
+        RequestStatus oldStatus = request.getStatus();
         request.setStatus(RequestStatus.CANCELED);
         Request savedRequest = requestRepository.save(request);
-        if(oldStatus.equals(RequestStatus.CONFIRMED)){
+        if (oldStatus.equals(RequestStatus.CONFIRMED)) {
             eventService.incrementParticipantLimit(request.getEvent());
         }
         return RequestMapper.toDto(savedRequest);
