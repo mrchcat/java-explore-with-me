@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme.event.controller;
 
+import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
@@ -50,6 +51,7 @@ public class EventPublicController {
                 .end(end)
                 .onlyAvailable(onlyAvailable)
                 .build();
+//        TODO НУжно ли ?
         if (start != null) {
             query.setStart(start);
         }
@@ -61,10 +63,10 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    EventShortDto getEventById(HttpServletRequest request,
-                               @PathVariable(name = "eventId") long eventId) {
+    EventDto getEventById(HttpServletRequest request,
+                          @PathVariable(name = "eventId") long eventId) {
         log.info("PublicAPI: received request to get event id={}", eventId);
-        return eventService.getShortDtoById(eventId, request);
+        return eventService.getDtoById(eventId, request);
     }
 
 }

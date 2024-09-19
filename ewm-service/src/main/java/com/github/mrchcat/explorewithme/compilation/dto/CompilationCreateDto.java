@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme.compilation.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor
 public class CompilationCreateDto {
+    @NotBlank
     @Length(min = 1, max = 50, message = "Title must have from 1 to 50 symbols")
     private String title;
     private Set<Long> events;

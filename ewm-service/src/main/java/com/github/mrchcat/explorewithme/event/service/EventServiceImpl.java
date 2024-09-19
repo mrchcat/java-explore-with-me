@@ -48,7 +48,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final StatHttpClient statHttpClient;
     @Value("${app.name}")
-    private static String APP_NAME;
+    private String appName;
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
@@ -61,7 +61,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto updateByUser(long userId, long eventId, EventUpdateDto updateDto) {
-        validator.isDateNotTooEarlyUser(updateDto.getEventDate());
+        if (updateDto.getEventDate() != null) {
+            validator.isDateNotTooEarlyUser(updateDto.getEventDate());
+        }
         Event oldEvent = getById(eventId);
         validator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
@@ -82,7 +84,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto updateByAdmin(long eventId, EventUpdateDto updateDto) {
-        validator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
+        if (updateDto.getEventDate() != null) {
+            validator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
+        }
         Event oldEvent = getById(eventId);
         EventState oldState = oldEvent.getState();
         Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
@@ -99,6 +103,9 @@ public class EventServiceImpl implements EventService {
     private EventState getNewState(Event oldEvent, EventUpdateDto updateDto) {
         EventState oldState = oldEvent.getState();
         EventStateAction action = updateDto.getStateAction();
+        if (action == null) {
+            return oldState;
+        }
         if (action.equals(PUBLISH_EVENT) && (oldState.equals(CANCELED) || oldState.equals(PUBLISHED))) {
             String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
             throw new DataIntegrityException(message);
@@ -182,29 +189,36 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventShortDto getShortDtoById(long eventId, HttpServletRequest request) {
+    public EventDto getDtoById(long eventId, HttpServletRequest request) {
         EventState state = PUBLISHED;
         Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
             String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
         sendToStatService(request);
-        return eventMapper.toShortDto(event);
+        return eventMapper.toDto(event);
     }
 
     @Override
-    public void decrementParticipants(Event event) {
-        int participants = event.getParticipants();
-        event.setParticipants(participants - 1);
+    public void decrementConfirmedRequest(Event event) {
+        int oldConfirmedRequests = event.getConfirmedRequests();
+        event.setConfirmedRequests(oldConfirmedRequests - 1);
+        log.info("Event {} was decremented by 1", event);
         eventRepository.save(event);
     }
 
     @Override
-    public void incrementParticipants(Event event) {
-        validator.checkParticipantLimit(event);
-        int participants = event.getParticipants();
-        event.setParticipants(participants + 1);
+    public void incrementConfirmedRequest(Event event, int number) {
+//        validator.checkParticipantLimit(event);
+        int oldConfirmedRequests = event.getConfirmedRequests();
+        event.setConfirmedRequests(oldConfirmedRequests + number);
+        log.info("Event {} was incremented by {}", event, number);
         eventRepository.save(event);
+    }
+
+    @Override
+    public void incrementConfirmedRequest(Event event) {
+        incrementConfirmedRequest(event, 1);
     }
 
     private void sendToStatService(HttpServletRequest request) {
@@ -217,7 +231,7 @@ public class EventServiceImpl implements EventService {
             log.error("RemoteAddress {} can not be converted to InetAdress", remoteAddress);
         }
         RequestCreateDto statRequest = RequestCreateDto.builder()
-                .app(APP_NAME)
+                .app(appName)
                 .uri(request.getRequestURI())
                 .ip(ip)
                 .timestamp(LocalDateTime.now())

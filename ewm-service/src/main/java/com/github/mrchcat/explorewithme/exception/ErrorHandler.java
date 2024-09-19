@@ -3,6 +3,7 @@ package com.github.mrchcat.explorewithme.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,6 +38,21 @@ public class ErrorHandler {
                 .errors(ex.getStackTrace())
                 .build();
     }
+
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(ArgumentNotValidException.class)
+    public ErrorResponse handleArgumentNotValidException(ArgumentNotValidException ex) {
+        log.info(ex.getMessage());
+        return ErrorResponse.builder()
+                .status(BAD_REQUEST)
+                .reason("Arquments are not valid.")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
+    }
+
 
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DataIntegrityException.class)
@@ -84,6 +100,19 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .status(CONFLICT)
                 .reason("For the requested operation the conditions are not met")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ErrorResponse handleMissingServletRequestParameterException(Exception ex) {
+        log.error(ex.toString());
+        return ErrorResponse.builder()
+                .status(BAD_REQUEST)
+                .reason("Incorrectly made request.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .errors(ex.getStackTrace())

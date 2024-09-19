@@ -28,12 +28,17 @@ public class RequestValidator {
         }
     }
 
-    public void isFreeLimit(int freeLimit) {
-        if (freeLimit <= 0) {
+    public boolean isNoLimits(Event event) {
+        return event.getParticipantLimit() == 0;
+    }
+
+    public void isFreeLimitEnough(Event event) {
+        if (!isNoLimits(event) && (event.getParticipantLimit() - event.getConfirmedRequests() <= 0)) {
             String message = "The participant limit has been reached";
             throw new RulesViolationException(message);
         }
     }
+
 
     public void isRequestCorrespondEvent(Event event, List<Request> requests) {
         for (Request r : requests) {

@@ -5,6 +5,7 @@ import com.github.mrchcat.explorewithme.compilation.repository.CompilationReposi
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
+import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
@@ -33,7 +34,7 @@ public class Validator {
 
 
     public void checkParticipantLimit(Event event) {
-        long participants = event.getParticipants();
+        long participants = event.getConfirmedRequests();
         long limit = event.getParticipantLimit();
         if (participants >= limit) {
             String message = String.format("Participant limit=%d for event id=%d can not be exceeded", limit, event.getId());
@@ -80,9 +81,9 @@ public class Validator {
     }
 
     public void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
-        if (start != null && finish != null && finish.isBefore(start)) {
+          if (start != null && finish != null && finish.isBefore(start)) {
             String message = String.format("The dates violate order: %s must be before %s", start, finish);
-            throw new RulesViolationException(message);
+            throw new ArgumentNotValidException(message);
         }
     }
 
@@ -109,7 +110,7 @@ public class Validator {
         if (eventDate.isBefore(earliestPossibleTime)) {
             String message = String.format("Start of event must be not earlier than %d hours before now",
                     gap.getSeconds() / 60 / 60);
-            throw new RulesViolationException(message);
+            throw new ArgumentNotValidException(message);
         }
     }
 

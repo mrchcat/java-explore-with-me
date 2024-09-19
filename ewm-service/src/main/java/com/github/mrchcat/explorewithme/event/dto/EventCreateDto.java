@@ -23,11 +23,14 @@ import java.time.LocalDateTime;
 public class EventCreateDto {
 
     @NotBlank(message = "title can not be empty")
+    @Length(min = 3, max = 120, message = "Title must have size 3-120 signs.")
     private String title;
 
+    @NotBlank(message = "annotation can not be empty")
     @Length(min = 20, max = 2000, message = "Annotation must have size 20-2000 signs.")
     private String annotation;
 
+    @NotBlank(message = "description can not be empty")
     @Length(min = 20, max = 7000, message = "Description must have size 20-7000 signs.")
     private String description;
 
@@ -40,10 +43,13 @@ public class EventCreateDto {
     private LocalDateTime eventDate;
 
     private Location location;
-    private Boolean paid;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Boolean paid = false;
 
     @PositiveOrZero
-    private Integer participantLimit;
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Integer participantLimit = 0;
 
     @JsonSetter(nulls = Nulls.SKIP)
     private Boolean requestModeration = true;

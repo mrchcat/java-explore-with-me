@@ -5,6 +5,7 @@ import com.github.mrchcat.explorewithme.RequestQueryParamDto;
 import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.service.StatService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,8 +36,8 @@ public class StatController {
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestStatisticDto> getRequestStatistic(
-            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @NotNull LocalDateTime start,
+            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @NotNull LocalDateTime end,
             @RequestParam(name = "uris", required = false) String[] uris,
             @RequestParam(name = "unique", required = false, defaultValue = "false") boolean unique) {
 

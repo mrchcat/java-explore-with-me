@@ -38,9 +38,12 @@ public interface EventService {
                                       EventSortAttribute sort,
                                       HttpServletRequest request);
 
-    EventShortDto getShortDtoById(long eventId,HttpServletRequest request);
+    EventDto getDtoById(long eventId, HttpServletRequest request);
 
-    void decrementParticipants(Event event);
+    void decrementConfirmedRequest(Event event);
 
-    void incrementParticipants(Event event);
+    void incrementConfirmedRequest(Event event, int number);
+
+    void incrementConfirmedRequest(Event event);
+
 }

@@ -66,11 +66,12 @@ public class Event {
     @Column(name = "participant_limit")
     private int participantLimit;
 
-    @Column(name = "participants")
-    private int participants;
+    @Column(name = "confirmed_requests")
+    private int confirmedRequests;
 
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    @Builder.Default
+    private boolean requestModeration = true;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
