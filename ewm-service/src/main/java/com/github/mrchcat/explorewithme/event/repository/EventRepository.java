@@ -61,4 +61,18 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventCustom
             WHERE e.id=:eventId AND e.state=:state
             """)
     boolean existByIdAndState(long eventId, EventState state);
+
+    @Query(value = """
+            SELECT CASE WHEN COUNT(e)>0 THEN TRUE ELSE FALSE END
+            FROM Event AS e
+            WHERE e.id=:eventId AND e.initiator.id=:userId
+            """)
+    boolean existsByIdAndInitiator(long userId, long eventId);
+
+    @Query(value = """
+            SELECT e
+            FROM Event AS e
+            WHERE e.id=:eventId AND e.initiator.id=:userId
+            """)
+    Optional<Event> getByIdAndInitiator(long userId, long eventId);
 }

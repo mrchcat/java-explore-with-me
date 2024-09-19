@@ -27,7 +27,15 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     @Query("""
             SELECT r
             FROM Request AS r
-            WHERE r.requester.id!=:userId
+            WHERE r.requester.id=:userId
             """)
     List<Request> getByRequester(long userId);
+
+    @Query("""
+            SELECT r
+            FROM Request AS r
+            JOIN r.event AS e
+            WHERE e.initiator.id=:userId AND e.id=:eventId
+            """)
+    List<Request> getByInitiatorAndEvent(long userId, long eventId);
 }

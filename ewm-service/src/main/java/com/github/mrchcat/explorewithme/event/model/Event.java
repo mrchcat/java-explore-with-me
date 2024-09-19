@@ -61,16 +61,16 @@ public class Event {
     private Location location;
 
     @Column(name = "paid")
-    private Boolean paid;
+    private boolean paid;
 
     @Column(name = "participant_limit")
-    private Long participantLimit;
+    private int participantLimit;
 
     @Column(name = "participants")
-    private long participants=0;
+    private int participants;
 
     @Column(name = "request_moderation")
-    private Boolean requestModeration;
+    private boolean requestModeration;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

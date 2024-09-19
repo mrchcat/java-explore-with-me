@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,8 +42,8 @@ public class EventCreateDto {
     private Location location;
     private Boolean paid;
 
-    @Positive
-    private Long participantLimit;
+    @PositiveOrZero
+    private Integer participantLimit;
 
     @JsonSetter(nulls = Nulls.SKIP)
     private Boolean requestModeration = true;

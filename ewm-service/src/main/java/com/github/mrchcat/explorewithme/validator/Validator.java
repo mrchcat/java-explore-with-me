@@ -58,6 +58,13 @@ public class Validator {
     }
 
 
+    public void isEventExistForInitiator(long userId, long eventId) {
+        if (!eventRepository.existsByIdAndInitiator(userId, eventId)) {
+            String message = String.format("User with id=%d is not an initiator of event with id=%d", userId, eventId);
+            throw new ObjectNotFoundException(message);
+        }
+    }
+
     public void isEventExist(long eventId) {
         if (!eventRepository.existsById(eventId)) {
             String message = String.format("Event with id=%d was not found", eventId);

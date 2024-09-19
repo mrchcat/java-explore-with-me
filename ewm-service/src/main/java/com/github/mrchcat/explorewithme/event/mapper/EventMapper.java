@@ -150,9 +150,9 @@ public class EventMapper {
                 .category(categoryDto)
                 .eventDate(e.getEventDate())
                 .location(e.getLocation())
-                .paid(e.getPaid())
+                .paid(e.isPaid())
                 .participantLimit(e.getParticipantLimit())
-                .requestModeration(e.getRequestModeration())
+                .requestModeration(e.isRequestModeration())
                 .createdOn(e.getCreatedOn())
                 .initiator(userShortDto)
                 .publishedOn(e.getPublishedOn())
@@ -192,7 +192,7 @@ public class EventMapper {
                 .annotation(e.getAnnotation())
                 .category(categoryDto)
                 .eventDate(e.getEventDate())
-                .paid(e.getPaid())
+                .paid(e.isPaid())
                 .initiator(userShortDto)
                 .build();
     }

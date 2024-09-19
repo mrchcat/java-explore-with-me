@@ -27,6 +27,8 @@ public interface EventService {
 
     Event getById(long eventId);
 
+    Event getByIdAndInitiator(long userId, long eventId);
+
     List<Event> getById(List<Long> eventIds);
 
     List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable);

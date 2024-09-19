@@ -131,6 +131,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Event getByIdAndInitiator(long userId, long eventId) {
+        return eventRepository.getByIdAndInitiator(userId, eventId).orElseThrow(() -> {
+            String message = String.format("Event with id=%d with initiator %d was not found", eventId, userId);
+            return new ObjectNotFoundException(message);
+        });
+    }
+
+    @Override
     public List<Event> getById(List<Long> eventIds) {
         return eventRepository.findAllById(eventIds);
     }
@@ -186,7 +194,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void decrementParticipants(Event event) {
-        long participants = event.getParticipants();
+        int participants = event.getParticipants();
         event.setParticipants(participants - 1);
         eventRepository.save(event);
     }
@@ -194,7 +202,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public void incrementParticipants(Event event) {
         validator.checkParticipantLimit(event);
-        long participants = event.getParticipants();
+        int participants = event.getParticipants();
         event.setParticipants(participants + 1);
         eventRepository.save(event);
     }

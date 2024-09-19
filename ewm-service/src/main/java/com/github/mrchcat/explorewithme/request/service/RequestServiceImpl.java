@@ -4,6 +4,8 @@ import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.request.dto.RequestDto;
+import com.github.mrchcat.explorewithme.request.dto.RequestStatusUpdateDto;
+import com.github.mrchcat.explorewithme.request.dto.RequestStatusUpdateResult;
 import com.github.mrchcat.explorewithme.request.mapper.RequestMapper;
 import com.github.mrchcat.explorewithme.request.model.Request;
 import com.github.mrchcat.explorewithme.request.model.RequestStatus;
@@ -16,10 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.mrchcat.explorewithme.request.model.RequestStatus.CANCELED;
 import static com.github.mrchcat.explorewithme.request.model.RequestStatus.CONFIRMED;
+import static com.github.mrchcat.explorewithme.request.model.RequestUpdateStatus.REJECTED;
 
 @Service
 @Slf4j
@@ -43,7 +47,7 @@ public class RequestServiceImpl implements RequestService {
                 .requester(user)
                 .event(event)
                 .build();
-        if (!event.getRequestModeration()) {
+        if (canConfirmAllRequests(event)) {
             requestToSave.setStatus(CONFIRMED);
             eventService.incrementParticipants(event);
         } else {
@@ -66,8 +70,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestDto> getAllDtoByUser(long userId) {
+    public List<RequestDto> getAllDtoByRequester(long userId) {
         List<Request> requests = requestRepository.getByRequester(userId);
+        return RequestMapper.toDto(requests);
+    }
+
+    @Override
+    public List<RequestDto> getAllDtoByInitiatorAndEvent(long userId, long eventId) {
+        List<Request> requests = requestRepository.getByInitiatorAndEvent(userId, eventId);
         return RequestMapper.toDto(requests);
     }
 
@@ -77,4 +87,48 @@ public class RequestServiceImpl implements RequestService {
             return new ObjectNotFoundException(message);
         });
     }
+
+    @Override
+    public RequestStatusUpdateResult updateStatus(long userId, long eventId, RequestStatusUpdateDto updates) {
+        Event event = eventService.getByIdAndInitiator(userId, eventId);
+        int freeLimit = event.getParticipantLimit() - event.getParticipants();
+        requestValidator.isFreeLimit(freeLimit);
+        List<Request> requests = requestRepository.findAllById(updates.getRequestIds());
+        requestValidator.isRequestCorrespondEvent(event, requests);
+
+        List<Request> confirmedRequests = new ArrayList<>();
+        List<Request> rejectedRequests = new ArrayList<>();
+        if (updates.getStatus().equals(REJECTED)) {
+            for (Request r : requests) {
+                requestValidator.isPending(r);
+                rejectedRequests.add(r);
+            }
+        } else {
+            int allowed = Math.min(requests.size(), freeLimit);
+            for (int i = 0; i < allowed; i++) {
+                Request r = requests.get(i);
+                requestValidator.isPending(r);
+                confirmedRequests.add(r);
+            }
+            for (int i = allowed; i < requests.size() - 1; i++) {
+                Request r = requests.get(i);
+                rejectedRequests.add(r);
+            }
+        }
+        confirmedRequests.forEach(r -> r.setStatus(CONFIRMED));
+        rejectedRequests.forEach(r -> r.setStatus(RequestStatus.REJECTED));
+        requestRepository.saveAll(confirmedRequests);
+        requestRepository.saveAll(rejectedRequests);
+
+        return RequestStatusUpdateResult.builder()
+                .confirmedRequests(RequestMapper.toDto(confirmedRequests))
+                .rejectedRequests(RequestMapper.toDto(rejectedRequests))
+                .build();
+    }
+
+    private boolean canConfirmAllRequests(Event event) {
+        return !event.isRequestModeration() || event.getParticipantLimit() == 0;
+    }
+
+
 }

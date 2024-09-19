@@ -6,13 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-//    @Query("""
-//            UPDATE Category AS ctg
-//            SET ctg.name=:#{#upd.name}
-//            WHERE ctg.id=:#{#upd.id}
-//            """)
-//    Category updateById(Category upd);
-
     boolean existsByName(String name);
 
     @Query("""
@@ -21,13 +14,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             WHERE ctg.id!=:id AND ctg.name=:name
             """)
     boolean existsByNameExclId(long id, String name);
-
-//    @Query(value = """
-//            SELECT *
-//            FROM categories
-//            LIMIT :size
-//            OFFSET :from
-//            """, nativeQuery = true)
-//    List<Category> getAllCategories(long from, long size);
 
 }

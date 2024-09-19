@@ -55,5 +55,6 @@ public class Request {
 
     @Enumerated(EnumType.STRING)
     @JoinColumn(name = "status", nullable = false)
-    private RequestStatus status;
+    @Builder.Default
+    private RequestStatus status = RequestStatus.PENDING;
 }

@@ -34,7 +34,7 @@ public class EventDto {
 
     private Location location;
     private boolean paid;
-    private long participantLimit;
+    private int participantLimit;
     private boolean requestModeration;
     private int confirmedRequests;
 
