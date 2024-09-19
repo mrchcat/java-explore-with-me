@@ -38,10 +38,4 @@ public class RequestValidator {
         }
     }
 
-    public void isParticipantLimitExceeded(Event event) {
-        if (event.getParticipantLimit() <= 0) {
-            String message = String.format("Participant limit for event id=%d is exceeded", event.getId());
-            throw new RulesViolationException(message);
-        }
-    }
 }

@@ -66,6 +66,9 @@ public class Event {
     @Column(name = "participant_limit")
     private Long participantLimit;
 
+    @Column(name = "participants")
+    private long participants=0;
+
     @Column(name = "request_moderation")
     private Boolean requestModeration;
 
@@ -83,8 +86,9 @@ public class Event {
     @Column(name = "published_on", nullable = false)
     private LocalDateTime publishedOn;
 
-    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
+    @Builder.Default
     private EventState state = EventState.PENDING;
+
 }

@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.github.mrchcat.explorewithme.request.model.RequestStatus.CANCELED;
+import static com.github.mrchcat.explorewithme.request.model.RequestStatus.CONFIRMED;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -36,15 +39,13 @@ public class RequestServiceImpl implements RequestService {
         requestValidator.isRequestExists(userId, eventId);
         requestValidator.isRequestForOwnEvent(userId, event);
         requestValidator.isPublishedEvent(event);
-        requestValidator.isParticipantLimitExceeded(event);
-
         Request requestToSave = Request.builder()
                 .requester(user)
                 .event(event)
                 .build();
         if (!event.getRequestModeration()) {
-            requestToSave.setStatus(RequestStatus.CONFIRMED);
-            eventService.decrementParticipantLimit(event);
+            requestToSave.setStatus(CONFIRMED);
+            eventService.incrementParticipants(event);
         } else {
             requestToSave.setStatus(RequestStatus.PENDING);
         }
@@ -56,10 +57,10 @@ public class RequestServiceImpl implements RequestService {
     public RequestDto cancel(long userId, long requestId) {
         Request request = getByIdByUser(userId, requestId);
         RequestStatus oldStatus = request.getStatus();
-        request.setStatus(RequestStatus.CANCELED);
+        request.setStatus(CANCELED);
         Request savedRequest = requestRepository.save(request);
-        if (oldStatus.equals(RequestStatus.CONFIRMED)) {
-            eventService.incrementParticipantLimit(request.getEvent());
+        if (oldStatus.equals(CONFIRMED)) {
+            eventService.decrementParticipants(request.getEvent());
         }
         return RequestMapper.toDto(savedRequest);
     }

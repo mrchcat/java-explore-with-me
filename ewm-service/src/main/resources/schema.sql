@@ -28,14 +28,17 @@ CREATE TABLE IF NOT EXISTS events (
   latitude NUMERIC(9,6),
   longitude NUMERIC(9,6),
   paid BOOL,
-  participant_limit BIGINT CHECK (participant_limit >= 0),
+  participant_limit BIGINT,
+  participants BIGINT,
   request_moderation BOOL,
   initiator_id BIGINT,
   created_on TIMESTAMP NOT NULL,
   published_on TIMESTAMP,
   state VARCHAR NOT NULL,
   CONSTRAINT FK_EVENTS_CATEGORY_ID FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
-  CONSTRAINT FK_EVENTS_INITIATOR_ID FOREIGN KEY (initiator_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT FK_EVENTS_INITIATOR_ID FOREIGN KEY (initiator_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT CHECK_EVENTS_PARTICIPANT_LIMIT CHECK (participant_limit >= 0),
+  CONSTRAINT CHECK_EVENTS_PARTICIPANTS  CHECK (participants BETWEEN 0 AND participant_limit)
 );
 
 CREATE TABLE IF NOT EXISTS compilations (
@@ -65,6 +68,6 @@ CREATE TABLE requests (
 CREATE INDEX IF NOT EXISTS IDX_CATEGORIES_NAME ON categories(name);
 CREATE INDEX IF NOT EXISTS IDX_USERS_NAME ON users(email);
 CREATE INDEX IF NOT EXISTS IDX_EVENTS ON events(annotation,description,category_id,paid,event_date, participant_limit,state,initiator_id);
-CREATE INDEX IF NOT EXISTS IDX_requests ON requests(requester_id,event_id);
+CREATE INDEX IF NOT EXISTS IDX_requests ON requests(id, requester_id,event_id);
 
 

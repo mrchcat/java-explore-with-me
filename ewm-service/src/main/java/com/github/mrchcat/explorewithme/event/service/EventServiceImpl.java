@@ -185,16 +185,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void decrementParticipantLimit(Event event) {
-        long limit = event.getParticipantLimit();
-        event.setParticipantLimit(limit - 1);
+    public void decrementParticipants(Event event) {
+        long participants = event.getParticipants();
+        event.setParticipants(participants - 1);
         eventRepository.save(event);
     }
 
     @Override
-    public void incrementParticipantLimit(Event event) {
-        long limit = event.getParticipantLimit();
-        event.setParticipantLimit(limit + 1);
+    public void incrementParticipants(Event event) {
+        validator.checkParticipantLimit(event);
+        long participants = event.getParticipants();
+        event.setParticipants(participants + 1);
         eventRepository.save(event);
     }
 

@@ -2,6 +2,7 @@ package com.github.mrchcat.explorewithme.validator;
 
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
+import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
@@ -29,6 +30,16 @@ public class Validator {
     private static final Duration TIME_GAP_USER = Duration.ofHours(2);
     private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
+
+
+    public void checkParticipantLimit(Event event) {
+        long participants = event.getParticipants();
+        long limit = event.getParticipantLimit();
+        if (participants >= limit) {
+            String message = String.format("Participant limit=%d for event id=%d can not be exceeded", limit, event.getId());
+            throw new RulesViolationException(message);
+        }
+    }
 
 
     public void isCompilationExist(long compilationId) {
