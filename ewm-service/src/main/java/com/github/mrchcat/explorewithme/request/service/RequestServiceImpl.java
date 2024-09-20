@@ -117,7 +117,7 @@ public class RequestServiceImpl implements RequestService {
                 Request r = requests.get(i);
                 rejectedRequests.add(r);
             }
-        } else if(updates.getStatus().equals(RequestUpdateStatus.REJECTED)){
+        } else if (updates.getStatus().equals(RequestUpdateStatus.REJECTED)) {
             for (Request r : requests) {
                 requestValidator.isPending(r);
                 rejectedRequests.add(r);
