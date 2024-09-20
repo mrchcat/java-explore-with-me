@@ -6,9 +6,10 @@ import com.github.mrchcat.explorewithme.compilation.dto.CompilationUpdateDto;
 import com.github.mrchcat.explorewithme.compilation.mapper.CompilationMapper;
 import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
+import com.github.mrchcat.explorewithme.compilation.validator.CompilationValidator;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
-import com.github.mrchcat.explorewithme.validator.Validator;
+import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
-    private final Validator validator;
+    private final CompilationValidator compilationValidator;
+    private final EventValidator eventValidator;
     private final EventService eventService;
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
@@ -29,7 +31,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto create(CompilationCreateDto createDto) {
         var eventIds = createDto.getEvents();
-        validator.isEventExist(eventIds);
+        eventValidator.isEventExist(eventIds);
         Compilation compilationToSave = compilationMapper.toEntity(eventIds, createDto);
         Compilation savedCompilation = compilationRepository.save(compilationToSave);
         log.info("Compilation created {}", savedCompilation);
@@ -38,17 +40,17 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public void delete(long compilationId) {
-        validator.isCompilationExist(compilationId);
+        compilationValidator.isCompilationExist(compilationId);
         compilationRepository.deleteById(compilationId);
         log.info("Compilation with id={} deleted", compilationId);
     }
 
     @Override
     public CompilationDto update(long compilationId, CompilationUpdateDto updateDto) {
-        validator.isCompilationExist(compilationId);
+        compilationValidator.isCompilationExist(compilationId);
         Compilation compilation = getById(compilationId);
         var eventIds = updateDto.getEvents();
-        validator.isEventExist(eventIds);
+        eventValidator.isEventExist(eventIds);
         Compilation compilationToSave = compilationMapper.toEntity(compilation, updateDto);
         Compilation savedCompilation = compilationRepository.save(compilationToSave);
         log.info("Compilation updated to {}", savedCompilation);

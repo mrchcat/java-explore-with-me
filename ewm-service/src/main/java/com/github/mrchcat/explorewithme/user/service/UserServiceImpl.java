@@ -6,7 +6,7 @@ import com.github.mrchcat.explorewithme.user.dto.UserDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
-import com.github.mrchcat.explorewithme.validator.Validator;
+import com.github.mrchcat.explorewithme.user.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final Validator validator;
+    private final UserValidator userValidator;
 
     @Override
     public UserDto create(UserCreateDto createDto) {
-        validator.isUserEmailUnique(createDto.getEmail());
+        userValidator.isUserEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
         log.info("{} added}", savedUser);
         return UserMapper.toDto(savedUser);
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long userId) {
-        validator.isUserIdExists(userId);
+        userValidator.isUserIdExists(userId);
         userRepository.deleteById(userId);
         log.info("User with id={} deleted", userId);
     }

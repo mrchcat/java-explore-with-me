@@ -2,7 +2,7 @@ package com.github.mrchcat.explorewithme.event.controller;
 
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
-import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import jakarta.validation.Valid;
@@ -35,7 +35,7 @@ public class EventAdminController {
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     EventDto updateEvent(@PathVariable(name = "eventId") long eventId,
-                         @RequestBody @Valid EventUpdateDto updateDto) {
+                         @RequestBody @Valid EventAdminUpdateDto updateDto) {
         log.info("Admin API: received request to update event id={} with {}", eventId, updateDto);
         return eventService.updateByAdmin(eventId, updateDto);
     }

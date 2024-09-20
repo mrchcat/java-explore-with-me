@@ -5,20 +5,20 @@ import com.github.mrchcat.explorewithme.StatHttpClient;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
+import com.github.mrchcat.explorewithme.event.dto.EventPrivateUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
-import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.model.EventState;
-import com.github.mrchcat.explorewithme.event.model.EventStateAction;
+import com.github.mrchcat.explorewithme.event.model.EventAdminStateAction;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
-import com.github.mrchcat.explorewithme.exception.RulesViolationException;
-import com.github.mrchcat.explorewithme.user.service.UserService;
-import com.github.mrchcat.explorewithme.validator.Validator;
+import com.github.mrchcat.explorewithme.user.validator.UserValidator;
+import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,15 +36,17 @@ import java.util.Optional;
 import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
-import static com.github.mrchcat.explorewithme.event.model.EventStateAction.PUBLISH_EVENT;
+import static com.github.mrchcat.explorewithme.event.model.EventAdminStateAction.PUBLISH_EVENT;
+import static com.github.mrchcat.explorewithme.event.model.EventUserStateAction.CANCEL_REVIEW;
+import static com.github.mrchcat.explorewithme.event.model.EventUserStateAction.SEND_TO_REVIEW;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final UserService userService;
-    private final Validator validator;
+    private final UserValidator userValidator;
+    private final EventValidator eventValidator;
     private final EventMapper eventMapper;
     private final StatHttpClient statHttpClient;
     @Value("${app.name}")
@@ -52,7 +54,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
-        validator.isDateNotTooEarlyUser(createDto.getEventDate());
+        eventValidator.isDateNotTooEarlyUser(createDto.getEventDate());
         Event mappedEvent = eventMapper.toEntity(userId, createDto);
         Event savedEvent = eventRepository.save(mappedEvent);
         log.info("Created event {}", savedEvent);
@@ -60,66 +62,68 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto updateByUser(long userId, long eventId, EventUpdateDto updateDto) {
+    public EventDto updateByUser(long userId, long eventId, EventPrivateUpdateDto updateDto) {
         if (updateDto.getEventDate() != null) {
-            validator.isDateNotTooEarlyUser(updateDto.getEventDate());
+            eventValidator.isDateNotTooEarlyUser(updateDto.getEventDate());
         }
         Event oldEvent = getById(eventId);
-        validator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
-        Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
-        EventStateAction statusAction = updateDto.getStateAction();
-        EventState newState;
-        if (statusAction != null) {
-            newState = switch (statusAction) {
-                case SEND_TO_REVIEW -> PENDING;
-                case CANCEL_REVIEW -> CANCELED;
-                case PUBLISH_EVENT -> throw new RulesViolationException("User do not allow to publish events");
-            };
-            mappedEvent.setState(newState);
-        }
+        eventValidator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
+        Event mappedEvent = eventMapper.updateEntityByUser(oldEvent, updateDto);
+//        EventUserStateAction statusAction = updateDto.getStateAction();
+//        EventState newState;
+//        if (statusAction != null) {
+//            newState = switch (statusAction) {
+//                case SEND_TO_REVIEW -> PENDING;
+//                case CANCEL_REVIEW -> CANCELED;
+//            };
+//            mappedEvent.setState(newState);
+//        }
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("User id={} updated event {}", userId, updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
 
     @Override
-    public EventDto updateByAdmin(long eventId, EventUpdateDto updateDto) {
+    public EventDto updateByAdmin(long eventId, EventAdminUpdateDto updateDto) {
         if (updateDto.getEventDate() != null) {
-            validator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
+            eventValidator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
         }
         Event oldEvent = getById(eventId);
         EventState oldState = oldEvent.getState();
-        Event mappedEvent = eventMapper.updateEntity(oldEvent, updateDto);
-        EventState newState = getNewState(oldEvent, updateDto);
-        if (newState.equals(PUBLISHED) && oldState.equals(PENDING)) {
-            mappedEvent.setPublishedOn(LocalDateTime.now());
-        }
-        mappedEvent.setState(newState);
+        Event mappedEvent = eventMapper.updateEntityByAdmin(oldEvent, updateDto);
+//        EventState newState = getNewState(oldEvent, updateDto);
+//        if(newState.equals(PUBLISHED)){
+//            switch (oldState){
+//                case PENDING -> mappedEvent.setPublishedOn(LocalDateTime.now());
+//                case CANCELED -> throw new RulesViolationException("Cancelled event can not be published");
+//            }
+//        }
+//        mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("Admin updated event {}", updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
 
-    private EventState getNewState(Event oldEvent, EventUpdateDto updateDto) {
-        EventState oldState = oldEvent.getState();
-        EventStateAction action = updateDto.getStateAction();
-        if (action == null) {
-            return oldState;
-        }
-        if (action.equals(PUBLISH_EVENT) && (oldState.equals(CANCELED) || oldState.equals(PUBLISHED))) {
-            String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
-            throw new DataIntegrityException(message);
-        }
-        return switch (action) {
-            case CANCEL_REVIEW -> CANCELED;
-            case SEND_TO_REVIEW -> PENDING;
-            case PUBLISH_EVENT -> PUBLISHED;
-        };
-    }
+//    private EventState getNewState(Event oldEvent, EventAdminUpdateDto updateDto) {
+//        EventState oldState = oldEvent.getState();
+//        EventAdminStateAction action = updateDto.getStateAction();
+//        if (action == null) {
+//            return oldState;
+//        }
+//        if (action.equals(PUBLISH_EVENT) && (oldState.equals(CANCELED) || oldState.equals(PUBLISHED))) {
+//            String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
+//            throw new DataIntegrityException(message);
+//        }
+//        return switch (action) {
+//            case CANCEL_REVIEW -> CANCELED;
+//            case SEND_TO_REVIEW -> PENDING;
+//            case PUBLISH_EVENT -> PUBLISHED;
+//        };
+//    }
 
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
-        validator.isUserIdExists(userId);
+        userValidator.isUserIdExists(userId);
         log.info("Validator отработал успешно");
         Optional<Event> eventOptional = eventRepository.getByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
@@ -152,14 +156,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable) {
-        validator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        eventValidator.isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
         return eventMapper.toDto(events);
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
-        validator.isUserIdExists(userId);
+        userValidator.isUserIdExists(userId);
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
         return eventMapper.toShortDto(events);
     }
@@ -171,7 +175,7 @@ public class EventServiceImpl implements EventService {
                                              HttpServletRequest request) {
         log.info("зашли в getAllByQuery с параметрами query={} pageable={} sort={} request={}",
                 query, pageable, sort, request);
-        validator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        eventValidator.isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
         log.info("сделали запрос в БД и получили ответ {}", events);
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
@@ -179,7 +183,6 @@ public class EventServiceImpl implements EventService {
         if (sort != null) {
             var comparator = switch (sort) {
                 case VIEWS -> Comparator.comparingLong(EventShortDto::getViews).reversed();
-//                TODO проверить порядок сортировки
                 case EVENT_DATE -> Comparator.comparing(EventShortDto::getEventDate);
             };
             eventShortDtoList.sort(comparator);

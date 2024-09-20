@@ -1,7 +1,6 @@
 package com.github.mrchcat.explorewithme.event.model;
 
-public enum EventStateAction {
+public enum EventUserStateAction {
     SEND_TO_REVIEW,
     CANCEL_REVIEW,
-    PUBLISH_EVENT
 }

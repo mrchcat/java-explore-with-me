@@ -1,7 +1,7 @@
 package com.github.mrchcat.explorewithme.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.github.mrchcat.explorewithme.event.model.EventStateAction;
+import com.github.mrchcat.explorewithme.event.model.EventAdminStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @NoArgsConstructor
-public class EventUpdateDto {
+public class EventAdminUpdateDto {
 
     @Length(min = 3, max = 120, message = "Title must have size 3-120 signs.")
     private String title;
@@ -28,10 +28,8 @@ public class EventUpdateDto {
     @Length(min = 20, max = 7000, message = "Description must have size 20-7000 signs.")
     private String description;
 
-//    @NotNull(message = "category can not be empty")
     private Long category;
 
-//    @NotNull(message = "event can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
@@ -42,8 +40,7 @@ public class EventUpdateDto {
     @PositiveOrZero
     private Integer participantLimit;
 
-//    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean requestModeration;
 
-    private EventStateAction stateAction;
+    private EventAdminStateAction stateAction;
 }

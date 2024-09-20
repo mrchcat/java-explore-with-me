@@ -2,8 +2,9 @@ package com.github.mrchcat.explorewithme.event.controller;
 
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
+import com.github.mrchcat.explorewithme.event.dto.EventPrivateUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
-import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -43,7 +44,7 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.OK)
     EventDto updateEvent(@PathVariable(name = "userId") long userId,
                          @PathVariable(name = "eventId") long eventId,
-                         @RequestBody @Valid EventUpdateDto updateDto) {
+                         @RequestBody @Valid EventPrivateUpdateDto updateDto) {
         log.info("Private API: received request from user id={} to update {}", userId, updateDto);
         return eventService.updateByUser(userId, eventId, updateDto);
     }

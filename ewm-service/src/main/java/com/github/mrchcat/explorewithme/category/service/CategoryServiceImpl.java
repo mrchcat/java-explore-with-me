@@ -5,8 +5,9 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
+import com.github.mrchcat.explorewithme.category.validator.CategoryValidator;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
-import com.github.mrchcat.explorewithme.validator.Validator;
+import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +21,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final Validator validator;
+    private final CategoryValidator categoryValidator;
+    private final EventValidator eventValidator;
 
     @Override
     public CategoryDto create(CategoryCreateDto createDto) {
-        validator.isCategoryNameUnique(createDto.getName());
+        categoryValidator.isCategoryNameUnique(createDto.getName());
         Category savedCategory = categoryRepository.save(CategoryMapper.toEntity(createDto));
         log.info("{} created", savedCategory);
         return CategoryMapper.toDTO(savedCategory);
@@ -32,16 +34,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(long catId) {
-        validator.isCategoryIdExists(catId);
-        validator.isAnyLinkedEventsForCategory(catId);
+        categoryValidator.isCategoryIdExists(catId);
+        eventValidator.isAnyLinkedEventsForCategory(catId);
         categoryRepository.deleteById(catId);
         log.info("Category with id={} deleted", catId);
     }
 
     @Override
     public CategoryDto update(long catId, CategoryCreateDto createDto) {
-        validator.isCategoryIdExists(catId);
-        validator.isCategoryNameUniqueExclId(catId, createDto.getName());
+        categoryValidator.isCategoryIdExists(catId);
+        categoryValidator.isCategoryNameUniqueExclId(catId, createDto.getName());
         Category updatedCategory = categoryRepository.save(CategoryMapper.toEntity(catId, createDto));
         log.info("Category updated to {}", updatedCategory);
         return CategoryMapper.toDTO(updatedCategory);

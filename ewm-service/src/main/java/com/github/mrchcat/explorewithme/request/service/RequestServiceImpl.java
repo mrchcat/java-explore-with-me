@@ -14,7 +14,7 @@ import com.github.mrchcat.explorewithme.request.repository.RequestRepository;
 import com.github.mrchcat.explorewithme.request.validator.RequestValidator;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.service.UserService;
-import com.github.mrchcat.explorewithme.validator.Validator;
+import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ import static java.lang.Math.min;
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final RequestValidator requestValidator;
-    private final Validator validator;
+    private final EventValidator eventValidator;
     private final EventService eventService;
     private final UserService userService;
 

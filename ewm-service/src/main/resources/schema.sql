@@ -67,6 +67,7 @@ CREATE TABLE requests (
 
 CREATE INDEX IF NOT EXISTS IDX_CATEGORIES_NAME ON categories(name);
 CREATE INDEX IF NOT EXISTS IDX_USERS_NAME ON users(email);
+--TODO проверить
 --CREATE INDEX IF NOT EXISTS IDX_EVENTS ON events(annotation,description,category_id,paid,event_date, participant_limit,state,initiator_id);
 CREATE INDEX IF NOT EXISTS IDX_requests ON requests(id, requester_id,event_id);
 
