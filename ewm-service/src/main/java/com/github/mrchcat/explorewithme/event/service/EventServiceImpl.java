@@ -62,15 +62,6 @@ public class EventServiceImpl implements EventService {
         Event oldEvent = getById(eventId);
         eventValidator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
         Event mappedEvent = eventMapper.updateEntityByUser(oldEvent, updateDto);
-//        EventUserStateAction statusAction = updateDto.getStateAction();
-//        EventState newState;
-//        if (statusAction != null) {
-//            newState = switch (statusAction) {
-//                case SEND_TO_REVIEW -> PENDING;
-//                case CANCEL_REVIEW -> CANCELED;
-//            };
-//            mappedEvent.setState(newState);
-//        }
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("User id={} updated event {}", userId, updatedEvent);
         return eventMapper.toDto(updatedEvent);
@@ -84,35 +75,10 @@ public class EventServiceImpl implements EventService {
         Event oldEvent = getById(eventId);
         EventState oldState = oldEvent.getState();
         Event mappedEvent = eventMapper.updateEntityByAdmin(oldEvent, updateDto);
-//        EventState newState = getNewState(oldEvent, updateDto);
-//        if(newState.equals(PUBLISHED)){
-//            switch (oldState){
-//                case PENDING -> mappedEvent.setPublishedOn(LocalDateTime.now());
-//                case CANCELED -> throw new RulesViolationException("Cancelled event can not be published");
-//            }
-//        }
-//        mappedEvent.setState(newState);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("Admin updated event {}", updatedEvent);
         return eventMapper.toDto(updatedEvent);
     }
-
-//    private EventState getNewState(Event oldEvent, EventAdminUpdateDto updateDto) {
-//        EventState oldState = oldEvent.getState();
-//        EventAdminStateAction action = updateDto.getStateAction();
-//        if (action == null) {
-//            return oldState;
-//        }
-//        if (action.equals(PUBLISH_EVENT) && (oldState.equals(CANCELED) || oldState.equals(PUBLISHED))) {
-//            String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
-//            throw new DataIntegrityException(message);
-//        }
-//        return switch (action) {
-//            case CANCEL_REVIEW -> CANCELED;
-//            case SEND_TO_REVIEW -> PENDING;
-//            case PUBLISH_EVENT -> PUBLISHED;
-//        };
-//    }
 
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
@@ -205,7 +171,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void incrementConfirmedRequest(Event event, int number) {
-//        validator.checkParticipantLimit(event);
         int oldConfirmedRequests = event.getConfirmedRequests();
         event.setConfirmedRequests(oldConfirmedRequests + number);
         log.info("Event {} was incremented by {}", event, number);
@@ -218,7 +183,6 @@ public class EventServiceImpl implements EventService {
     }
 
     private void sendToStatService(HttpServletRequest request) {
-        log.info("зашли в sendToStatService {}", request);
         String remoteAddress = request.getRemoteAddr();
         InetAddress ip = null;
         try {

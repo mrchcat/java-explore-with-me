@@ -51,10 +51,6 @@ public class EventPublicController {
                 .end(end)
                 .onlyAvailable(onlyAvailable)
                 .build();
-//        TODO НУжно ли ?
-        if (start != null) {
-            query.setStart(start);
-        }
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
         log.info("Public API: received request from {} to get all events with parameters {} and pagination {}",
                 request.getRemoteAddr(), query, pageable);

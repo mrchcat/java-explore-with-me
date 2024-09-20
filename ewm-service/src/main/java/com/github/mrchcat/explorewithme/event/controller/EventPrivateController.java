@@ -4,7 +4,6 @@ import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPrivateUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
-import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;

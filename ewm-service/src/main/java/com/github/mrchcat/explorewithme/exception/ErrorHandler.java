@@ -24,13 +24,13 @@ public class ErrorHandler {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ApiError handleValidationExceptions(MethodArgumentNotValidException ex) {
         String defaultMessage = ex.getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.error(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(defaultMessage)
@@ -42,9 +42,9 @@ public class ErrorHandler {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ArgumentNotValidException.class)
-    public ErrorResponse handleArgumentNotValidException(ArgumentNotValidException ex) {
+    public ApiError handleArgumentNotValidException(ArgumentNotValidException ex) {
         log.info(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Arquments are not valid.")
                 .message(ex.getMessage())
@@ -56,9 +56,9 @@ public class ErrorHandler {
 
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DataIntegrityException.class)
-    public ErrorResponse handleDataIntegrityExceptions(DataIntegrityException ex) {
+    public ApiError handleDataIntegrityExceptions(DataIntegrityException ex) {
         log.info(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(CONFLICT)
                 .reason("Integrity constraint has been violated.")
                 .message(ex.getMessage())
@@ -69,9 +69,9 @@ public class ErrorHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ErrorResponse handleObjectNotFoundException(ObjectNotFoundException ex) {
+    public ApiError handleObjectNotFoundException(ObjectNotFoundException ex) {
         log.info(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(NOT_FOUND)
                 .reason("The required object was not found.")
                 .message(ex.getMessage())
@@ -82,9 +82,9 @@ public class ErrorHandler {
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ErrorResponse handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException ex) {
+    public ApiError handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(ex.getMessage())
@@ -95,9 +95,9 @@ public class ErrorHandler {
 
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(RulesViolationException.class)
-    public ErrorResponse handleRulesViolationExceptions(RulesViolationException ex) {
+    public ApiError handleRulesViolationExceptions(RulesViolationException ex) {
         log.error(ex.getMessage());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(CONFLICT)
                 .reason("For the requested operation the conditions are not met")
                 .message(ex.getMessage())
@@ -108,9 +108,9 @@ public class ErrorHandler {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ErrorResponse handleMissingServletRequestParameterException(Exception ex) {
+    public ApiError handleMissingServletRequestParameterException(Exception ex) {
         log.error(ex.toString());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(ex.getMessage())
@@ -122,9 +122,9 @@ public class ErrorHandler {
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorResponse handleOtherExceptions(Exception ex) {
+    public ApiError handleOtherExceptions(Exception ex) {
         log.error(ex.toString());
-        return ErrorResponse.builder()
+        return ApiError.builder()
                 .status(INTERNAL_SERVER_ERROR)
                 .reason("Internal error")
                 .message(ex.getMessage())

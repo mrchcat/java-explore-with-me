@@ -19,7 +19,6 @@ import com.github.mrchcat.explorewithme.event.model.EventUserStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
-import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.dto.UserShortDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
 import com.github.mrchcat.explorewithme.user.model.User;
@@ -112,33 +111,33 @@ public class EventMapper {
         if (requestModeration != null) {
             event.setRequestModeration(updateDto.getRequestModeration());
         }
-
         EventAdminStateAction action = updateDto.getStateAction();
-        if (action != null) {
-            EventState oldState = event.getState();
-            EventState newState=null;
-            if (action.equals(PUBLISH_EVENT)) {
-                newState = switch (oldState) {
-                    case PENDING -> {
-                        event.setPublishedOn(LocalDateTime.now());
-                        yield PUBLISHED;
-                    }
-                    case CANCELED, PUBLISHED -> {
-                        String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
-                        throw new DataIntegrityException(message);
-                    }
-                };
-            } else if (action.equals(REJECT_EVENT)) {
-                newState = switch (oldState) {
-                    case PENDING ->  CANCELED;
-                    case CANCELED, PUBLISHED -> {
-                        String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
-                        throw new DataIntegrityException(message);
-                    }
-                };
-            }
-            event.setState(newState);
+        if (action == null) {
+            return event;
         }
+        EventState oldState = event.getState();
+        EventState newState = null;
+        if (action.equals(PUBLISH_EVENT)) {
+            newState = switch (oldState) {
+                case PENDING -> {
+                    event.setPublishedOn(LocalDateTime.now());
+                    yield PUBLISHED;
+                }
+                case CANCELED, PUBLISHED -> {
+                    String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
+                    throw new DataIntegrityException(message);
+                }
+            };
+        } else if (action.equals(REJECT_EVENT)) {
+            newState = switch (oldState) {
+                case PENDING -> CANCELED;
+                case CANCELED, PUBLISHED -> {
+                    String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
+                    throw new DataIntegrityException(message);
+                }
+            };
+        }
+        event.setState(newState);
         return event;
     }
 

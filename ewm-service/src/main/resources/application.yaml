@@ -10,13 +10,13 @@ app:
 spring:
   sql:
     init.mode: always
-#TODO   потом удалить
-  datasource:
-    url: jdbc:postgresql://localhost:5435/ewm-service
-    username: mcat
-    password: 54321
-    driverClassName: org.postgresql.Driver
-#TODO до этого момента
+##TODO   потом удалить
+#  datasource:
+#    url: jdbc:postgresql://localhost:5435/ewm-service
+#    username: mcat
+#    password: 54321
+#    driverClassName: org.postgresql.Driver
+##TODO -------
   jpa:
     hibernate:
       ddl-auto: none
