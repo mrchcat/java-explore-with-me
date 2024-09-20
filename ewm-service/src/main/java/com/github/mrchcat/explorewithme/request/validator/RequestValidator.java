@@ -28,12 +28,12 @@ public class RequestValidator {
         }
     }
 
-    public boolean isNoLimits(Event event) {
+    public boolean isInfiniteLimit(Event event) {
         return event.getParticipantLimit() == 0;
     }
 
     public void isFreeLimitEnough(Event event) {
-        if (!isNoLimits(event) && (event.getParticipantLimit() - event.getConfirmedRequests() <= 0)) {
+        if (!isInfiniteLimit(event) && (event.getParticipantLimit() - event.getConfirmedRequests() <= 0)) {
             String message = "The participant limit has been reached";
             throw new RulesViolationException(message);
         }

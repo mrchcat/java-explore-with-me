@@ -3,22 +3,20 @@ package com.github.mrchcat.explorewithme.event.service;
 import com.github.mrchcat.explorewithme.RequestCreateDto;
 import com.github.mrchcat.explorewithme.StatHttpClient;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
+import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPrivateUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
-import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.model.EventState;
-import com.github.mrchcat.explorewithme.event.model.EventAdminStateAction;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
-import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
+import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.validator.UserValidator;
-import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
-import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
-import static com.github.mrchcat.explorewithme.event.model.EventAdminStateAction.PUBLISH_EVENT;
-import static com.github.mrchcat.explorewithme.event.model.EventUserStateAction.CANCEL_REVIEW;
-import static com.github.mrchcat.explorewithme.event.model.EventUserStateAction.SEND_TO_REVIEW;
 
 @Service
 @Slf4j

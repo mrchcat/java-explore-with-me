@@ -44,6 +44,7 @@ public class RequestServiceImpl implements RequestService {
         requestValidator.isRequestExists(userId, eventId);
         requestValidator.isRequestForOwnEvent(userId, event);
         requestValidator.isPublishedEvent(event);
+        requestValidator.isFreeLimitEnough(event);
         Request requestToSave = Request.builder()
                 .requester(user)
                 .event(event)
@@ -95,7 +96,7 @@ public class RequestServiceImpl implements RequestService {
     public RequestStatusUpdateResult updateStatus(long userId, long eventId, RequestStatusUpdateDto updates) {
         Event event = eventService.getByIdAndInitiator(userId, eventId);
         int freeLimit;
-        if (requestValidator.isNoLimits(event)) {
+        if (requestValidator.isInfiniteLimit(event)) {
             freeLimit = Integer.MAX_VALUE;
         } else {
             freeLimit = event.getParticipantLimit() - event.getConfirmedRequests();

@@ -26,6 +26,7 @@ public class EventValidator {
 
 
 
+
     public void isEventExist(Set<Long> eventIds) {
         if (eventIds != null && !eventIds.isEmpty() && eventRepository.countEvents(eventIds) != eventIds.size()) {
             String message = String.format("Check the list of event ids=%s, some of the events were not found", eventIds);
