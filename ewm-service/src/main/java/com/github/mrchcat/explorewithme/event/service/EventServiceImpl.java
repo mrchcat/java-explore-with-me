@@ -14,9 +14,9 @@ import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
-import com.github.mrchcat.explorewithme.event.validator.EventValidator;
+import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
-import com.github.mrchcat.explorewithme.user.validator.UserValidator;
+import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +26,14 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.mrchcat.explorewithme.event.model.EventState.CANCELED;
+import static com.github.mrchcat.explorewithme.event.model.EventState.PENDING;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 
 @Service
@@ -38,16 +41,17 @@ import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final UserValidator userValidator;
-    private final EventValidator eventValidator;
     private final EventMapper eventMapper;
     private final StatHttpClient statHttpClient;
     @Value("${app.name}")
     private String appName;
+    private static final Duration TIME_GAP_USER = Duration.ofHours(2);
+    private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
+    private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
-        eventValidator.isDateNotTooEarlyUser(createDto.getEventDate());
+        isDateNotTooEarly(createDto.getEventDate(), TIME_GAP_USER);
         Event mappedEvent = eventMapper.toEntity(userId, createDto);
         Event savedEvent = eventRepository.save(mappedEvent);
         log.info("Created event {}", savedEvent);
@@ -56,11 +60,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto updateByUser(long userId, long eventId, EventPrivateUpdateDto updateDto) {
-        if (updateDto.getEventDate() != null) {
-            eventValidator.isDateNotTooEarlyUser(updateDto.getEventDate());
+        LocalDateTime eventDate = updateDto.getEventDate();
+        if (eventDate != null) {
+            isDateNotTooEarly(eventDate, TIME_GAP_USER);
         }
         Event oldEvent = getById(eventId);
-        eventValidator.isEventHasCorrectStatusToUpdate(oldEvent.getState());
+        isEventHasCorrectStatusToUpdate(oldEvent.getState());
         Event mappedEvent = eventMapper.updateEntityByUser(oldEvent, updateDto);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("User id={} updated event {}", userId, updatedEvent);
@@ -69,11 +74,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto updateByAdmin(long eventId, EventAdminUpdateDto updateDto) {
-        if (updateDto.getEventDate() != null) {
-            eventValidator.isDateNotTooEarlyAdmin(updateDto.getEventDate());
+        LocalDateTime eventDate = updateDto.getEventDate();
+        if (eventDate != null) {
+            isDateNotTooEarly(eventDate, TIME_GAP_ADMIN);
         }
         Event oldEvent = getById(eventId);
-        EventState oldState = oldEvent.getState();
+//        EventState oldState = oldEvent.getState();
         Event mappedEvent = eventMapper.updateEntityByAdmin(oldEvent, updateDto);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("Admin updated event {}", updatedEvent);
@@ -82,8 +88,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
-        userValidator.isUserIdExists(userId);
-        log.info("Validator отработал успешно");
         Optional<Event> eventOptional = eventRepository.getByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
             String message = String.format("Event with id=%d for user with id=%d was not found", eventId, userId);
@@ -115,14 +119,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable) {
-        eventValidator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
         return eventMapper.toDto(events);
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
-        userValidator.isUserIdExists(userId);
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
         return eventMapper.toShortDto(events);
     }
@@ -132,11 +135,8 @@ public class EventServiceImpl implements EventService {
                                              Pageable pageable,
                                              EventSortAttribute sort,
                                              HttpServletRequest request) {
-        log.info("зашли в getAllByQuery с параметрами query={} pageable={} sort={} request={}",
-                query, pageable, sort, request);
-        eventValidator.isCorrectDateOrder(query.getStart(), query.getEnd());
+        isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
-        log.info("сделали запрос в БД и получили ответ {}", events);
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
 
         if (sort != null) {
@@ -199,4 +199,31 @@ public class EventServiceImpl implements EventService {
         log.info("создали запрос {}", statRequest);
         statHttpClient.addRequest(statRequest);
     }
+
+    private void isDateNotTooEarly(LocalDateTime eventDate, Duration gap) {
+        LocalDateTime earliestPossibleTime = LocalDateTime.now().plus(gap);
+        if (eventDate.isBefore(earliestPossibleTime)) {
+            String message = String.format("Start of event must be not earlier than %d hours before now",
+                    gap.getSeconds() / 60 / 60);
+            throw new ArgumentNotValidException(message);
+        }
+    }
+
+    private void isEventHasCorrectStatusToUpdate(EventState state) {
+        for (EventState allowed : PERMITTED_STATUS) {
+            if (state.equals(allowed)) {
+                return;
+            }
+        }
+        String message = String.format("Only %s can be changed", PERMITTED_STATUS);
+        throw new RulesViolationException(message);
+    }
+
+    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
+        if (start != null && finish != null && finish.isBefore(start)) {
+            String message = String.format("The dates violate order: %s must be before %s", start, finish);
+            throw new ArgumentNotValidException(message);
+        }
+    }
+
 }

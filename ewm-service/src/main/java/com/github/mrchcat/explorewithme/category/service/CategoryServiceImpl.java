@@ -5,9 +5,10 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
-import com.github.mrchcat.explorewithme.category.validator.CategoryValidator;
-import com.github.mrchcat.explorewithme.event.validator.EventValidator;
+import com.github.mrchcat.explorewithme.event.repository.EventRepository;
+import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -21,30 +22,29 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CategoryValidator categoryValidator;
-    private final EventValidator eventValidator;
+    private final EventRepository eventRepository;
 
     @Override
     public CategoryDto create(CategoryCreateDto createDto) {
-        categoryValidator.isCategoryNameUnique(createDto.getName());
+        isCategoryNameUnique(createDto.getName());
         Category savedCategory = categoryRepository.save(CategoryMapper.toEntity(createDto));
         log.info("{} created", savedCategory);
         return CategoryMapper.toDTO(savedCategory);
     }
 
     @Override
-    public void delete(long catId) {
-        categoryValidator.isCategoryIdExists(catId);
-        eventValidator.isAnyLinkedEventsForCategory(catId);
-        categoryRepository.deleteById(catId);
-        log.info("Category with id={} deleted", catId);
+    public void delete(long categoryId) {
+        isAnyLinkedEventsForCategory(categoryId);
+        categoryRepository.deleteById(categoryId);
+        log.info("Category with id={} deleted", categoryId);
     }
 
     @Override
-    public CategoryDto update(long catId, CategoryCreateDto createDto) {
-        categoryValidator.isCategoryIdExists(catId);
-        categoryValidator.isCategoryNameUniqueExclId(catId, createDto.getName());
-        Category updatedCategory = categoryRepository.save(CategoryMapper.toEntity(catId, createDto));
+    public CategoryDto update(long categoryId, CategoryCreateDto createDto) {
+        isCategoryNameUniqueExclId(categoryId, createDto.getName());
+        Category oldCategory = getById(categoryId);
+        Category mapped = CategoryMapper.toEntity(oldCategory, createDto);
+        Category updatedCategory = categoryRepository.save(mapped);
         log.info("Category updated to {}", updatedCategory);
         return CategoryMapper.toDTO(updatedCategory);
     }
@@ -68,4 +68,26 @@ public class CategoryServiceImpl implements CategoryService {
             return new ObjectNotFoundException(message);
         });
     }
+
+    public void isCategoryNameUnique(String categoryName) {
+        if (categoryRepository.existsByName(categoryName)) {
+            String message = String.format("Name=[%s] is not unique for category", categoryName);
+            throw new DataIntegrityException(message);
+        }
+    }
+
+    private void isCategoryNameUniqueExclId(long categoryId, String categoryName) {
+        if (categoryRepository.existsByNameExclId(categoryId, categoryName)) {
+            String message = String.format("%s is not unique for category", categoryName);
+            throw new RulesViolationException(message);
+        }
+    }
+
+    public void isAnyLinkedEventsForCategory(long categoryId) {
+        if (eventRepository.existsByCategory(categoryId)) {
+            String message = String.format("Category id=%d have connected events", categoryId);
+            throw new RulesViolationException(message);
+        }
+    }
+
 }

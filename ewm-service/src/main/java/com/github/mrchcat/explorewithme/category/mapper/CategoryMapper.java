@@ -26,9 +26,9 @@ public class CategoryMapper {
                 .build();
     }
 
-    public static Category toEntity(long categoryId, CategoryCreateDto createDto) {
+    public static Category toEntity(Category category, CategoryCreateDto createDto) {
         return Category.builder()
-                .id(categoryId)
+                .id(category.getId())
                 .name(createDto.getName())
                 .build();
     }

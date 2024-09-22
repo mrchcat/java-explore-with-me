@@ -1,12 +1,12 @@
 package com.github.mrchcat.explorewithme.user.service;
 
+import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.dto.UserCreateDto;
 import com.github.mrchcat.explorewithme.user.dto.UserDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
-import com.github.mrchcat.explorewithme.user.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserValidator userValidator;
 
     @Override
     public UserDto create(UserCreateDto createDto) {
-        userValidator.isUserEmailUnique(createDto.getEmail());
+        isUserEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
         log.info("{} added}", savedUser);
         return UserMapper.toDto(savedUser);
@@ -31,9 +30,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long userId) {
-        userValidator.isUserIdExists(userId);
         userRepository.deleteById(userId);
-        log.info("User with id={} deleted", userId);
+        log.info("User with id={} deleted or not exists", userId);
     }
 
     @Override
@@ -54,6 +52,13 @@ public class UserServiceImpl implements UserService {
             String message = String.format("User with id=%d was not found", userId);
             return new ObjectNotFoundException(message);
         });
+    }
+
+    public void isUserEmailUnique(String userEmail) {
+        if (userRepository.existsByEmail(userEmail)) {
+            String message = String.format("Email=[%s] is not unique for user", userEmail);
+            throw new DataIntegrityException(message);
+        }
     }
 
 }
