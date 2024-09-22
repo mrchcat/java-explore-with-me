@@ -1,5 +1,7 @@
 package com.github.mrchcat.explorewithme.event.controller;
 
+import com.github.mrchcat.explorewithme.RequestCreateDto;
+import com.github.mrchcat.explorewithme.StatHttpClient;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
@@ -10,6 +12,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +36,9 @@ import java.util.List;
 @Slf4j
 public class EventPublicController {
     private final EventService eventService;
+    @Value("${app.name}")
+    private String appName;
+    private final StatHttpClient statHttpClient;
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
@@ -54,7 +62,9 @@ public class EventPublicController {
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
         log.info("Public API: received request from {} to get all events with parameters {} and pagination {}",
                 request.getRemoteAddr(), query, pageable);
-        return eventService.getAllByQuery(query, pageable, sort, request);
+        List<EventShortDto> result = eventService.getAllByQuery(query, pageable, sort, request);
+        sendToStatService(request);
+        return result;
     }
 
     @GetMapping("/{eventId}")
@@ -62,7 +72,26 @@ public class EventPublicController {
     EventDto getEventById(HttpServletRequest request,
                           @PathVariable(name = "eventId") long eventId) {
         log.info("PublicAPI: received request to get event id={}", eventId);
-        return eventService.getDtoById(eventId, request);
+        EventDto result=eventService.getDtoById(eventId, request);
+        sendToStatService(request);
+        return result;
     }
 
+    private void sendToStatService(HttpServletRequest request) {
+        String remoteAddress = request.getRemoteAddr();
+        InetAddress ip = null;
+        try {
+            ip = InetAddress.getByName(remoteAddress);
+        } catch (UnknownHostException e) {
+            log.error("RemoteAddress {} can not be converted to InetAdress", remoteAddress);
+        }
+        RequestCreateDto statRequest = RequestCreateDto.builder()
+                .app(appName)
+                .uri(request.getRequestURI())
+                .ip(ip)
+                .timestamp(LocalDateTime.now())
+                .build();
+        log.info("создали запрос {}", statRequest);
+        statHttpClient.addRequest(statRequest);
+    }
 }

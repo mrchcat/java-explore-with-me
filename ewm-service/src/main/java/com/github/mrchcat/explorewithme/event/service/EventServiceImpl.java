@@ -1,7 +1,5 @@
 package com.github.mrchcat.explorewithme.event.service;
 
-import com.github.mrchcat.explorewithme.RequestCreateDto;
-import com.github.mrchcat.explorewithme.StatHttpClient;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
@@ -20,12 +18,9 @@ import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -42,9 +37,6 @@ import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final StatHttpClient statHttpClient;
-    @Value("${app.name}")
-    private String appName;
     private static final Duration TIME_GAP_USER = Duration.ofHours(2);
     private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
@@ -146,7 +138,7 @@ public class EventServiceImpl implements EventService {
             };
             eventShortDtoList.sort(comparator);
         }
-        sendToStatService(request);
+//        sendToStatService(request);
         return eventShortDtoList;
     }
 
@@ -157,7 +149,7 @@ public class EventServiceImpl implements EventService {
             String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
-        sendToStatService(request);
+//        sendToStatService(request);
         return eventMapper.toDto(event);
     }
 
@@ -180,24 +172,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public void incrementConfirmedRequest(Event event) {
         incrementConfirmedRequest(event, 1);
-    }
-
-    private void sendToStatService(HttpServletRequest request) {
-        String remoteAddress = request.getRemoteAddr();
-        InetAddress ip = null;
-        try {
-            ip = InetAddress.getByName(remoteAddress);
-        } catch (UnknownHostException e) {
-            log.error("RemoteAddress {} can not be converted to InetAdress", remoteAddress);
-        }
-        RequestCreateDto statRequest = RequestCreateDto.builder()
-                .app(appName)
-                .uri(request.getRequestURI())
-                .ip(ip)
-                .timestamp(LocalDateTime.now())
-                .build();
-        log.info("создали запрос {}", statRequest);
-        statHttpClient.addRequest(statRequest);
     }
 
     private void isDateNotTooEarly(LocalDateTime eventDate, Duration gap) {

@@ -17,7 +17,6 @@ import com.github.mrchcat.explorewithme.event.model.EventAdminStateAction;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.model.EventUserStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
-import com.github.mrchcat.explorewithme.event.validator.EventValidator;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.user.dto.UserShortDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
@@ -53,7 +52,6 @@ public class EventMapper {
     private final StatHttpClient statHttpClient;
     private static final boolean IS_UNIQUE_VIEWS = true;
     private static final String PUBLIC_VIEW_URI = "/events";
-    private final EventValidator eventValidator;
 
     public Event toEntity(long initiatorId, EventCreateDto ecd) {
         User initiator = userService.getById(initiatorId);
