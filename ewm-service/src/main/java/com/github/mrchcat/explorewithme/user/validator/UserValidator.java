@@ -11,17 +11,17 @@ import org.springframework.stereotype.Component;
 public class UserValidator {
     private final UserRepository userRepository;
 
-    public void isUserEmailUnique(String userEmail) {
-        if (userRepository.existsByEmail(userEmail)) {
-            String message = String.format("Email=[%s] is not unique for user", userEmail);
-            throw new DataIntegrityException(message);
-        }
-    }
-
-    public void isUserIdExists(long userId) {
-        if (!userRepository.existsById(userId)) {
-            String message = String.format("User with id=%d was not found", userId);
-            throw new ObjectNotFoundException(message);
-        }
-    }
+//    public void isUserEmailUnique(String userEmail) {
+//        if (userRepository.existsByEmail(userEmail)) {
+//            String message = String.format("Email=[%s] is not unique for user", userEmail);
+//            throw new DataIntegrityException(message);
+//        }
+//    }
+//
+//    public void isUserIdExists(long userId) {
+//        if (!userRepository.existsById(userId)) {
+//            String message = String.format("User with id=%d was not found", userId);
+//            throw new ObjectNotFoundException(message);
+//        }
+//    }
 }
