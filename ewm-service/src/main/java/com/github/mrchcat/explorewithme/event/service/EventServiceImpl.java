@@ -71,7 +71,6 @@ public class EventServiceImpl implements EventService {
             isDateNotTooEarly(eventDate, TIME_GAP_ADMIN);
         }
         Event oldEvent = getById(eventId);
-//        EventState oldState = oldEvent.getState();
         Event mappedEvent = eventMapper.updateEntityByAdmin(oldEvent, updateDto);
         Event updatedEvent = eventRepository.save(mappedEvent);
         log.info("Admin updated event {}", updatedEvent);
@@ -110,9 +109,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable) {
+    public List<EventDto> getAllByQuery(EventAdminSearchDto query) {
         isCorrectDateOrder(query.getStart(), query.getEnd());
-        List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
+        List<Event> events = eventRepository.getAllEventByQuery(query);
         return eventMapper.toDto(events);
     }
 
@@ -123,14 +122,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getAllByQuery(EventPublicSearchDto query,
-                                             Pageable pageable,
-                                             EventSortAttribute sort,
-                                             HttpServletRequest request) {
+    public List<EventShortDto> getAllByQuery(EventPublicSearchDto query) {
         isCorrectDateOrder(query.getStart(), query.getEnd());
-        List<Event> events = eventRepository.getAllEventByQuery(query, pageable);
+        List<Event> events = eventRepository.getAllEventByQuery(query);
         List<EventShortDto> eventShortDtoList = eventMapper.toShortDto(events);
-
+        var sort=query.getEventSortAttribute();
         if (sort != null) {
             var comparator = switch (sort) {
                 case VIEWS -> Comparator.comparingLong(EventShortDto::getViews).reversed();
@@ -138,18 +134,16 @@ public class EventServiceImpl implements EventService {
             };
             eventShortDtoList.sort(comparator);
         }
-//        sendToStatService(request);
         return eventShortDtoList;
     }
 
     @Override
-    public EventDto getDtoById(long eventId, HttpServletRequest request) {
+    public EventDto getDtoById(long eventId) {
         EventState state = PUBLISHED;
         Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
             String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
-//        sendToStatService(request);
         return eventMapper.toDto(event);
     }
 

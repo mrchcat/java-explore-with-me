@@ -1,5 +1,6 @@
 package com.github.mrchcat.explorewithme.event.dto;
 
+import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,4 +29,6 @@ public class EventPublicSearchDto {
     Boolean onlyAvailable;
     @Builder.Default
     List<EventState> states = List.of(EventState.PUBLISHED);
+    Pageable pageable;
+    EventSortAttribute eventSortAttribute;
 }

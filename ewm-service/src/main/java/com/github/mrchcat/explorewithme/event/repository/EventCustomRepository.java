@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface EventCustomRepository {
 
-    List<Event> getAllEventByQuery(EventAdminSearchDto queryParams, Pageable pageable);
+    List<Event> getAllEventByQuery(EventAdminSearchDto queryParams);
 
-    List<Event> getAllEventByQuery(EventPublicSearchDto queryParams, Pageable pageable);
+    List<Event> getAllEventByQuery(EventPublicSearchDto queryParams);
 
 }

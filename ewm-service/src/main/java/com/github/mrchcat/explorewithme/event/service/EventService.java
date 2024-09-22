@@ -32,14 +32,11 @@ public interface EventService {
 
     List<Event> getById(List<Long> eventIds);
 
-    List<EventDto> getAllByQuery(EventAdminSearchDto query, Pageable pageable);
+    List<EventDto> getAllByQuery(EventAdminSearchDto query);
 
-    List<EventShortDto> getAllByQuery(EventPublicSearchDto query,
-                                      Pageable pageable,
-                                      EventSortAttribute sort,
-                                      HttpServletRequest request);
+    List<EventShortDto> getAllByQuery(EventPublicSearchDto query);
 
-    EventDto getDtoById(long eventId, HttpServletRequest request);
+    EventDto getDtoById(long eventId);
 
     void decrementConfirmedRequest(Event event);
 

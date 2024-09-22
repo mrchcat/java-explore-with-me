@@ -52,17 +52,18 @@ public class EventPublicController {
                                      @RequestParam(name = "sort", required = false) EventSortAttribute sort,
                                      @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                      @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
-        EventPublicSearchDto query = EventPublicSearchDto.builder()
+         EventPublicSearchDto query = EventPublicSearchDto.builder()
                 .text(text)
                 .categoryIds(categoryIds)
                 .paid(paid)
                 .end(end)
                 .onlyAvailable(onlyAvailable)
+                .pageable(PageRequest.of(from > 0 ? from / size : 0, size))
+                 .eventSortAttribute(sort)
                 .build();
-        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
-        log.info("Public API: received request from {} to get all events with parameters {} and pagination {}",
-                request.getRemoteAddr(), query, pageable);
-        List<EventShortDto> result = eventService.getAllByQuery(query, pageable, sort, request);
+        log.info("Public API: received request from {} to get all events with parameters {}",
+                request.getRemoteAddr(), query);
+        List<EventShortDto> result = eventService.getAllByQuery(query);
         sendToStatService(request);
         return result;
     }
@@ -72,7 +73,7 @@ public class EventPublicController {
     EventDto getEventById(HttpServletRequest request,
                           @PathVariable(name = "eventId") long eventId) {
         log.info("PublicAPI: received request to get event id={}", eventId);
-        EventDto result=eventService.getDtoById(eventId, request);
+        EventDto result=eventService.getDtoById(eventId);
         sendToStatService(request);
         return result;
     }

@@ -22,7 +22,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
     @PersistenceContext
     EntityManager em;
 
-    public List<Event> getAllEventByQuery(EventAdminSearchDto qp, Pageable pageable) {
+    public List<Event> getAllEventByQuery(EventAdminSearchDto qp) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Event> query = builder.createQuery(Event.class);
         Root<Event> root = query.from(Event.class);
@@ -57,8 +57,8 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
         }
         query.where(builder.and(wherePredicates.toArray(new Predicate[]{})));
 
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
+        int pageNumber = qp.getPageable().getPageNumber();
+        int pageSize = qp.getPageable().getPageSize();
         var limitedQuery = em.createQuery(query)
                 .setFirstResult(pageNumber * pageSize)
                 .setMaxResults(pageSize);
@@ -67,7 +67,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
     }
 
     @Override
-    public List<Event> getAllEventByQuery(EventPublicSearchDto qp, Pageable pageable) {
+    public List<Event> getAllEventByQuery(EventPublicSearchDto qp) {
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Event> query = builder.createQuery(Event.class);
@@ -122,8 +122,8 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
 
         query.where(builder.and(wherePredicates.toArray(new Predicate[]{})));
 
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
+        int pageNumber = qp.getPageable().getPageNumber();
+        int pageSize = qp.getPageable().getPageSize();
         var limitedQuery = em.createQuery(query)
                 .setFirstResult(pageNumber * pageSize)
                 .setMaxResults(pageSize);
