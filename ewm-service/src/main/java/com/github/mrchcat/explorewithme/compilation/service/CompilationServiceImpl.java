@@ -28,7 +28,6 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventService eventService;
 
-
     @Override
     public CompilationDto create(CompilationCreateDto createDto) {
         Compilation compilation = new Compilation();

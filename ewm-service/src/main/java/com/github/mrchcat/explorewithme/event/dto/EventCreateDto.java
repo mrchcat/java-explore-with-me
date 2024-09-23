@@ -3,6 +3,7 @@ package com.github.mrchcat.explorewithme.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.github.mrchcat.explorewithme.annotation.NotEarlierThan;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,7 @@ public class EventCreateDto {
     @NotNull(message = "event can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotEarlierThan(2)
     private LocalDateTime eventDate;
 
     private Location location;

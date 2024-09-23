@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.user.service;
 
-import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.user.dto.UserCreateDto;
 import com.github.mrchcat.explorewithme.user.dto.UserDto;
@@ -22,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserCreateDto createDto) {
-        isUserEmailUnique(createDto.getEmail());
         User savedUser = userRepository.save(UserMapper.toEntity(createDto));
         log.info("{} added}", savedUser);
         return UserMapper.toDto(savedUser);
@@ -53,12 +51,4 @@ public class UserServiceImpl implements UserService {
             return new ObjectNotFoundException(message);
         });
     }
-
-    public void isUserEmailUnique(String userEmail) {
-        if (userRepository.existsByEmail(userEmail)) {
-            String message = String.format("Email=[%s] is not unique for user", userEmail);
-            throw new DataIntegrityException(message);
-        }
-    }
-
 }

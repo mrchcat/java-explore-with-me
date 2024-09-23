@@ -5,6 +5,7 @@ import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.service.EventService;
+import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,9 @@ public class EventAdminController {
                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                 @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                 @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
-         EventAdminSearchDto searchDto = EventAdminSearchDto.builder()
+
+        isCorrectDateOrder(start, end);
+        EventAdminSearchDto searchDto = EventAdminSearchDto.builder()
                 .userIds(userIds)
                 .states(states)
                 .categoryIds(categoryIds)
@@ -59,6 +62,13 @@ public class EventAdminController {
                 .pageable(PageRequest.of(from > 0 ? from / size : 0, size))
                 .build();
         return eventService.getAllByQuery(searchDto);
+    }
+
+    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
+        if (start != null && finish != null && finish.isBefore(start)) {
+            String message = String.format("The dates violate order: %s must be before %s", start, finish);
+            throw new ArgumentNotValidException(message);
+        }
     }
 }
 

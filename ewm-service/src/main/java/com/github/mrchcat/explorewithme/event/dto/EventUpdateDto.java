@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.event.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
@@ -8,9 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,10 +24,6 @@ public class EventUpdateDto {
     private String description;
 
     private Long category;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
 
     private Location location;
     private Boolean paid;

@@ -25,4 +25,5 @@ public class EventAdminSearchDto {
     LocalDateTime start;
     LocalDateTime end;
     Pageable pageable;
+
 }

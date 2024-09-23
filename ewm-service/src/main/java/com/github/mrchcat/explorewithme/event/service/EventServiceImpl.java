@@ -19,7 +19,6 @@ import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.model.EventUserStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
-import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
@@ -31,7 +30,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,15 +56,12 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final CategoryService categoryService;
     private final StatHttpClient statHttpClient;
-    private static final Duration TIME_GAP_USER = Duration.ofHours(2);
-    private static final Duration TIME_GAP_ADMIN = Duration.ofHours(1);
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
     private static final boolean IS_UNIQUE_VIEWS = true;
     private static final String PUBLIC_VIEW_URI = "/events";
 
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
-        isDateNotTooEarly(createDto.getEventDate(), TIME_GAP_USER);
         User initiator = userService.getById(userId);
         Category category = categoryService.getById(createDto.getCategory());
         Event event = Event.builder()
@@ -83,8 +78,7 @@ public class EventServiceImpl implements EventService {
                 .build();
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {}", savedEvent);
-        long views = getEventViews(savedEvent);
-        return EventMapper.toDto(savedEvent, views);
+        return toDto(savedEvent);
     }
 
     @Override
@@ -94,7 +88,6 @@ public class EventServiceImpl implements EventService {
 
         LocalDateTime eventDate = updateDto.getEventDate();
         if (eventDate != null) {
-            isDateNotTooEarly(eventDate, TIME_GAP_USER);
             event.setEventDate(eventDate);
         }
 
@@ -150,8 +143,7 @@ public class EventServiceImpl implements EventService {
 
         Event updatedEvent = eventRepository.save(event);
         log.info("User id={} updated event {}", userId, updatedEvent);
-        long views = getEventViews(updatedEvent);
-        return EventMapper.toDto(updatedEvent, views);
+        return toDto(updatedEvent);
     }
 
     @Override
@@ -160,7 +152,6 @@ public class EventServiceImpl implements EventService {
 
         LocalDateTime eventDate = updateDto.getEventDate();
         if (eventDate != null) {
-            isDateNotTooEarly(eventDate, TIME_GAP_ADMIN);
             event.setEventDate(eventDate);
         }
 
@@ -226,8 +217,7 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("Admin updated event {}", updatedEvent);
-        long views = getEventViews(updatedEvent);
-        return EventMapper.toDto(updatedEvent, views);
+        return toDto(updatedEvent);
     }
 
     @Override
@@ -237,8 +227,7 @@ public class EventServiceImpl implements EventService {
             String message = String.format("Event with id=%d for user with id=%d was not found", eventId, userId);
             return new ObjectNotFoundException(message);
         });
-        long views = getEventViews(event);
-        return EventMapper.toDto(event, views);
+        return toDto(event);
     }
 
     @Override
@@ -264,25 +253,20 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query) {
-        isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toDto(events, idViewMap);
+        return toDto(events);
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
-        Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toShortDto(events, idViewMap);
+        return toShortDto(events);
     }
 
     @Override
     public List<EventShortDto> getAllByQuery(EventPublicSearchDto query) {
-        isCorrectDateOrder(query.getStart(), query.getEnd());
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        Map<Long, Long> idViewMap = getEventViews(events);
-        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, idViewMap);
+        List<EventShortDto> eventShortDtoList = toShortDto(events);
         var sort = query.getEventSortAttribute();
         if (sort != null) {
             var comparator = switch (sort) {
@@ -301,8 +285,7 @@ public class EventServiceImpl implements EventService {
             String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
             return new ObjectNotFoundException(message);
         });
-        long views = getEventViews(event);
-        return EventMapper.toDto(event, views);
+        return toDto(event);
     }
 
     @Override
@@ -326,15 +309,6 @@ public class EventServiceImpl implements EventService {
         incrementConfirmedRequest(event, 1);
     }
 
-    private void isDateNotTooEarly(LocalDateTime eventDate, Duration gap) {
-        LocalDateTime earliestPossibleTime = LocalDateTime.now().plus(gap);
-        if (eventDate.isBefore(earliestPossibleTime)) {
-            String message = String.format("Start of event must be not earlier than %d hours before now",
-                    gap.getSeconds() / 60 / 60);
-            throw new ArgumentNotValidException(message);
-        }
-    }
-
     private void isEventHasCorrectStatusToUpdate(EventState state) {
         for (EventState allowed : PERMITTED_STATUS) {
             if (state.equals(allowed)) {
@@ -343,13 +317,6 @@ public class EventServiceImpl implements EventService {
         }
         String message = String.format("Only %s can be changed", PERMITTED_STATUS);
         throw new RulesViolationException(message);
-    }
-
-    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
-        if (start != null && finish != null && finish.isBefore(start)) {
-            String message = String.format("The dates violate order: %s must be before %s", start, finish);
-            throw new ArgumentNotValidException(message);
-        }
     }
 
     private String makeUri(long id) {
@@ -408,5 +375,18 @@ public class EventServiceImpl implements EventService {
         return idViewMap;
     }
 
+    private EventDto toDto(Event event){
+        long views = getEventViews(event);
+        return EventMapper.toDto(event, views);
+    }
 
+    private List<EventDto> toDto(List<Event> events){
+        Map<Long, Long> idViewMap = getEventViews(events);
+        return EventMapper.toDto(events,idViewMap);
+    }
+
+    private List<EventShortDto> toShortDto(List<Event> events){
+        Map<Long, Long> idViewMap = getEventViews(events);
+        return EventMapper.toShortDto(events,idViewMap);
+    }
 }

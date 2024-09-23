@@ -2,6 +2,7 @@ package com.github.mrchcat.explorewithme.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,6 +67,20 @@ public class ErrorHandler {
                 .errors(ex.getStackTrace())
                 .build();
     }
+
+    @ResponseStatus(CONFLICT)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ApiError handleDataIntegrityExceptions(DataIntegrityViolationException ex) {
+        log.info(ex.getMessage());
+        return ApiError.builder()
+                .status(CONFLICT)
+                .reason("Integrity constraint has been violated.")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getStackTrace())
+                .build();
+    }
+
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(ObjectNotFoundException.class)

@@ -7,6 +7,7 @@ import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.service.EventService;
+import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -51,14 +52,15 @@ public class EventPublicController {
                                      @RequestParam(name = "sort", required = false) EventSortAttribute sort,
                                      @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                      @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
-         EventPublicSearchDto query = EventPublicSearchDto.builder()
+        isCorrectDateOrder(start, end);
+        EventPublicSearchDto query = EventPublicSearchDto.builder()
                 .text(text)
                 .categoryIds(categoryIds)
                 .paid(paid)
                 .end(end)
                 .onlyAvailable(onlyAvailable)
                 .pageable(PageRequest.of(from > 0 ? from / size : 0, size))
-                 .eventSortAttribute(sort)
+                .eventSortAttribute(sort)
                 .build();
         log.info("Public API: received request from {} to get all events with parameters {}",
                 request.getRemoteAddr(), query);
@@ -72,7 +74,7 @@ public class EventPublicController {
     EventDto getEventById(HttpServletRequest request,
                           @PathVariable(name = "eventId") long eventId) {
         log.info("PublicAPI: received request to get event id={}", eventId);
-        EventDto result=eventService.getDtoById(eventId);
+        EventDto result = eventService.getDtoById(eventId);
         sendToStatService(request);
         return result;
     }
@@ -93,5 +95,12 @@ public class EventPublicController {
                 .build();
         log.info("создали запрос {}", statRequest);
         statHttpClient.addRequest(statRequest);
+    }
+
+    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
+        if (start != null && finish != null && finish.isBefore(start)) {
+            String message = String.format("The dates violate order: %s must be before %s", start, finish);
+            throw new ArgumentNotValidException(message);
+        }
     }
 }

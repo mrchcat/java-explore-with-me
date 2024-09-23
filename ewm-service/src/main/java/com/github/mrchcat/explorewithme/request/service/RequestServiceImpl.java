@@ -188,5 +188,4 @@ public class RequestServiceImpl implements RequestService {
             throw new RulesViolationException(message);
         }
     }
-
 }
