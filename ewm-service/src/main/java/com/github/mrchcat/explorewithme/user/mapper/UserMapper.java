@@ -21,7 +21,6 @@ public class UserMapper {
         return users.stream().map(UserMapper::toDto).toList();
     }
 
-
     public static UserShortDto toShortDto(User user) {
         return UserShortDto.builder()
                 .id(user.getId())
@@ -29,16 +28,10 @@ public class UserMapper {
                 .build();
     }
 
-    public static List<UserShortDto> toShortDto(List<User> users) {
-        return users.stream().map(UserMapper::toShortDto).toList();
-    }
-
-
     public static User toEntity(UserCreateDto createDto) {
         return User.builder()
                 .email(createDto.getEmail())
                 .name(createDto.getName())
                 .build();
     }
-
 }

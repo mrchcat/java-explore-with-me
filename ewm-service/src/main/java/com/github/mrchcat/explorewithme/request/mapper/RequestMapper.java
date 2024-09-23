@@ -22,6 +22,4 @@ public class RequestMapper {
                 .map(RequestMapper::toDto)
                 .toList();
     }
-
-
 }
