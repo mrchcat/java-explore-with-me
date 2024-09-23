@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Category with id={} deleted", categoryId);
     }
 
+    @Transactional
     @Override
     public CategoryDto update(long categoryId, CategoryCreateDto createDto) {
         Category oldCategory = getById(categoryId);

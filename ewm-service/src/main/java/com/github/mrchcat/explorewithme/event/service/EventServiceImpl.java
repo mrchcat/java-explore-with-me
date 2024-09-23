@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -60,6 +61,7 @@ public class EventServiceImpl implements EventService {
     private static final boolean IS_UNIQUE_VIEWS = true;
     private static final String PUBLIC_VIEW_URI = "/events";
 
+    @Transactional
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
         User initiator = userService.getById(userId);
@@ -81,6 +83,7 @@ public class EventServiceImpl implements EventService {
         return toDto(savedEvent);
     }
 
+    @Transactional
     @Override
     public EventDto updateByUser(long userId, long eventId, EventPrivateUpdateDto updateDto) {
         Event event = getById(eventId);
@@ -146,6 +149,7 @@ public class EventServiceImpl implements EventService {
         return toDto(updatedEvent);
     }
 
+    @Transactional
     @Override
     public EventDto updateByAdmin(long eventId, EventAdminUpdateDto updateDto) {
         Event event = getById(eventId);
@@ -324,17 +328,14 @@ public class EventServiceImpl implements EventService {
     }
 
     private Map<String, Long> getRequestFromStat(LocalDateTime start, String[] uris) {
-        log.info("зашли в getRequestFromStat c параметрами {} {}", start, Arrays.toString(uris));
         var request = RequestQueryParamDto.builder()
                 .start(start)
                 .end(LocalDateTime.now())
                 .uris(uris)
                 .unique(IS_UNIQUE_VIEWS)
                 .build();
-        log.info("Создали request {}", request);
         try {
             List<RequestStatisticDto> answer = statHttpClient.getRequestStatistic(request);
-            log.info("Ответ {}", answer);
             return answer.stream()
                     .collect(Collectors.toMap(RequestStatisticDto::getUri, RequestStatisticDto::getHits));
         } catch (IOException ex) {
@@ -375,17 +376,20 @@ public class EventServiceImpl implements EventService {
         return idViewMap;
     }
 
-    private EventDto toDto(Event event){
+    @Override
+    public EventDto toDto(Event event){
         long views = getEventViews(event);
         return EventMapper.toDto(event, views);
     }
 
-    private List<EventDto> toDto(List<Event> events){
+    @Override
+    public List<EventDto> toDto(List<Event> events){
         Map<Long, Long> idViewMap = getEventViews(events);
         return EventMapper.toDto(events,idViewMap);
     }
 
-    private List<EventShortDto> toShortDto(List<Event> events){
+    @Override
+    public List<EventShortDto> toShortDto(List<Event> events){
         Map<Long, Long> idViewMap = getEventViews(events);
         return EventMapper.toShortDto(events,idViewMap);
     }

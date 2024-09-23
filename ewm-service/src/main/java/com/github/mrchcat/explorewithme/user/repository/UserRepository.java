@@ -8,10 +8,6 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByEmail(String email);
-
-    boolean existsById(long userId);
-
     @Query(value = """
             SELECT *
             FROM users

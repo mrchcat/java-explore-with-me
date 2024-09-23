@@ -43,8 +43,10 @@ public interface EventService {
 
     void incrementConfirmedRequest(Event event);
 
-    long getEventViews(Event event);
+    EventDto toDto(Event event);
 
-    Map<Long, Long> getEventViews(List<Event> events);
+    List<EventDto> toDto(List<Event> events);
+
+    List<EventShortDto> toShortDto(List<Event> events);
 
 }

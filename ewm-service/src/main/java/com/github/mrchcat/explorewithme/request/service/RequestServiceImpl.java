@@ -17,6 +17,7 @@ import com.github.mrchcat.explorewithme.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class RequestServiceImpl implements RequestService {
     private final EventService eventService;
     private final UserService userService;
 
-
+    @Transactional
     @Override
     public RequestDto create(long userId, long eventId) {
         User user = userService.getById(userId);
@@ -58,6 +59,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.toDto(savedRequest);
     }
 
+    @Transactional
     @Override
     public RequestDto cancel(long userId, long requestId) {
         Request request = getByIdByUser(userId, requestId);
@@ -90,6 +92,7 @@ public class RequestServiceImpl implements RequestService {
         });
     }
 
+    @Transactional
     @Override
     public RequestStatusUpdateResult updateStatus(long userId, long eventId, RequestStatusUpdateDto updates) {
         Event event = eventService.getByIdAndInitiator(userId, eventId);
