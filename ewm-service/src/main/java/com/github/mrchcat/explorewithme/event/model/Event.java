@@ -49,7 +49,7 @@ public class Event {
     private String description;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -74,7 +74,7 @@ public class Event {
     private boolean requestModeration = true;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "initiator_id", nullable = false)
     private User initiator;
 

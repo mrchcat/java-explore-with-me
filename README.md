@@ -8,4 +8,8 @@ API основного сервиса состоит из 3 частей:
 
 Структура базы данных сервиса представлена ниже
 
+**Основной сервис:**
 ![main service schema](/ewm-service/src/main/resources/schema.png)
+
+**Сервис статистики**
+![stat service schema](/statistics/service/src/main/resources/schema.png)
