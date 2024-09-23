@@ -7,7 +7,6 @@ import com.github.mrchcat.explorewithme.compilation.mapper.CompilationMapper;
 import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
-import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;

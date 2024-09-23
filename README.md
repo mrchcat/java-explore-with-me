@@ -8,4 +8,4 @@ API основного сервиса состоит из 3 частей:
 
 Структура базы данных сервиса представлена ниже
 
-![](ewm-service\src\main\resources\schema.png)
+![main service schema](/ewm-service/src/main/resources/schema.png)

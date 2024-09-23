@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -377,20 +376,20 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto toDto(Event event){
+    public EventDto toDto(Event event) {
         long views = getEventViews(event);
         return EventMapper.toDto(event, views);
     }
 
     @Override
-    public List<EventDto> toDto(List<Event> events){
+    public List<EventDto> toDto(List<Event> events) {
         Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toDto(events,idViewMap);
+        return EventMapper.toDto(events, idViewMap);
     }
 
     @Override
-    public List<EventShortDto> toShortDto(List<Event> events){
+    public List<EventShortDto> toShortDto(List<Event> events) {
         Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toShortDto(events,idViewMap);
+        return EventMapper.toShortDto(events, idViewMap);
     }
 }
