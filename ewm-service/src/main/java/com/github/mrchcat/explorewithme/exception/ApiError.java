@@ -16,5 +16,5 @@ public record ApiError(HttpStatus status,
                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                             LocalDateTime timestamp,
 
-                       StackTraceElement[] errors) {
+                       String errors) {
 }

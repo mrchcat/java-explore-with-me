@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -30,13 +32,17 @@ public class ErrorHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(defaultMessage)
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
@@ -44,13 +50,17 @@ public class ErrorHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ArgumentNotValidException.class)
     public ApiError handleArgumentNotValidException(ArgumentNotValidException ex) {
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Arquments are not valid.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
@@ -58,93 +68,120 @@ public class ErrorHandler {
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DataIntegrityException.class)
     public ApiError handleDataIntegrityExceptions(DataIntegrityException ex) {
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(CONFLICT)
                 .reason("Integrity constraint has been violated.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ApiError handleDataIntegrityExceptions(DataIntegrityViolationException ex) {
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(CONFLICT)
                 .reason("Integrity constraint has been violated.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public ApiError handleObjectNotFoundException(NotFoundException ex) {
-        log.info(ex.getMessage());
+    public ApiError handleNotFoundException(NotFoundException ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(NOT_FOUND)
                 .reason("The required object was not found.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiError handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException ex) {
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(RulesViolationException.class)
     public ApiError handleRulesViolationExceptions(RulesViolationException ex) {
-        log.info(ex.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(CONFLICT)
                 .reason("For the requested operation the conditions are not met")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ApiError handleMissingServletRequestParameterException(Exception ex) {
-        log.info(ex.toString());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.info(errors);
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
-
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiError handleOtherExceptions(Exception ex) {
-        log.error(ex.toString());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String errors = sw.toString();
+        log.error(errors);
         return ApiError.builder()
                 .status(INTERNAL_SERVER_ERROR)
                 .reason("Internal error")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
-                .errors(ex.getStackTrace())
+                .errors(errors)
                 .build();
     }
 }
