@@ -12,6 +12,7 @@ import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPrivateUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
+import com.github.mrchcat.explorewithme.event.dto.EventUpdateDto;
 import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventAdminStateAction;
@@ -87,53 +88,7 @@ public class EventServiceImpl implements EventService {
     public EventDto updateByUser(long userId, long eventId, EventPrivateUpdateDto updateDto) {
         Event event = getById(eventId);
         isEventHasCorrectStatusToUpdate(event.getState());
-
-        LocalDateTime eventDate = updateDto.getEventDate();
-        if (eventDate != null) {
-            event.setEventDate(eventDate);
-        }
-
-        Long categoryId = updateDto.getCategory();
-        if ((categoryId != null) && (event.getCategory().getId() != categoryId)) {
-            Category category = categoryService.getById(updateDto.getCategory());
-            event.setCategory(category);
-        }
-
-        String title = (updateDto.getTitle());
-        if (title != null) {
-            event.setTitle(title);
-        }
-
-        String annotation = updateDto.getAnnotation();
-        if (annotation != null) {
-            event.setAnnotation(annotation);
-        }
-
-        String description = updateDto.getDescription();
-        if (description != null) {
-            event.setDescription(description);
-        }
-
-        Location location = updateDto.getLocation();
-        if (location != null) {
-            event.setLocation(location);
-        }
-
-        Boolean paid = updateDto.getPaid();
-        if (paid != null) {
-            event.setPaid(paid);
-        }
-
-        Integer participantLimit = updateDto.getParticipantLimit();
-        if (participantLimit != null) {
-            event.setParticipantLimit(participantLimit);
-        }
-
-        Boolean requestModeration = updateDto.getRequestModeration();
-        if (requestModeration != null) {
-            event.setRequestModeration(updateDto.getRequestModeration());
-        }
-
+        updateFields(event, updateDto, updateDto.getEventDate());
         EventUserStateAction userAction = updateDto.getStateAction();
         if (userAction != null) {
             EventState newState = switch (userAction) {
@@ -142,7 +97,6 @@ public class EventServiceImpl implements EventService {
             };
             event.setState(newState);
         }
-
         Event updatedEvent = eventRepository.save(event);
         log.info("User id={} updated event {}", userId, updatedEvent);
         return EventMapper.toDto(event, getEventViews(updatedEvent));
@@ -152,46 +106,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto updateByAdmin(long eventId, EventAdminUpdateDto updateDto) {
         Event event = getById(eventId);
-
-        LocalDateTime eventDate = updateDto.getEventDate();
-        if (eventDate != null) {
-            event.setEventDate(eventDate);
-        }
-
-        Long categoryId = updateDto.getCategory();
-        if ((categoryId != null) && (event.getCategory().getId() != categoryId)) {
-            Category category = categoryService.getById(updateDto.getCategory());
-            event.setCategory(category);
-        }
-        String title = (updateDto.getTitle());
-        if (title != null) {
-            event.setTitle(title);
-        }
-        String annotation = updateDto.getAnnotation();
-        if (annotation != null) {
-            event.setAnnotation(annotation);
-        }
-        String description = updateDto.getDescription();
-        if (description != null) {
-            event.setDescription(description);
-        }
-
-        Location location = updateDto.getLocation();
-        if (location != null) {
-            event.setLocation(location);
-        }
-        Boolean paid = updateDto.getPaid();
-        if (paid != null) {
-            event.setPaid(paid);
-        }
-        Integer participantLimit = updateDto.getParticipantLimit();
-        if (participantLimit != null) {
-            event.setParticipantLimit(participantLimit);
-        }
-        Boolean requestModeration = updateDto.getRequestModeration();
-        if (requestModeration != null) {
-            event.setRequestModeration(updateDto.getRequestModeration());
-        }
+        updateFields(event, updateDto, updateDto.getEventDate());
         EventAdminStateAction action = updateDto.getStateAction();
         if (action != null) {
             EventState oldState = event.getState();
@@ -378,21 +293,50 @@ public class EventServiceImpl implements EventService {
         return idViewMap;
     }
 
-//    public EventDto toDto(Event event) {
-//        long views = getEventViews(event);
-//        return EventMapper.toDto(event, views);
-//    }
-//
-//    public List<EventDto> toDto(List<Event> events) {
-//        Map<Long, Long> idViewMap = getEventViews(events);
-//        return EventMapper.toDto(events, idViewMap);
-//    }
+    private void updateFields(Event event, EventUpdateDto updateDto, LocalDateTime eventDate) {
 
-//
-//    public List<EventShortDto> toShortDto(List<Event> events) {
-//        Map<Long, Long> idViewMap = getEventViews(events);
-//        return EventMapper.toShortDto(events, idViewMap);
-//    }
-//
+        if (eventDate != null) {
+            event.setEventDate(eventDate);
+        }
 
+        Long categoryId = updateDto.getCategory();
+        if ((categoryId != null) && (event.getCategory().getId() != categoryId)) {
+            Category category = categoryService.getById(updateDto.getCategory());
+            event.setCategory(category);
+        }
+        String title = (updateDto.getTitle());
+        if (title != null) {
+            event.setTitle(title);
+        }
+
+        String annotation = updateDto.getAnnotation();
+        if (annotation != null) {
+            event.setAnnotation(annotation);
+        }
+
+        String description = updateDto.getDescription();
+        if (description != null) {
+            event.setDescription(description);
+        }
+
+        Location location = updateDto.getLocation();
+        if (location != null) {
+            event.setLocation(location);
+        }
+
+        Boolean paid = updateDto.getPaid();
+        if (paid != null) {
+            event.setPaid(paid);
+        }
+
+        Integer participantLimit = updateDto.getParticipantLimit();
+        if (participantLimit != null) {
+            event.setParticipantLimit(participantLimit);
+        }
+
+        Boolean requestModeration = updateDto.getRequestModeration();
+        if (requestModeration != null) {
+            event.setRequestModeration(updateDto.getRequestModeration());
+        }
+    }
 }
