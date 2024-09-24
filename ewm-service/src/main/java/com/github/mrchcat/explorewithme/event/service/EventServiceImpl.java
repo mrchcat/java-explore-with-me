@@ -1,10 +1,7 @@
 package com.github.mrchcat.explorewithme.event.service;
 
-import com.github.mrchcat.explorewithme.RequestQueryParamDto;
-import com.github.mrchcat.explorewithme.RequestStatisticDto;
-import com.github.mrchcat.explorewithme.StatHttpClient;
 import com.github.mrchcat.explorewithme.category.model.Category;
-import com.github.mrchcat.explorewithme.category.service.CategoryService;
+import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventCreateDto;
@@ -24,24 +21,18 @@ import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.model.User;
-import com.github.mrchcat.explorewithme.user.service.UserService;
+import com.github.mrchcat.explorewithme.user.repository.UserRepository;
+import com.github.mrchcat.explorewithme.utils.Views;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.github.mrchcat.explorewithme.event.model.EventAdminStateAction.PUBLISH_EVENT;
 import static com.github.mrchcat.explorewithme.event.model.EventAdminStateAction.REJECT_EVENT;
@@ -54,18 +45,16 @@ import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final UserService userService;
-    private final CategoryService categoryService;
-    private final StatHttpClient statHttpClient;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final Views views;
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
-    private static final boolean IS_UNIQUE_VIEWS = true;
-    private static final String PUBLIC_VIEW_URI = "/events";
 
     @Transactional
     @Override
     public EventDto create(long userId, EventCreateDto createDto) {
-        User initiator = userService.getById(userId);
-        Category category = categoryService.getById(createDto.getCategory());
+        User initiator = getUserById(userId);
+        Category category = getCategoryById(createDto.getCategory());
         Event event = Event.builder()
                 .title(createDto.getTitle())
                 .annotation(createDto.getAnnotation())
@@ -80,7 +69,7 @@ public class EventServiceImpl implements EventService {
                 .build();
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {}", savedEvent);
-        return EventMapper.toDto(event, getEventViews(savedEvent));
+        return EventMapper.toDto(event, views.getEventViews(savedEvent));
     }
 
     @Transactional
@@ -99,7 +88,7 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("User id={} updated event {}", userId, updatedEvent);
-        return EventMapper.toDto(event, getEventViews(updatedEvent));
+        return EventMapper.toDto(event, views.getEventViews(updatedEvent));
     }
 
     @Transactional
@@ -135,7 +124,7 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("Admin updated event {}", updatedEvent);
-        return EventMapper.toDto(updatedEvent, getEventViews(updatedEvent));
+        return EventMapper.toDto(updatedEvent, views.getEventViews(updatedEvent));
 
     }
 
@@ -146,10 +135,9 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " for user with id=" + userId + " was not found";
             return new NotFoundException(message);
         });
-        return EventMapper.toDto(event, getEventViews(event));
+        return EventMapper.toDto(event, views.getEventViews(event));
     }
 
-    @Override
     public Event getById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
             String message = "Event with id=" + eventId + " was not found";
@@ -158,34 +146,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event getByIdAndInitiator(long userId, long eventId) {
-        return eventRepository.getByIdAndInitiator(userId, eventId).orElseThrow(() -> {
-            String message = "Event with id=" + eventId + " with initiator " + userId + " was not found";
-            return new NotFoundException(message);
-        });
-    }
-
-    @Override
-    public List<Event> getById(List<Long> eventIds) {
-        return eventRepository.findAllById(eventIds);
-    }
-
-    @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        return EventMapper.toDto(events, getEventViews(events));
+        return EventMapper.toDto(events, views.getEventViews(events));
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
-        return EventMapper.toShortDto(events, getEventViews(events));
+        return EventMapper.toShortDto(events, views.getEventViews(events));
     }
 
     @Override
     public List<EventShortDto> getAllByQuery(EventPublicSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, getEventViews(events));
+        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, views.getEventViews(events));
         var sort = query.getEventSortAttribute();
         if (sort != null) {
             var comparator = switch (sort) {
@@ -204,7 +179,7 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " and status=" + state + " was not found";
             return new NotFoundException(message);
         });
-        return EventMapper.toDto(event, getEventViews(event));
+        return EventMapper.toDto(event, views.getEventViews(event));
     }
 
     @Override
@@ -238,62 +213,7 @@ public class EventServiceImpl implements EventService {
         throw new RulesViolationException(message);
     }
 
-    private String makeUri(long id) {
-        return PUBLIC_VIEW_URI + "/" + id;
-    }
-
-    private Map<String, Long> getRequestFromStat(LocalDateTime start, String[] uris) {
-        var request = RequestQueryParamDto.builder()
-                .start(start)
-                .end(LocalDateTime.now())
-                .uris(uris)
-                .unique(IS_UNIQUE_VIEWS)
-                .build();
-        try {
-            List<RequestStatisticDto> answer = statHttpClient.getRequestStatistic(request);
-            return answer.stream()
-                    .collect(Collectors.toMap(RequestStatisticDto::getUri, RequestStatisticDto::getHits));
-        } catch (IOException ex) {
-            log.error("Stat service returned an exception for request {}", request);
-            return Stream.of(uris).collect(Collectors.toMap(Function.identity(), u -> 0L));
-        }
-    }
-
-    @Override
-    public long getEventViews(Event event) {
-        LocalDateTime start = event.getCreatedOn();
-        String uri = makeUri(event.getId());
-        String[] uris = new String[]{uri};
-        var uriViewsMap = getRequestFromStat(start, uris);
-        return (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0;
-    }
-
-    @Override
-    public Map<Long, Long> getEventViews(List<Event> events) {
-        if (events.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Map<Long, String> idUrisMap = events.stream()
-                .map(Event::getId)
-                .collect(Collectors.toMap(Function.identity(), this::makeUri));
-
-        LocalDateTime start = events.stream()
-                .map(Event::getCreatedOn)
-                .min(LocalDateTime::compareTo)
-                .orElseThrow(() -> new RuntimeException("Event entity has no creation date"));
-
-        Map<String, Long> uriViewsMap = getRequestFromStat(start, idUrisMap.values().toArray(new String[0]));
-
-        Map<Long, Long> idViewMap = new HashMap<>(uriViewsMap.size());
-        for (var entry : idUrisMap.entrySet()) {
-            Long id = entry.getKey();
-            String uri = entry.getValue();
-            idViewMap.put(id, (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0);
-        }
-        return idViewMap;
-    }
-
-    private void updateFields(Event event, EventUpdateDto updateDto, LocalDateTime eventDate) {
+     private void updateFields(Event event, EventUpdateDto updateDto, LocalDateTime eventDate) {
 
         if (eventDate != null) {
             event.setEventDate(eventDate);
@@ -301,7 +221,7 @@ public class EventServiceImpl implements EventService {
 
         Long categoryId = updateDto.getCategory();
         if ((categoryId != null) && (event.getCategory().getId() != categoryId)) {
-            Category category = categoryService.getById(updateDto.getCategory());
+            Category category = getCategoryById(updateDto.getCategory());
             event.setCategory(category);
         }
         String title = (updateDto.getTitle());
@@ -338,5 +258,21 @@ public class EventServiceImpl implements EventService {
         if (requestModeration != null) {
             event.setRequestModeration(updateDto.getRequestModeration());
         }
+    }
+
+    private User getUserById(long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.orElseThrow(() -> {
+            String message = "User with id=" + userId + " was not found";
+            return new NotFoundException(message);
+        });
+    }
+
+    private Category getCategoryById(long categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        return categoryOptional.orElseThrow(() -> {
+            String message = "Category with id=" + categoryId + " was not found";
+            return new NotFoundException(message);
+        });
     }
 }

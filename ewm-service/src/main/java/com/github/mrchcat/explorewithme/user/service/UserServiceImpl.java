@@ -1,6 +1,5 @@
 package com.github.mrchcat.explorewithme.user.service;
 
-import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.user.dto.UserCreateDto;
 import com.github.mrchcat.explorewithme.user.dto.UserDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -41,14 +39,5 @@ public class UserServiceImpl implements UserService {
             users = userRepository.getSelectedUsers(userIds, from, size);
         }
         return UserMapper.toDto(users);
-    }
-
-    @Override
-    public User getById(long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        return userOptional.orElseThrow(() -> {
-            String message = "User with id=" + userId + " was not found";
-            return new NotFoundException(message);
-        });
     }
 }

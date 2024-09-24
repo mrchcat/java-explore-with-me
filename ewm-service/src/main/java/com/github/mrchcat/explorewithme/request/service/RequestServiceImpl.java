@@ -1,6 +1,7 @@
 package com.github.mrchcat.explorewithme.request.service;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
+import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
@@ -13,7 +14,7 @@ import com.github.mrchcat.explorewithme.request.model.RequestStatus;
 import com.github.mrchcat.explorewithme.request.model.RequestUpdateStatus;
 import com.github.mrchcat.explorewithme.request.repository.RequestRepository;
 import com.github.mrchcat.explorewithme.user.model.User;
-import com.github.mrchcat.explorewithme.user.service.UserService;
+import com.github.mrchcat.explorewithme.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 import static com.github.mrchcat.explorewithme.request.model.RequestStatus.CANCELED;
@@ -32,14 +34,15 @@ import static java.lang.Math.min;
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
     private final EventService eventService;
-    private final UserService userService;
 
     @Transactional
     @Override
     public RequestDto create(long userId, long eventId) {
-        User user = userService.getById(userId);
-        Event event = eventService.getById(eventId);
+        User user = getUserById(userId);
+        Event event = getEventById(eventId);
         isPublishedEvent(event);
         isRequestExists(userId, eventId);
         isRequestForOwnEvent(userId, event);
@@ -95,7 +98,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public RequestStatusUpdateResult updateStatus(long userId, long eventId, RequestStatusUpdateDto updates) {
-        Event event = eventService.getByIdAndInitiator(userId, eventId);
+        Event event = getEventByIdAndInitiator(userId, eventId);
         int freeLimit;
         if (isInfiniteLimit(event)) {
             freeLimit = Integer.MAX_VALUE;
@@ -188,5 +191,28 @@ public class RequestServiceImpl implements RequestService {
             String message = "Event request from user id=" + userId + " for event id=" + eventId + " already exists";
             throw new RulesViolationException(message);
         }
+    }
+
+    private User getUserById(long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.orElseThrow(() -> {
+            String message = "User with id=" + userId + " was not found";
+            return new NotFoundException(message);
+        });
+    }
+
+    private Event getEventById(long eventId) {
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        return eventOptional.orElseThrow(() -> {
+            String message = "Event with id=" + eventId + " was not found";
+            return new NotFoundException(message);
+        });
+    }
+
+        public Event getEventByIdAndInitiator(long userId, long eventId) {
+        return eventRepository.getByIdAndInitiator(userId, eventId).orElseThrow(() -> {
+            String message = "Event with id=" + eventId + " with initiator " + userId + " was not found";
+            return new NotFoundException(message);
+        });
     }
 }

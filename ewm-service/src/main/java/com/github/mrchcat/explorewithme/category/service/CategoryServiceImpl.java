@@ -5,7 +5,6 @@ import com.github.mrchcat.explorewithme.category.dto.CategoryDto;
 import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
-import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final EventRepository eventRepository;
 
     @Override
     public CategoryDto create(CategoryCreateDto createDto) {
@@ -57,7 +55,6 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.toDTO(getById(categoryId));
     }
 
-    @Override
     public Category getById(long categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         return categoryOptional.orElseThrow(() -> {
