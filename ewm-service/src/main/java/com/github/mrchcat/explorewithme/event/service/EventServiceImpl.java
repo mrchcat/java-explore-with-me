@@ -79,7 +79,7 @@ public class EventServiceImpl implements EventService {
                 .build();
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {}", savedEvent);
-        return toDto(savedEvent);
+        return EventMapper.toDto(event, getEventViews(savedEvent));
     }
 
     @Transactional
@@ -145,7 +145,7 @@ public class EventServiceImpl implements EventService {
 
         Event updatedEvent = eventRepository.save(event);
         log.info("User id={} updated event {}", userId, updatedEvent);
-        return toDto(updatedEvent);
+        return EventMapper.toDto(event, getEventViews(updatedEvent));
     }
 
     @Transactional
@@ -220,7 +220,8 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("Admin updated event {}", updatedEvent);
-        return toDto(updatedEvent);
+        return EventMapper.toDto(updatedEvent, getEventViews(updatedEvent));
+
     }
 
     @Override
@@ -230,7 +231,7 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " for user with id=" + userId + " was not found";
             return new NotFoundException(message);
         });
-        return toDto(event);
+        return EventMapper.toDto(event, getEventViews(event));
     }
 
     @Override
@@ -257,19 +258,19 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        return toDto(events);
+        return EventMapper.toDto(events, getEventViews(events));
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
-        return toShortDto(events);
+        return EventMapper.toShortDto(events, getEventViews(events));
     }
 
     @Override
     public List<EventShortDto> getAllByQuery(EventPublicSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        List<EventShortDto> eventShortDtoList = toShortDto(events);
+        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, getEventViews(events));
         var sort = query.getEventSortAttribute();
         if (sort != null) {
             var comparator = switch (sort) {
@@ -288,7 +289,7 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " and status=" + state + " was not found";
             return new NotFoundException(message);
         });
-        return toDto(event);
+        return EventMapper.toDto(event, getEventViews(event));
     }
 
     @Override
@@ -343,6 +344,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    @Override
     public long getEventViews(Event event) {
         LocalDateTime start = event.getCreatedOn();
         String uri = makeUri(event.getId());
@@ -351,6 +353,7 @@ public class EventServiceImpl implements EventService {
         return (uriViewsMap.containsKey(uri)) ? uriViewsMap.get(uri) : 0;
     }
 
+    @Override
     public Map<Long, Long> getEventViews(List<Event> events) {
         if (events.isEmpty()) {
             return Collections.emptyMap();
@@ -375,21 +378,21 @@ public class EventServiceImpl implements EventService {
         return idViewMap;
     }
 
-    @Override
-    public EventDto toDto(Event event) {
-        long views = getEventViews(event);
-        return EventMapper.toDto(event, views);
-    }
+//    public EventDto toDto(Event event) {
+//        long views = getEventViews(event);
+//        return EventMapper.toDto(event, views);
+//    }
+//
+//    public List<EventDto> toDto(List<Event> events) {
+//        Map<Long, Long> idViewMap = getEventViews(events);
+//        return EventMapper.toDto(events, idViewMap);
+//    }
 
-    @Override
-    public List<EventDto> toDto(List<Event> events) {
-        Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toDto(events, idViewMap);
-    }
+//
+//    public List<EventShortDto> toShortDto(List<Event> events) {
+//        Map<Long, Long> idViewMap = getEventViews(events);
+//        return EventMapper.toShortDto(events, idViewMap);
+//    }
+//
 
-    @Override
-    public List<EventShortDto> toShortDto(List<Event> events) {
-        Map<Long, Long> idViewMap = getEventViews(events);
-        return EventMapper.toShortDto(events, idViewMap);
-    }
 }

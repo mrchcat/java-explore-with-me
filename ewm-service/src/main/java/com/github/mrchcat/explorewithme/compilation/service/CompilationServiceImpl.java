@@ -7,6 +7,7 @@ import com.github.mrchcat.explorewithme.compilation.mapper.CompilationMapper;
 import com.github.mrchcat.explorewithme.compilation.model.Compilation;
 import com.github.mrchcat.explorewithme.compilation.repository.CompilationRepository;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
+import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
@@ -44,7 +45,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.info("Compilation created {}", savedCompilation);
-        List<EventShortDto> eventShortDtos = eventService.toShortDto(newEvents);
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(newEvents, eventService.getEventViews(newEvents));
         return CompilationMapper.toDto(savedCompilation, eventShortDtos);
     }
 
@@ -75,14 +76,14 @@ public class CompilationServiceImpl implements CompilationService {
         }
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.info("Compilation updated to {}", savedCompilation);
-        List<EventShortDto> eventShortDtos = eventService.toShortDto(events);
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, eventService.getEventViews(events));
         return CompilationMapper.toDto(savedCompilation, eventShortDtos);
     }
 
     public Compilation getById(long compilationId) {
         Optional<Compilation> compilationOptional = compilationRepository.findById(compilationId);
         return compilationOptional.orElseThrow(() -> {
-            String message = "Compilation with id="+compilationId+" was not found";
+            String message = "Compilation with id=" + compilationId + " was not found";
             return new NotFoundException(message);
         });
     }
@@ -98,7 +99,7 @@ public class CompilationServiceImpl implements CompilationService {
         return compilations.stream()
                 .map(comp -> {
                     List<Event> events = comp.getEvents().stream().toList();
-                    List<EventShortDto> eventShortDtos = eventService.toShortDto(events);
+                    List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, eventService.getEventViews(events));
                     return CompilationMapper.toDto(comp, eventShortDtos);
                 }).toList();
     }
@@ -107,7 +108,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto getDtoById(long compilationId) {
         Compilation compilation = getById(compilationId);
         List<Event> events = compilation.getEvents().stream().toList();
-        List<EventShortDto> eventShortDtos = eventService.toShortDto(events);
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, eventService.getEventViews(events));
         return CompilationMapper.toDto(compilation, eventShortDtos);
     }
 }

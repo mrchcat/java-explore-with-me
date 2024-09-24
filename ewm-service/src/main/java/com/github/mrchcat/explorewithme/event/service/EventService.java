@@ -11,6 +11,7 @@ import com.github.mrchcat.explorewithme.event.model.Event;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EventService {
 
@@ -42,9 +43,7 @@ public interface EventService {
 
     void incrementConfirmedRequest(Event event);
 
-    EventDto toDto(Event event);
+    long getEventViews(Event event);
 
-    List<EventDto> toDto(List<Event> events);
-
-    List<EventShortDto> toShortDto(List<Event> events);
+    Map<Long, Long> getEventViews(List<Event> events);
 }
