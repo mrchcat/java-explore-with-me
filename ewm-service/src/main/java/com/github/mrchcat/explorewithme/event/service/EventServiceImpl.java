@@ -20,7 +20,7 @@ import com.github.mrchcat.explorewithme.event.model.EventUserStateAction;
 import com.github.mrchcat.explorewithme.event.model.Location;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
-import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.service.UserService;
@@ -203,7 +203,7 @@ public class EventServiceImpl implements EventService {
                         yield PUBLISHED;
                     }
                     case CANCELED, PUBLISHED -> {
-                        String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
+                        String message = "Cannot " + action + " the event because it's not in the right state: " + oldState;
                         throw new DataIntegrityException(message);
                     }
                 };
@@ -211,7 +211,7 @@ public class EventServiceImpl implements EventService {
                 newState = switch (oldState) {
                     case PENDING -> CANCELED;
                     case CANCELED, PUBLISHED -> {
-                        String message = String.format("Cannot %s the event because it's not in the right state: %s", action, oldState);
+                        String message = "Cannot " + action + " the event because it's not in the right state: " + oldState;
                         throw new DataIntegrityException(message);
                     }
                 };
@@ -227,8 +227,8 @@ public class EventServiceImpl implements EventService {
     public EventDto getDtoByIdAndUser(long userId, long eventId) {
         Optional<Event> eventOptional = eventRepository.getByIdByUserId(userId, eventId);
         Event event = eventOptional.orElseThrow(() -> {
-            String message = String.format("Event with id=%d for user with id=%d was not found", eventId, userId);
-            return new ObjectNotFoundException(message);
+            String message = "Event with id=" + eventId + " for user with id=" + userId + " was not found";
+            return new NotFoundException(message);
         });
         return toDto(event);
     }
@@ -236,16 +236,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
-            String message = String.format("Event with id=%d was not found", eventId);
-            return new ObjectNotFoundException(message);
+            String message = "Event with id=" + eventId + " was not found";
+            return new NotFoundException(message);
         });
     }
 
     @Override
     public Event getByIdAndInitiator(long userId, long eventId) {
         return eventRepository.getByIdAndInitiator(userId, eventId).orElseThrow(() -> {
-            String message = String.format("Event with id=%d with initiator %d was not found", eventId, userId);
-            return new ObjectNotFoundException(message);
+            String message = "Event with id=" + eventId + " with initiator " + userId + " was not found";
+            return new NotFoundException(message);
         });
     }
 
@@ -285,8 +285,8 @@ public class EventServiceImpl implements EventService {
     public EventDto getDtoById(long eventId) {
         EventState state = PUBLISHED;
         Event event = eventRepository.getByIdAndStatus(eventId, state).orElseThrow(() -> {
-            String message = String.format("Event with id=%d and status=%s was not found", eventId, state);
-            return new ObjectNotFoundException(message);
+            String message = "Event with id=" + eventId + " and status=" + state + " was not found";
+            return new NotFoundException(message);
         });
         return toDto(event);
     }
@@ -318,7 +318,7 @@ public class EventServiceImpl implements EventService {
                 return;
             }
         }
-        String message = String.format("Only %s can be changed", PERMITTED_STATUS);
+        String message = "Only " + PERMITTED_STATUS + " can be changed";
         throw new RulesViolationException(message);
     }
 

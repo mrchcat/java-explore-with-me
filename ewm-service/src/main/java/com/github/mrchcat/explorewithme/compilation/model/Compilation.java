@@ -42,7 +42,7 @@ public class Compilation {
     @Column(name = "pinned", nullable = false)
     private Boolean isPinned = false;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"))

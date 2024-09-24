@@ -30,7 +30,7 @@ public class ErrorHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; "));
-        log.error(ex.getMessage());
+        log.info(ex.getMessage());
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
@@ -83,8 +83,8 @@ public class ErrorHandler {
 
 
     @ResponseStatus(NOT_FOUND)
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ApiError handleObjectNotFoundException(ObjectNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ApiError handleObjectNotFoundException(NotFoundException ex) {
         log.info(ex.getMessage());
         return ApiError.builder()
                 .status(NOT_FOUND)
@@ -98,7 +98,7 @@ public class ErrorHandler {
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiError handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException ex) {
-        log.error(ex.getMessage());
+        log.info(ex.getMessage());
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")
@@ -111,7 +111,7 @@ public class ErrorHandler {
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(RulesViolationException.class)
     public ApiError handleRulesViolationExceptions(RulesViolationException ex) {
-        log.error(ex.getMessage());
+        log.info(ex.getMessage());
         return ApiError.builder()
                 .status(CONFLICT)
                 .reason("For the requested operation the conditions are not met")
@@ -124,7 +124,7 @@ public class ErrorHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ApiError handleMissingServletRequestParameterException(Exception ex) {
-        log.error(ex.toString());
+        log.info(ex.toString());
         return ApiError.builder()
                 .status(BAD_REQUEST)
                 .reason("Incorrectly made request.")

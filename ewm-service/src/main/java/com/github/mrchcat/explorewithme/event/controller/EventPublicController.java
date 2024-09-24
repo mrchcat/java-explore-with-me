@@ -99,7 +99,7 @@ public class EventPublicController {
 
     private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
         if (start != null && finish != null && finish.isBefore(start)) {
-            String message = String.format("The dates violate order: %s must be before %s", start, finish);
+            String message = "The dates violate order: " + start + " must be before " + finish;
             throw new ArgumentNotValidException(message);
         }
     }

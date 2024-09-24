@@ -1,6 +1,6 @@
 package com.github.mrchcat.explorewithme.user.service;
 
-import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.user.dto.UserCreateDto;
 import com.github.mrchcat.explorewithme.user.dto.UserDto;
 import com.github.mrchcat.explorewithme.user.mapper.UserMapper;
@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
     public User getById(long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         return userOptional.orElseThrow(() -> {
-            String message = String.format("User with id=%d was not found", userId);
-            return new ObjectNotFoundException(message);
+            String message = "User with id=" + userId + " was not found";
+            return new NotFoundException(message);
         });
     }
 }

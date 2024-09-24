@@ -6,7 +6,7 @@ import com.github.mrchcat.explorewithme.category.mapper.CategoryMapper;
 import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.category.repository.CategoryRepository;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
-import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto create(CategoryCreateDto createDto) {
-            Category savedCategory = categoryRepository.save(CategoryMapper.toEntity(createDto));
-            log.info("{} created", savedCategory);
-            return CategoryMapper.toDTO(savedCategory);
+        Category savedCategory = categoryRepository.save(CategoryMapper.toEntity(createDto));
+        log.info("{} created", savedCategory);
+        return CategoryMapper.toDTO(savedCategory);
     }
 
     @Override
@@ -61,8 +61,8 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getById(long categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         return categoryOptional.orElseThrow(() -> {
-            String message = String.format("Category with id=%d was not found", categoryId);
-            return new ObjectNotFoundException(message);
+            String message = "Category with id=" + categoryId + " was not found";
+            return new NotFoundException(message);
         });
     }
 }

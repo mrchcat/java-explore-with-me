@@ -9,7 +9,7 @@ import com.github.mrchcat.explorewithme.compilation.repository.CompilationReposi
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
-import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -82,8 +82,8 @@ public class CompilationServiceImpl implements CompilationService {
     public Compilation getById(long compilationId) {
         Optional<Compilation> compilationOptional = compilationRepository.findById(compilationId);
         return compilationOptional.orElseThrow(() -> {
-            String message = String.format("Compilation with id=%d was not found", compilationId);
-            return new ObjectNotFoundException(message);
+            String message = "Compilation with id="+compilationId+" was not found";
+            return new NotFoundException(message);
         });
     }
 

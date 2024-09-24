@@ -2,7 +2,7 @@ package com.github.mrchcat.explorewithme.request.service;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.service.EventService;
-import com.github.mrchcat.explorewithme.exception.ObjectNotFoundException;
+import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.request.dto.RequestDto;
 import com.github.mrchcat.explorewithme.request.dto.RequestStatusUpdateDto;
@@ -87,8 +87,8 @@ public class RequestServiceImpl implements RequestService {
 
     private Request getByIdByUser(long userId, long requestId) {
         return requestRepository.getByIdByRequester(userId, requestId).orElseThrow(() -> {
-            String message = String.format("Request with id=%d for user id=%d was not found", requestId, userId);
-            return new ObjectNotFoundException(message);
+            String message = "Request with id=" + requestId + " for user id=" + userId + " was not found";
+            return new NotFoundException(message);
         });
     }
 
@@ -144,8 +144,7 @@ public class RequestServiceImpl implements RequestService {
 
     private void isRequestForOwnEvent(long userId, Event event) {
         if (event.getInitiator().getId() == userId) {
-            String message = String.format("User id=%d can not make request for it's own event id=%d",
-                    userId, event.getId());
+            String message = "User id=" + userId + " can not make request for it's own event id=" + event.getId();
             throw new RulesViolationException(message);
         }
     }
@@ -171,23 +170,22 @@ public class RequestServiceImpl implements RequestService {
     private void isRequestCorrespondEvent(Event event, List<Request> requests) {
         for (Request r : requests) {
             if (r.getEvent().getId() != event.getId()) {
-                String message = String.format("Request id=%s does not correspond event id=%s", r, event);
-                throw new ObjectNotFoundException(message);
+                String message = "Request id=" + r + " does not correspond event id=" + event;
+                throw new NotFoundException(message);
             }
         }
     }
 
     public void isPending(Request request) {
         if (!request.getStatus().equals(RequestStatus.PENDING)) {
-            String message = String.format("Request status must be Pending for request %s", request);
+            String message = "Request status must be Pending for request " + request;
             throw new RulesViolationException(message);
         }
     }
 
-        public void isRequestExists(long userId, long eventId) {
+    public void isRequestExists(long userId, long eventId) {
         if (requestRepository.exists(userId, eventId)) {
-            String message = String.format("Event request from user id=%d for event id=%d already exists",
-                    userId, eventId);
+            String message = "Event request from user id=" + userId + " for event id=" + eventId + " already exists";
             throw new RulesViolationException(message);
         }
     }
