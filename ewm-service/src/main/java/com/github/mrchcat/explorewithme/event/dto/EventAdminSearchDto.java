@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EventAdminSearchDto {
+public class EventAdminSearchDto extends EventSearchDto{
     List<Long> userIds;
     List<EventState> states;
     List<Long> categoryIds;

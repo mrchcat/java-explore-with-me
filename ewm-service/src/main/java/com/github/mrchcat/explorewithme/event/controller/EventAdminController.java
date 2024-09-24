@@ -5,7 +5,6 @@ import com.github.mrchcat.explorewithme.event.dto.EventAdminUpdateDto;
 import com.github.mrchcat.explorewithme.event.dto.EventDto;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.service.EventService;
-import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.github.mrchcat.explorewithme.event.dto.EventSearchDto.isCorrectDateOrder;
 
 @RestController
 @RequestMapping("/admin/events")
@@ -62,13 +63,6 @@ public class EventAdminController {
                 .pageable(PageRequest.of(from > 0 ? from / size : 0, size))
                 .build();
         return eventService.getAllByQuery(searchDto);
-    }
-
-    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
-        if (start != null && finish != null && finish.isBefore(start)) {
-            String message = "The dates violate order: " + start + " must be before " + finish;
-            throw new ArgumentNotValidException(message);
-        }
     }
 }
 

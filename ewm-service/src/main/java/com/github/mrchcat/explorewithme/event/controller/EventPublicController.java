@@ -7,7 +7,6 @@ import com.github.mrchcat.explorewithme.event.dto.EventPublicSearchDto;
 import com.github.mrchcat.explorewithme.event.dto.EventShortDto;
 import com.github.mrchcat.explorewithme.event.model.EventSortAttribute;
 import com.github.mrchcat.explorewithme.event.service.EventService;
-import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -28,6 +27,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.github.mrchcat.explorewithme.event.dto.EventSearchDto.isCorrectDateOrder;
 
 @RestController
 @RequestMapping("/events")
@@ -96,11 +97,4 @@ public class EventPublicController {
         log.info("создали запрос {}", statRequest);
         statHttpClient.addRequest(statRequest);
     }
-
-    private void isCorrectDateOrder(LocalDateTime start, LocalDateTime finish) {
-        if (start != null && finish != null && finish.isBefore(start)) {
-            String message = "The dates violate order: " + start + " must be before " + finish;
-            throw new ArgumentNotValidException(message);
-        }
-    }
-}
+ }

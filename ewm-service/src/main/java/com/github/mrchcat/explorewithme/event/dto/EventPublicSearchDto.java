@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EventPublicSearchDto {
+public class EventPublicSearchDto extends EventSearchDto {
     String text;
     List<Long> categoryIds;
     Boolean paid;
@@ -31,4 +31,5 @@ public class EventPublicSearchDto {
     List<EventState> states = List.of(EventState.PUBLISHED);
     Pageable pageable;
     EventSortAttribute eventSortAttribute;
+
 }
