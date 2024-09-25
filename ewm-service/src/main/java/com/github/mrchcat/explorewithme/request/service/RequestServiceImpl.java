@@ -2,7 +2,6 @@ package com.github.mrchcat.explorewithme.request.service;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
-import com.github.mrchcat.explorewithme.event.service.EventService;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.request.dto.RequestDto;
@@ -36,7 +35,6 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-    private final EventService eventService;
 
     @Transactional
     @Override
@@ -53,7 +51,7 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         if (canConfirmAllRequests(event)) {
             requestToSave.setStatus(CONFIRMED);
-            eventService.incrementConfirmedRequest(event);
+            incrementConfirmedRequest(event);
         } else {
             requestToSave.setStatus(RequestStatus.PENDING);
         }
@@ -70,7 +68,7 @@ public class RequestServiceImpl implements RequestService {
         request.setStatus(CANCELED);
         Request savedRequest = requestRepository.save(request);
         if (oldStatus.equals(CONFIRMED)) {
-            eventService.decrementConfirmedRequest(request.getEvent());
+            decrementConfirmedRequest(request.getEvent());
         }
         log.info("User id={} canceled request {}", userId, savedRequest);
         return RequestMapper.toDto(savedRequest);
@@ -113,7 +111,7 @@ public class RequestServiceImpl implements RequestService {
         List<Request> rejectedRequests = new ArrayList<>();
         if (updates.getStatus().equals(RequestUpdateStatus.CONFIRMED)) {
             int allowed = min(requests.size(), freeLimit);
-            eventService.incrementConfirmedRequest(event, allowed);
+            incrementConfirmedRequest(event, allowed);
             for (int i = 0; i < allowed; i++) {
                 Request r = requests.get(i);
                 isPending(r);
@@ -214,5 +212,23 @@ public class RequestServiceImpl implements RequestService {
             String message = "Event with id=" + eventId + " with initiator " + userId + " was not found";
             return new NotFoundException(message);
         });
+    }
+
+    private void decrementConfirmedRequest(Event event) {
+        int oldConfirmedRequests = event.getConfirmedRequests();
+        event.setConfirmedRequests(oldConfirmedRequests - 1);
+        log.info("Event {} was decremented by 1", event);
+        eventRepository.save(event);
+    }
+
+    private void incrementConfirmedRequest(Event event, int number) {
+        int oldConfirmedRequests = event.getConfirmedRequests();
+        event.setConfirmedRequests(oldConfirmedRequests + number);
+        log.info("Event {} was incremented by {}", event, number);
+        eventRepository.save(event);
+    }
+
+    private void incrementConfirmedRequest(Event event) {
+        incrementConfirmedRequest(event, 1);
     }
 }

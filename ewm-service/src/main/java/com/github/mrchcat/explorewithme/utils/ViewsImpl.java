@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class ViewsImpl implements Views{
+public class ViewsImpl implements Views {
 
     private final StatHttpClient statHttpClient;
     private static final boolean IS_UNIQUE_VIEWS = true;

@@ -182,27 +182,6 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toDto(event, views.getEventViews(event));
     }
 
-    @Override
-    public void decrementConfirmedRequest(Event event) {
-        int oldConfirmedRequests = event.getConfirmedRequests();
-        event.setConfirmedRequests(oldConfirmedRequests - 1);
-        log.info("Event {} was decremented by 1", event);
-        eventRepository.save(event);
-    }
-
-    @Override
-    public void incrementConfirmedRequest(Event event, int number) {
-        int oldConfirmedRequests = event.getConfirmedRequests();
-        event.setConfirmedRequests(oldConfirmedRequests + number);
-        log.info("Event {} was incremented by {}", event, number);
-        eventRepository.save(event);
-    }
-
-    @Override
-    public void incrementConfirmedRequest(Event event) {
-        incrementConfirmedRequest(event, 1);
-    }
-
     private void isEventHasCorrectStatusToUpdate(EventState state) {
         for (EventState allowed : PERMITTED_STATUS) {
             if (state.equals(allowed)) {
