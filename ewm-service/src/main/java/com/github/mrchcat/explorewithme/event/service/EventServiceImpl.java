@@ -22,7 +22,8 @@ import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
-import com.github.mrchcat.explorewithme.utils.Views;
+import com.github.mrchcat.explorewithme.utils.participant.service.Participants;
+import com.github.mrchcat.explorewithme.utils.views.Views;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final Views views;
+    private final Participants participants;
     private static final List<EventState> PERMITTED_STATUS = List.of(CANCELED, PENDING);
 
     @Transactional
@@ -69,7 +71,7 @@ public class EventServiceImpl implements EventService {
                 .build();
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {}", savedEvent);
-        return EventMapper.toDto(event, views.getEventViews(savedEvent));
+        return EventMapper.toDto(event, views.getEventViews(savedEvent),participants.getEventParticipants(savedEvent));
     }
 
     @Transactional
@@ -88,7 +90,7 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("User id={} updated event {}", userId, updatedEvent);
-        return EventMapper.toDto(event, views.getEventViews(updatedEvent));
+        return EventMapper.toDto(event, views.getEventViews(updatedEvent),participants.getEventParticipants(updatedEvent));
     }
 
     @Transactional
@@ -124,7 +126,7 @@ public class EventServiceImpl implements EventService {
         }
         Event updatedEvent = eventRepository.save(event);
         log.info("Admin updated event {}", updatedEvent);
-        return EventMapper.toDto(updatedEvent, views.getEventViews(updatedEvent));
+        return EventMapper.toDto(updatedEvent, views.getEventViews(updatedEvent),participants.getEventParticipants(updatedEvent));
 
     }
 
@@ -135,7 +137,7 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " for user with id=" + userId + " was not found";
             return new NotFoundException(message);
         });
-        return EventMapper.toDto(event, views.getEventViews(event));
+        return EventMapper.toDto(event, views.getEventViews(event),participants.getEventParticipants(event));
     }
 
     public Event getById(long eventId) {
@@ -148,19 +150,19 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDto> getAllByQuery(EventAdminSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        return EventMapper.toDto(events, views.getEventViews(events));
+        return EventMapper.toDto(events, views.getEventViews(events),participants.getEventParticipants(events));
     }
 
     @Override
     public List<EventShortDto> getAllShortDtoByUser(long userId, Pageable pageable) {
         List<Event> events = eventRepository.getAllByUserId(userId, pageable);
-        return EventMapper.toShortDto(events, views.getEventViews(events));
+        return EventMapper.toShortDto(events, views.getEventViews(events),participants.getEventParticipants(events));
     }
 
     @Override
     public List<EventShortDto> getAllByQuery(EventPublicSearchDto query) {
         List<Event> events = eventRepository.getAllEventByQuery(query);
-        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, views.getEventViews(events));
+        List<EventShortDto> eventShortDtoList = EventMapper.toShortDto(events, views.getEventViews(events),participants.getEventParticipants(events));
         var sort = query.getEventSortAttribute();
         if (sort != null) {
             var comparator = switch (sort) {
@@ -179,7 +181,7 @@ public class EventServiceImpl implements EventService {
             String message = "Event with id=" + eventId + " and status=" + state + " was not found";
             return new NotFoundException(message);
         });
-        return EventMapper.toDto(event, views.getEventViews(event));
+        return EventMapper.toDto(event, views.getEventViews(event),participants.getEventParticipants(event));
     }
 
     private void isEventHasCorrectStatusToUpdate(EventState state) {

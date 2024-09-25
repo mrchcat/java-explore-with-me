@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class EventMapper {
 
-     private static EventDto toDtoExclViews(Event e) {
+    private static EventDto toDtoExclViewsRequests(Event e) {
         CategoryDto categoryDto = CategoryMapper.toDTO(e.getCategory());
         UserShortDto userShortDto = UserMapper.toShortDto(e.getInitiator());
         return EventDto.builder()
@@ -26,7 +26,6 @@ public class EventMapper {
                 .eventDate(e.getEventDate())
                 .location(e.getLocation())
                 .paid(e.isPaid())
-                .confirmedRequests(e.getConfirmedRequests())
                 .participantLimit(e.getParticipantLimit())
                 .requestModeration(e.isRequestModeration())
                 .createdOn(e.getCreatedOn())
@@ -36,16 +35,20 @@ public class EventMapper {
                 .build();
     }
 
-    public static EventDto toDto(Event e, long views) {
-        EventDto eventDto = toDtoExclViews(e);
+    public static EventDto toDto(Event e, long views, int participants) {
+        EventDto eventDto = toDtoExclViewsRequests(e);
         eventDto.setViews(views);
+        eventDto.setConfirmedRequests(participants);
         return eventDto;
     }
 
-    public static List<EventDto> toDto(List<Event> events, Map<Long, Long> idViewMap) {
+    public static List<EventDto> toDto(List<Event> events,
+                                       Map<Long, Long> idViewMap,
+                                       Map<Long, Integer> idParticipantMap) {
         return events.stream()
-                .map(EventMapper::toDtoExclViews)
+                .map(EventMapper::toDtoExclViewsRequests)
                 .peek(dto -> dto.setViews(idViewMap.get(dto.getId())))
+                .peek(dto -> dto.setConfirmedRequests(idParticipantMap.get(dto.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -58,16 +61,18 @@ public class EventMapper {
                 .annotation(e.getAnnotation())
                 .category(categoryDto)
                 .eventDate(e.getEventDate())
-                .confirmedRequests(e.getConfirmedRequests())
                 .paid(e.isPaid())
                 .initiator(userShortDto)
                 .build();
     }
 
-    public static List<EventShortDto> toShortDto(List<Event> events, Map<Long, Long> idViewMap) {
+    public static List<EventShortDto> toShortDto(List<Event> events,
+                                                 Map<Long, Long> idViewMap,
+                                                 Map<Long, Integer> idParticipantMap) {
         return events.stream()
                 .map(EventMapper::toShortDtoExclViews)
                 .peek(dto -> dto.setViews(idViewMap.get(dto.getId())))
+                .peek(dto -> dto.setConfirmedRequests(idParticipantMap.get(dto.getId())))
                 .collect(Collectors.toList());
     }
 }

@@ -11,7 +11,8 @@ import com.github.mrchcat.explorewithme.event.mapper.EventMapper;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
-import com.github.mrchcat.explorewithme.utils.Views;
+import com.github.mrchcat.explorewithme.utils.participant.service.Participants;
+import com.github.mrchcat.explorewithme.utils.views.Views;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
     private final Views views;
+    private final Participants participants;
 
     @Override
     public CompilationDto create(CompilationCreateDto createDto) {
@@ -47,7 +49,9 @@ public class CompilationServiceImpl implements CompilationService {
         }
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.info("Compilation created {}", savedCompilation);
-        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(newEvents, views.getEventViews(newEvents));
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(newEvents,
+                views.getEventViews(newEvents),
+                participants.getEventParticipants(newEvents));
         return CompilationMapper.toDto(savedCompilation, eventShortDtos);
     }
 
@@ -78,7 +82,9 @@ public class CompilationServiceImpl implements CompilationService {
         }
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.info("Compilation updated to {}", savedCompilation);
-        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, views.getEventViews(events));
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events,
+                views.getEventViews(events),
+                participants.getEventParticipants(events));
         return CompilationMapper.toDto(savedCompilation, eventShortDtos);
     }
 
@@ -101,7 +107,9 @@ public class CompilationServiceImpl implements CompilationService {
         return compilations.stream()
                 .map(comp -> {
                     List<Event> events = comp.getEvents().stream().toList();
-                    List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, views.getEventViews(events));
+                    List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events,
+                            views.getEventViews(events),
+                            participants.getEventParticipants(events));
                     return CompilationMapper.toDto(comp, eventShortDtos);
                 }).toList();
     }
@@ -110,7 +118,9 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto getDtoById(long compilationId) {
         Compilation compilation = getById(compilationId);
         List<Event> events = compilation.getEvents().stream().toList();
-        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events, views.getEventViews(events));
+        List<EventShortDto> eventShortDtos = EventMapper.toShortDto(events,
+                views.getEventViews(events),
+                participants.getEventParticipants(events));
         return CompilationMapper.toDto(compilation, eventShortDtos);
     }
 }

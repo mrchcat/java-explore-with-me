@@ -65,9 +65,6 @@ public class Event {
     @Column(name = "participant_limit")
     private int participantLimit;
 
-    @Column(name = "confirmed_requests")
-    private int confirmedRequests;
-
     @Column(name = "request_moderation")
     @Builder.Default
     private boolean requestModeration = true;

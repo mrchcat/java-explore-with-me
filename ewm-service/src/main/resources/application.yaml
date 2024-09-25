@@ -1,14 +1,6 @@
 server:
   port: 8080
 
-#  TODO удалить
-statserver:
-  url: http://localhost:9090
-
-#TODO удалить
-app:
-  name: ewm-main-service
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5435/ewm-service

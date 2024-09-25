@@ -38,4 +38,5 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             WHERE e.initiator.id=:userId AND e.id=:eventId
             """)
     List<Request> getByInitiatorAndEvent(long userId, long eventId);
+
 }

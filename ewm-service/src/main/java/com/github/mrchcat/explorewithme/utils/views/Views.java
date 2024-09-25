@@ -1,4 +1,4 @@
-package com.github.mrchcat.explorewithme.utils;
+package com.github.mrchcat.explorewithme.utils.views;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
 

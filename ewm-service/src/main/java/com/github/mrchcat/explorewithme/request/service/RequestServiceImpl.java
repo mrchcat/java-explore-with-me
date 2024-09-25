@@ -14,6 +14,7 @@ import com.github.mrchcat.explorewithme.request.model.RequestUpdateStatus;
 import com.github.mrchcat.explorewithme.request.repository.RequestRepository;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
+import com.github.mrchcat.explorewithme.utils.participant.service.Participants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final Participants participants;
 
     @Transactional
     @Override
@@ -51,7 +53,6 @@ public class RequestServiceImpl implements RequestService {
                 .build();
         if (canConfirmAllRequests(event)) {
             requestToSave.setStatus(CONFIRMED);
-            incrementConfirmedRequest(event);
         } else {
             requestToSave.setStatus(RequestStatus.PENDING);
         }
@@ -67,9 +68,6 @@ public class RequestServiceImpl implements RequestService {
         RequestStatus oldStatus = request.getStatus();
         request.setStatus(CANCELED);
         Request savedRequest = requestRepository.save(request);
-        if (oldStatus.equals(CONFIRMED)) {
-            decrementConfirmedRequest(request.getEvent());
-        }
         log.info("User id={} canceled request {}", userId, savedRequest);
         return RequestMapper.toDto(savedRequest);
     }
@@ -101,7 +99,7 @@ public class RequestServiceImpl implements RequestService {
         if (isInfiniteLimit(event)) {
             freeLimit = Integer.MAX_VALUE;
         } else {
-            freeLimit = event.getParticipantLimit() - event.getConfirmedRequests();
+            freeLimit = event.getParticipantLimit() - participants.getEventParticipants(event);
             isFreeLimitEnough(event);
         }
         List<Request> requests = requestRepository.findAllById(updates.getRequestIds());
@@ -111,7 +109,6 @@ public class RequestServiceImpl implements RequestService {
         List<Request> rejectedRequests = new ArrayList<>();
         if (updates.getStatus().equals(RequestUpdateStatus.CONFIRMED)) {
             int allowed = min(requests.size(), freeLimit);
-            incrementConfirmedRequest(event, allowed);
             for (int i = 0; i < allowed; i++) {
                 Request r = requests.get(i);
                 isPending(r);
@@ -158,7 +155,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private void isFreeLimitEnough(Event event) {
-        if (!isInfiniteLimit(event) && (event.getParticipantLimit() - event.getConfirmedRequests() <= 0)) {
+        if (!isInfiniteLimit(event) && (event.getParticipantLimit() - participants.getEventParticipants(event) <= 0)) {
             String message = "The participant limit has been reached";
             throw new RulesViolationException(message);
         }
@@ -207,28 +204,10 @@ public class RequestServiceImpl implements RequestService {
         });
     }
 
-        public Event getEventByIdAndInitiator(long userId, long eventId) {
+    public Event getEventByIdAndInitiator(long userId, long eventId) {
         return eventRepository.getByIdAndInitiator(userId, eventId).orElseThrow(() -> {
             String message = "Event with id=" + eventId + " with initiator " + userId + " was not found";
             return new NotFoundException(message);
         });
-    }
-
-    private void decrementConfirmedRequest(Event event) {
-        int oldConfirmedRequests = event.getConfirmedRequests();
-        event.setConfirmedRequests(oldConfirmedRequests - 1);
-        log.info("Event {} was decremented by 1", event);
-        eventRepository.save(event);
-    }
-
-    private void incrementConfirmedRequest(Event event, int number) {
-        int oldConfirmedRequests = event.getConfirmedRequests();
-        event.setConfirmedRequests(oldConfirmedRequests + number);
-        log.info("Event {} was incremented by {}", event, number);
-        eventRepository.save(event);
-    }
-
-    private void incrementConfirmedRequest(Event event) {
-        incrementConfirmedRequest(event, 1);
     }
 }
