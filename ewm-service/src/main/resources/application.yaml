@@ -2,12 +2,6 @@ server:
   port: 8080
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5435/ewm-service
-    username: mcat
-    password: 54321
-    driverClassName: org.postgresql.Driver
-
   sql:
     init.mode: always
   jpa:
