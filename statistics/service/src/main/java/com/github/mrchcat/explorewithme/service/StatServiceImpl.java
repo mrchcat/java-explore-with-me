@@ -6,6 +6,7 @@ import com.github.mrchcat.explorewithme.RequestStatisticDto;
 import com.github.mrchcat.explorewithme.mapper.RequestMapper;
 import com.github.mrchcat.explorewithme.model.Request;
 import com.github.mrchcat.explorewithme.repository.StatRepository;
+import com.github.mrchcat.explorewithme.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class StatServiceImpl implements StatService {
     @Override
     @Transactional(readOnly = true)
     public List<RequestStatisticDto> getRequestStatistic(RequestQueryParamDto queryParams) {
+        Validator.validate(queryParams);
         List<RequestStatisticDto> statisticDtos = statRepository.getRequestStatistic(queryParams);
         log.info("{}", statisticDtos);
         return statisticDtos;
