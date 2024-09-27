@@ -19,9 +19,9 @@ public class CommentAdminUpdateDto {
     private CommentState state;
     private Boolean editable;
 
-    public void notNullAll(){
-        if(state==null && editable==null){
-            String message="Some of the update fields must have content";
+    public void notNullAll() {
+        if (state == null && editable == null) {
+            String message = "Some of the update fields must have content";
             throw new ArgumentNotValidException(message);
         }
 

@@ -4,6 +4,7 @@ import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,5 +20,7 @@ public interface CommentService {
     CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto);
 
     void delete(long commentId);
+
+    List<CommentDto> getAllForPublic(long eventId, Pageable pageable);
 
 }

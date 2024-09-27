@@ -65,7 +65,6 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto cancel(long userId, long requestId) {
         Request request = getByIdByUser(userId, requestId);
-        RequestStatus oldStatus = request.getStatus();
         request.setStatus(CANCELED);
         Request savedRequest = requestRepository.save(request);
         log.info("User id={} canceled request {}", userId, savedRequest);

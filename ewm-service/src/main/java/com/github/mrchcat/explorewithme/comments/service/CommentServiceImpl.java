@@ -16,6 +16,7 @@ import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +80,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<CommentDto> getAllForPublic(long eventId, Pageable pageable) {
+        var comments = commentRepository.findAliveByEvent(eventId, pageable);
+        return CommentMapper.toDto(comments);
+    }
+
+    @Override
     public CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto) {
         Comment comment = getComment(commentId);
         CommentState newState = updateDto.getState();
@@ -101,8 +108,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void delete(long commentId) {
         commentRepository.deleteById(commentId);
-        log.info("Comment id=" + commentId + " was deleted");
+        log.info("Comment id={} was deleted", commentId);
     }
+
 
     private User getUser(long userId) {
         return userRepository.findById(userId).orElseThrow(() -> {
@@ -131,7 +139,6 @@ public class CommentServiceImpl implements CommentService {
             return new NotFoundException(message);
         });
     }
-
 
     private void canUserCommentThisEvent(Event event, User author) {
         if (event.getInitiator().getId() == author.getId()) {

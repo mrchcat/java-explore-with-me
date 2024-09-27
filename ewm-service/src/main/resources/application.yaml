@@ -1,22 +1,7 @@
 server:
   port: 8080
 
-
-#TODO удалить
-statserver:
-  url: http://localhost:9090
-#TODO удалить
-app:
-  name: ewm-main-service
-
-
 spring:
-  #TODO удалить
-  datasource:
-    url: jdbc:postgresql://localhost:5435/ewm-service
-    username: mcat
-    password: 54321
-    driverClassName: org.postgresql.Driver
   sql:
     init.mode: always
   jpa:

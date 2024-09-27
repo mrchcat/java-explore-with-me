@@ -1,7 +1,6 @@
 package com.github.mrchcat.explorewithme.comments.dto;
 
 import com.github.mrchcat.explorewithme.comments.model.CommentState;
-import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.exception.ArgumentNotValidException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

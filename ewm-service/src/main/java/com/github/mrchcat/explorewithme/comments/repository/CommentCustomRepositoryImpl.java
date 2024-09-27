@@ -1,17 +1,12 @@
 package com.github.mrchcat.explorewithme.comments.repository;
 
-import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 import com.github.mrchcat.explorewithme.comments.model.CommentState;
-import com.github.mrchcat.explorewithme.event.model.Event;
-import com.github.mrchcat.explorewithme.event.model.EventState;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Fetch;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Sort;

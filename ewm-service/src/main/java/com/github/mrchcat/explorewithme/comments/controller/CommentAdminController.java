@@ -5,7 +5,6 @@ import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.model.CommentState;
 import com.github.mrchcat.explorewithme.comments.service.CommentService;
-import com.github.mrchcat.explorewithme.event.model.EventState;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
