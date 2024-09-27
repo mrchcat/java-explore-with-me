@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=ewm-statistic
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -32,7 +32,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
     networks:
       - backend
 
@@ -45,7 +45,7 @@ services:
       - POSTGRES_DB=ewm-service
       - POSTGRES_USER=mcat
       - POSTGRES_PASSWORD=54321
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -70,7 +70,7 @@ services:
       - SPRING_DATASOURCE_DRIVERCLASSNAME=org.postgresql.Driver
       - STATSERVER_URL=http://statistics:9090
       - APP_NAME=ewm-main-service;
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
     networks:
       - backend
 
