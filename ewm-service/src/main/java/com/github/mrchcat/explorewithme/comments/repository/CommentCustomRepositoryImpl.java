@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -45,12 +46,14 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
         }
 
         List<Long> eventIds = qp.getEventId();
+        root.fetch("event");
         if (eventIds != null && !eventIds.isEmpty()) {
             Predicate inEventList = root.get("event").get("id").in(eventIds);
             wherePredicates.add(inEventList);
         }
 
         List<Long> userIds = qp.getUserId();
+        root.fetch("author");
         if (userIds != null && !userIds.isEmpty()) {
             Predicate inUserList = root.get("author").get("id").in(userIds);
             wherePredicates.add(inUserList);
@@ -82,10 +85,10 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
         query.where(builder.and(wherePredicates.toArray(new Predicate[]{})));
 
-        List<Sort.Order> order=qp.getPageable().getSort().get().toList();
-        String property=order.getFirst().getProperty();
-        Sort.Direction direction=order.getFirst().getDirection();
-        switch (direction){
+        List<Sort.Order> order = qp.getPageable().getSort().get().toList();
+        String property = order.getFirst().getProperty();
+        Sort.Direction direction = order.getFirst().getDirection();
+        switch (direction) {
             case ASC -> query.orderBy(builder.asc(root.get(property)));
             case DESC -> query.orderBy(builder.desc(root.get(property)));
         }
