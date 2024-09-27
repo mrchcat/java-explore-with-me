@@ -2,8 +2,8 @@ package com.github.mrchcat.explorewithme.comments.service;
 
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
-import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
 import com.github.mrchcat.explorewithme.comments.mapper.CommentMapper;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 import com.github.mrchcat.explorewithme.comments.model.CommentState;
@@ -51,13 +51,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void delete(long userId, long commentId) {
+    public void setDeadState(long userId, long commentId) {
         Comment comment = getCommentForPublishedEvent(commentId);
         canUserEditComment(comment, userId);
         comment.setState(DEAD);
         comment.setEditable(false);
         commentRepository.save(comment);
-        log.info("Comment {} was deleted", comment);
+        log.info("Comment status {} was set to DEAD", comment);
     }
 
     @Override
@@ -82,20 +82,26 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto) {
         Comment comment = getComment(commentId);
         CommentState newState = updateDto.getState();
-        if (newState != null) {
+        Boolean isEditable = updateDto.getEditable();
+        if (newState == null) {
+            comment.setEditable(isEditable);
+        } else {
             comment.setState(newState);
             if (newState.equals(DEAD)) {
                 comment.setEditable(false);
-            }
-        } else {
-            Boolean isEditable = updateDto.getEditable();
-            if (isEditable != null) {
+            } else {
                 comment.setEditable(isEditable);
             }
         }
         Comment updatedComment = commentRepository.save(comment);
         log.info("Comment {} was updated by admin", updatedComment);
         return CommentMapper.toDto(updatedComment);
+    }
+
+    @Override
+    public void delete(long commentId) {
+        commentRepository.deleteById(commentId);
+        log.info("Comment id=" + commentId + " was deleted");
     }
 
     private User getUser(long userId) {
@@ -121,7 +127,7 @@ public class CommentServiceImpl implements CommentService {
 
     private Comment getComment(long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> {
-            String message = "Comment with id=" + commentId + "was not found";
+            String message = "Comment with id=" + commentId + " was not found";
             return new NotFoundException(message);
         });
     }

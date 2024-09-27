@@ -1,7 +1,7 @@
 package com.github.mrchcat.explorewithme.comments.controller;
 
-import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
 import com.github.mrchcat.explorewithme.comments.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class CommentPrivateController {
     void deleteComment(@PathVariable(name = "userId") long userId,
                        @PathVariable(name = "commentId") long commentId) {
         log.info("Private API: received request from user id={} to delete comment id={}", userId, commentId);
-        commentService.delete(userId, commentId);
+        commentService.setDeadState(userId, commentId);
     }
 
     @PatchMapping("/{userId}/comments/{commentId}")

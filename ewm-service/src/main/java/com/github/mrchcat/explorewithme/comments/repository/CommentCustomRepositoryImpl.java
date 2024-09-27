@@ -1,7 +1,9 @@
 package com.github.mrchcat.explorewithme.comments.repository;
 
+import com.github.mrchcat.explorewithme.category.model.Category;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
+import com.github.mrchcat.explorewithme.comments.model.CommentState;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import jakarta.persistence.EntityManager;
@@ -11,6 +13,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -35,22 +38,21 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
             wherePredicates.add(inCommentList);
         }
 
-        List<Long> eventIds = qp.getEventId();
-        if (eventIds != null && !eventIds.isEmpty()) {
-            Predicate inEventList = root.get("event").in(eventIds);
-            wherePredicates.add(inEventList);
+        CommentState commentState = qp.getCommentState();
+        if (commentState != null) {
+            Predicate isCommentState = builder.equal(root.get("state"), commentState);
+            wherePredicates.add(isCommentState);
         }
 
-        EventState eventState = qp.getEventState();
-        if (eventState != null) {
-            Join<Comment, Event> eventJoin = root.join("event");
-            Predicate isEventState = builder.equal(eventJoin.get("state"), eventState);
-            wherePredicates.add(isEventState);
+        List<Long> eventIds = qp.getEventId();
+        if (eventIds != null && !eventIds.isEmpty()) {
+            Predicate inEventList = root.get("event").get("id").in(eventIds);
+            wherePredicates.add(inEventList);
         }
 
         List<Long> userIds = qp.getUserId();
         if (userIds != null && !userIds.isEmpty()) {
-            Predicate inUserList = root.get("author").in(userIds);
+            Predicate inUserList = root.get("author").get("id").in(userIds);
             wherePredicates.add(inUserList);
         }
 
@@ -62,7 +64,9 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
         String text = qp.getText();
         if (text != null && !text.isEmpty()) {
-            Predicate textSearch = builder.like(builder.lower(root.get("text")), "%" + text.toLowerCase() + "%");
+            text = text.trim().toLowerCase();
+            Predicate textSearch = builder.like(builder.lower(root.get("text")), "%" + text + "%");
+            wherePredicates.add(textSearch);
         }
 
         var start = qp.getStart();
@@ -77,6 +81,14 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
         }
 
         query.where(builder.and(wherePredicates.toArray(new Predicate[]{})));
+
+        List<Sort.Order> order=qp.getPageable().getSort().get().toList();
+        String property=order.getFirst().getProperty();
+        Sort.Direction direction=order.getFirst().getDirection();
+        switch (direction){
+            case ASC -> query.orderBy(builder.asc(root.get(property)));
+            case DESC -> query.orderBy(builder.desc(root.get(property)));
+        }
 
         int pageNumber = qp.getPageable().getPageNumber();
         int pageSize = qp.getPageable().getPageSize();

@@ -3,6 +3,7 @@ package com.github.mrchcat.explorewithme.comments.controller;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
+import com.github.mrchcat.explorewithme.comments.model.CommentState;
 import com.github.mrchcat.explorewithme.comments.service.CommentService;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,18 +28,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto.isCorrectDateOrder;
+
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class CommentAdminController {
-    CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping("/comments")
     @ResponseStatus(HttpStatus.OK)
     List<CommentDto> getAllComments(@RequestParam(name = "comment", required = false) List<Long> commentIds,
+                                    @RequestParam(name = "commentState", defaultValue = "ALIVE", required = false) CommentState commentState,
                                     @RequestParam(name = "event", required = false) List<Long> eventIds,
-                                    @RequestParam(name = "eventState", defaultValue = "PUBLISHED", required = false) EventState eventState,
                                     @RequestParam(name = "user", required = false) List<Long> userIds,
                                     @RequestParam(name = "editable", required = false) Boolean editable,
                                     @RequestParam(name = "text", required = false) String text,
@@ -47,11 +51,14 @@ public class CommentAdminController {
                                     @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                     @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
 
-        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, order);
+        isCorrectDateOrder(start,end);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0,
+                size,
+                order, "lastModification");
         var query = CommentAdminSearchDto.builder()
                 .commentId(commentIds)
+                .commentState(commentState)
                 .eventId(eventIds)
-                .eventState(eventState)
                 .userId(userIds)
                 .editable(editable)
                 .text(text)
@@ -70,5 +77,12 @@ public class CommentAdminController {
         updateDto.notNullAll();
         log.info("Admin API: received request to update comment id={} with {}", commentService, updateDto);
         return commentService.updateByAdmin(commentId, updateDto);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteComment(@PathVariable(name = "commentId") long commentId) {
+        log.info("Admin API: received request to delete comment id={}", commentId);
+        commentService.delete(commentId);
     }
 }
