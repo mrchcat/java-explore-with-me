@@ -1,12 +1,14 @@
 package com.github.mrchcat.explorewithme.comments.service;
 
-import com.github.mrchcat.explorewithme.comments.dto.CommentCreateDto;
-import com.github.mrchcat.explorewithme.comments.dto.CommentShortDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.mapper.CommentMapper;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
+import com.github.mrchcat.explorewithme.comments.model.CommentState;
 import com.github.mrchcat.explorewithme.comments.repository.CommentRepository;
 import com.github.mrchcat.explorewithme.event.model.Event;
-import com.github.mrchcat.explorewithme.event.model.EventState;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
 import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
@@ -16,6 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.github.mrchcat.explorewithme.comments.model.CommentState.DEAD;
+import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 
 @Service
 @Slf4j
@@ -27,10 +35,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentShortDto create(long userId, long eventId, CommentCreateDto createDto) {
-        Event event = getEventById(eventId);
-        hasEventCorrectStatus(event);
-        User author = getUserById(userId);
+    public CommentDto create(long userId, long eventId, CommentPrivateCreateDto createDto) {
+        Event event = getPublishedEvent(eventId);
+        User author = getUser(userId);
         canUserCommentThisEvent(event, author);
         Comment comment = Comment.builder()
                 .event(event)
@@ -39,87 +46,86 @@ public class CommentServiceImpl implements CommentService {
                 .build();
         Comment savedComment = commentRepository.save(comment);
         log.info("{} was saved", savedComment);
-        return CommentMapper.toShortDto(savedComment);
+        return CommentMapper.toDto(savedComment);
     }
 
     @Override
     @Transactional
     public void delete(long userId, long commentId) {
-        int isDeleted = commentRepository.deleteByIdAndUserAndState(commentId, userId, EventState.PUBLISHED);
-        if (isDeleted == 0) {
-            String message = "Comment id=" + commentId + " was not deleted";
-            log.info(message);
-            throw new NotFoundException(message);
-        }
-        log.info("Comment {} was deleted.", commentId);
+        Comment comment = getCommentForPublishedEvent(commentId);
+        canUserEditComment(comment, userId);
+        comment.setState(DEAD);
+        comment.setEditable(false);
+        commentRepository.save(comment);
+        log.info("Comment {} was deleted", comment);
     }
 
-//    @Override
-//    public CommentShortDto update(long userId, long commentId, CommentUpdatePublicDto updateDto) {
-//        Comment comment = getById(commentId);
-//        checkIsUserCommented(userId, comment);
-//        comment.setText(updateDto.getText());
-//        comment.setLastModified(LocalDateTime.now());
-//        commentRepository.save(comment);
-//        log.info("{} was updated", comment);
-//        return CommentMapper.toShortDto(comment);
-//    }
-//
-//    @Override
-//    public void rate(long userId, long commentId, CommentRating rating) {
-//        Comment comment = getById(commentId);
-//        checkIsUserNotCommented(userId, comment);
-//        comment.updateRating(rating);
-//        commentRepository.save(comment);
-//    }
-//
-//    public Comment getById(long commentId) {
-//        return commentRepository.findById(commentId).orElseThrow(() -> {
-//            String message = String.format("Comment with id=%d  was not found", commentId);
-//            return new NotFoundException(message);
-//        });
-//    }
-//
-//    private void checkIsAlive(Comment comment) {
-//        if (!comment.getState().equals(CommentState.ALIVE)) {
-//            throw new NotFoundException("Parent comment was deleted");
-//        }
-//    }
-//
-//    private void checkIsUserCommented(long userId, Comment comment) {
-//        if (comment.getAuthor().getId() != userId) {
-//            String message = String.format("User id=%d did not write comment %s", userId, comment);
-//            throw new NotFoundException(message);
-//        }
-//    }
-//
-//    private void checkIsUserNotCommented(long userId, Comment comment) {
-//        if (comment.getAuthor().getId() == userId) {
-//            String message = "User cannot rate own comment";
-//            throw new NotFoundException(message);
-//        }
-//    }
+    @Override
+    public CommentDto updateByUser(long userId, long commentId, CommentPrivateCreateDto updateDto) {
+        Comment comment = getCommentForPublishedEvent(commentId);
+        canUserEditComment(comment, userId);
+        comment.setText(updateDto.getText());
+        comment.setModified(true);
+        comment.setLastModification(LocalDateTime.now());
+        Comment updatedComment = commentRepository.save(comment);
+        log.info("Comment {} was updated by user", updatedComment);
+        return CommentMapper.toDto(updatedComment);
+    }
 
-    private User getUserById(long userId) {
+    @Override
+    public List<CommentDto> getAllForAdmin(CommentAdminSearchDto query) {
+        var comments = commentRepository.getAllCommentsByQuery(query);
+        return CommentMapper.toDto(comments);
+    }
+
+    @Override
+    public CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto) {
+        Comment comment = getComment(commentId);
+        CommentState newState = updateDto.getState();
+        if (newState != null) {
+            comment.setState(newState);
+            if (newState.equals(DEAD)) {
+                comment.setEditable(false);
+            }
+        } else {
+            Boolean isEditable = updateDto.getEditable();
+            if (isEditable != null) {
+                comment.setEditable(isEditable);
+            }
+        }
+        Comment updatedComment = commentRepository.save(comment);
+        log.info("Comment {} was updated by admin", updatedComment);
+        return CommentMapper.toDto(updatedComment);
+    }
+
+    private User getUser(long userId) {
         return userRepository.findById(userId).orElseThrow(() -> {
             String message = "User with id=" + userId + " was not found";
             return new NotFoundException(message);
         });
     }
 
-    private Event getEventById(long eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() -> {
-            String message = "Event with id=" + eventId + " was not found";
+    private Event getPublishedEvent(long eventId) {
+        return eventRepository.getByIdAndStatus(eventId, PUBLISHED).orElseThrow(() -> {
+            String message = "Published event with id=" + eventId + " was not found";
             return new NotFoundException(message);
         });
     }
 
-    private Comment getCommentById(long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> {
-            String message = "Comment with id=" + commentId + " was not found";
+    private Comment getCommentForPublishedEvent(long commentId) {
+        return commentRepository.getByIdAndEventState(commentId, PUBLISHED).orElseThrow(() -> {
+            String message = "Comment with id=" + commentId + "for published event was not found";
             return new NotFoundException(message);
         });
     }
+
+    private Comment getComment(long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> {
+            String message = "Comment with id=" + commentId + "was not found";
+            return new NotFoundException(message);
+        });
+    }
+
 
     private void canUserCommentThisEvent(Event event, User author) {
         if (event.getInitiator().getId() == author.getId()) {
@@ -132,18 +138,13 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private void isParentForTheSameEvent(Comment parentComment, Event event) {
-        if (parentComment.getEvent().getId() != event.getId()) {
-            String message = "Parent comment must belong to the same event";
+    private void canUserEditComment(Comment comment, long userId) {
+        boolean isCommentAlive = comment.getState().equals(CommentState.ALIVE);
+        boolean isCommentEditable = comment.isEditable();
+        boolean doesCommentBelongToUser = comment.getAuthor().getId() == userId;
+        if (!isCommentAlive || !isCommentEditable || !doesCommentBelongToUser) {
+            String message = "Comment id=" + comment.getId() + " can not be changed due to rule violation";
             throw new RulesViolationException(message);
         }
     }
-
-    private void hasEventCorrectStatus(Event event) {
-        if (event.getState() != EventState.PUBLISHED) {
-            String message = "Event with id=" + event.getId() + " is not published";
-            throw new NotFoundException(message);
-        }
-    }
-
 }

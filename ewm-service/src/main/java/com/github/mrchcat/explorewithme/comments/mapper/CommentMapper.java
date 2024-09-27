@@ -1,16 +1,14 @@
 package com.github.mrchcat.explorewithme.comments.mapper;
 
-import com.github.mrchcat.explorewithme.comments.dto.CommentShortDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class CommentMapper {
 
-    public static CommentShortDto toShortDto(Comment comment) {
-        return CommentShortDto.builder()
+    public static CommentDto toDto(Comment comment) {
+        return CommentDto.builder()
                 .id(comment.getId())
                 .state(comment.getState())
                 .eventId(comment.getEvent().getId())
@@ -20,8 +18,10 @@ public class CommentMapper {
                 .created(comment.getCreated())
                 .modified(comment.isModified())
                 .lastModification(comment.getLastModification())
-                .likes(comment.getLikes())
-                .dislikes(comment.getDislikes())
                 .build();
+    }
+
+    public static List<CommentDto> toDto(List<Comment> comment) {
+        return comment.stream().map(CommentMapper::toDto).toList();
     }
 }

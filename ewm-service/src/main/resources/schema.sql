@@ -72,17 +72,9 @@ CREATE TABLE  IF NOT EXISTS comments (
   text varchar(10000) NOT NULL,
   created timestamp NOT NULL,
   is_modified bool NOT NULL,
-  last_modification timestamp,
-  likes bigint,
-  dislikes bigint,
-  rating float NOT NULL,
-  total_estimates bigint NOT NULL,
+  last_modification timestamp NOT NULL,
   CONSTRAINT FK_FOREIGN_COMMENTS_EVENT_ID  FOREIGN KEY (event_id) REFERENCES events(id),
-  CONSTRAINT FK_FOREIGN_COMMENTS_AUTHOR_ID FOREIGN KEY (author_id) REFERENCES users(id),
-  CONSTRAINT CHECK_LIKES CHECK(likes>=0),
-  CONSTRAINT CHECK_DISLIKES CHECK(dislikes>=0),
-  CONSTRAINT CHECK_TOTAL_ESTIMATES CHECK(total_estimates>=0),
-  CONSTRAINT CHECK_RATING CHECK(rating>=0)
+  CONSTRAINT FK_FOREIGN_COMMENTS_AUTHOR_ID FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
 CREATE INDEX IF NOT EXISTS IDX_CATEGORIES_NAME ON categories(name);

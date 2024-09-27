@@ -11,8 +11,8 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @ToString
 @NoArgsConstructor
-public class CommentPublicUpdateDto {
-    @NotBlank(message = "Comment can not be blank")
-    @Length(min = 1, max = 15000, message = "Comment must have from 1 to 15000 signs")
+public class CommentPrivateCreateDto {
+    @NotBlank(message = "Comment can not be empty")
+    @Length(min=1, max=15000, message = "Comment must have from 1 to 10000 signs")
     private String text;
 }

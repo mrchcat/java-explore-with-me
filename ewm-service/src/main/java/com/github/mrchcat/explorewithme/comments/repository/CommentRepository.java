@@ -3,8 +3,9 @@ package com.github.mrchcat.explorewithme.comments.repository;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 import com.github.mrchcat.explorewithme.event.model.EventState;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
 
@@ -15,11 +16,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
             """)
     boolean existByEventAndAuthor(long eventId, long author_id);
 
-    @Modifying
     @Query("""
-            DELETE FROM Comment AS cmt
-            JOIN Event AS e ON cmt.event.id=e.id
-            WHERE e.state=:state AND cmt.id=:commentId AND cmt.author.id=:userId
+            SELECT cmt
+            FROM Comment AS cmt
+            JOIN cmt.event AS e
+            WHERE cmt.id=:commentId AND e.state=:state
             """)
-    int deleteByIdAndUserAndState(long commentId, long userId, EventState state);
+    Optional<Comment> getByIdAndEventState(long commentId, EventState state);
 }

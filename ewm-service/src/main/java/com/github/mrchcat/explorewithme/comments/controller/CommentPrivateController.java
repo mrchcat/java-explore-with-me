@@ -1,9 +1,7 @@
 package com.github.mrchcat.explorewithme.comments.controller;
 
-import com.github.mrchcat.explorewithme.comments.dto.CommentCreateDto;
-import com.github.mrchcat.explorewithme.comments.dto.CommentPublicUpdateDto;
-import com.github.mrchcat.explorewithme.comments.dto.CommentShortDto;
-import com.github.mrchcat.explorewithme.comments.model.CommentRating;
+import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +26,13 @@ public class CommentPrivateController {
 
     @PostMapping("/{userId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
-    CommentShortDto createComment(@PathVariable(name = "userId") long userId,
-                                  @RequestParam(name = "event") long eventId,
-                                  @RequestBody @Valid CommentCreateDto createDto) {
+    CommentDto createComment(@PathVariable(name = "userId") long userId,
+                             @RequestParam(name = "event") long eventId,
+                             @RequestBody @Valid CommentPrivateCreateDto createDto) {
         log.info("""
-                Private API: received request from user id={} to create comment 
+                Private API: received request from user id={} to create comment
                 for event id={} with content {}
                 """, userId, eventId, createDto);
-//        TODO передавать через DTO
         return commentService.create(userId, eventId, createDto);
     }
 
@@ -47,22 +44,13 @@ public class CommentPrivateController {
         commentService.delete(userId, commentId);
     }
 
-//    @PatchMapping("/{userId}/comments/{commentId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    CommentShortDto updateEvent(@PathVariable(name = "userId") long userId,
-//                                @PathVariable(name = "commentId") long commentId,
-//                                @RequestBody @Valid CommentPublicUpdateDto updateDto) {
-//        log.info("Private API: received request from user id={} to update {}", userId, updateDto);
-//        return commentService.update(userId, commentId, updateDto);
-//    }
-//
-//    @PatchMapping("/{userId}/comments/{commentId}/rating")
-//    @ResponseStatus(HttpStatus.OK)
-//    void likeEvent(@PathVariable(name = "userId") long userId,
-//                   @PathVariable(name = "commentId") long commentId,
-//                   @RequestParam(name = "rating") CommentRating rating) {
-//        log.info("Private API: received request from user id={} to rate comment {} as {}", userId, commentId, rating);
-//        commentService.rate(userId, commentId, rating);
-//    }
-
+    @PatchMapping("/{userId}/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    CommentDto updateComment(@PathVariable(name = "userId") long userId,
+                             @PathVariable(name = "commentId") long commentId,
+                             @RequestBody @Valid CommentPrivateCreateDto updateDto) {
+        log.info("Private API: received request from user id={} to update comment id={} by content {}",
+                userId, commentId, updateDto);
+        return commentService.updateByUser(userId, commentId, updateDto);
+    }
 }

@@ -1,19 +1,20 @@
 package com.github.mrchcat.explorewithme.comments.service;
 
-import com.github.mrchcat.explorewithme.comments.dto.CommentCreateDto;
-import com.github.mrchcat.explorewithme.comments.dto.CommentShortDto;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.github.mrchcat.explorewithme.comments.dto.CommentAdminSearchDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentAdminUpdateDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
+import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
+
+import java.util.List;
 
 public interface CommentService {
-    CommentShortDto create(long userId, long eventId, CommentCreateDto createDto);
-
-//    Comment getById(long commentId);
+    CommentDto create(long userId, long eventId, CommentPrivateCreateDto createDto);
 
     void delete(long userId, long commentId);
 
-//    CommentShortDto update(long userId, long commentId, CommentPublicUpdateDto updateDto);
-//
-//    void rate(long userId, long commentId, CommentRating rating);
+    CommentDto updateByUser(long userId, long commentId, CommentPrivateCreateDto updateDto);
 
+    List<CommentDto> getAllForAdmin(CommentAdminSearchDto query);
+
+    CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto);
 }

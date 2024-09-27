@@ -1,7 +1,6 @@
 package com.github.mrchcat.explorewithme.comments.model;
 
 import com.github.mrchcat.explorewithme.event.model.Event;
-import com.github.mrchcat.explorewithme.exception.DataIntegrityException;
 import com.github.mrchcat.explorewithme.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -26,8 +24,6 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -72,21 +68,8 @@ public class Comment {
     @Column(name = "is_modified", nullable = false)
     private boolean isModified = false;
 
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modification")
     private LocalDateTime lastModification;
-
-    @Column(name = "likes")
-    private long likes;
-
-    @Column(name = "dislikes")
-    private long dislikes;
-
-    @Column(name = "rating")
-    @Builder.Default
-    private double rating = 1;
-
-    @Column(name = "total_estimates")
-    private long totalEstimates;
-
 }
