@@ -1,25 +1,31 @@
 {
 	"info": {
-		"_postman_id": "09b7c3be-afae-4802-825f-5af20ce6c1c9",
+		"_postman_id": "792b1333-8a5f-4266-a491-a126a4b81026",
 		"name": "Comments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "34817112",
-		"_collection_link": "https://myteam-5362.postman.co/workspace/MyTeam~90d59427-0a41-49ba-8328-b65785fc7dc5/collection/34817112-09b7c3be-afae-4802-825f-5af20ce6c1c9?action=share&source=collection_link&creator=34817112"
+		"_collection_link": "https://myteam-5362.postman.co/workspace/MyTeam~90d59427-0a41-49ba-8328-b65785fc7dc5/collection/34817112-792b1333-8a5f-4266-a491-a126a4b81026?action=share&source=collection_link&creator=34817112"
 	},
 	"item": [
 		{
 			"name": "Подготовка объектов",
 			"item": [
 				{
-					"name": "Подготовка: Добавляем первого пользователя",
+					"name": "Подготовка: Добавляем User1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('user1', pm.response.json().id)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -41,7 +47,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"User1\",\r\n    \"email\": \"user1@mail.ru\"\r\n}",
+							"raw": "{\r\n    \"name\": \"User1\",\r\n    \"email\": \"User1@mail.ru\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -53,15 +59,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Добавляем второго пользователя",
+					"name": "Подготовка: Добавляем user2",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('user2', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -95,15 +102,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Добавляем третьего пользователя",
+					"name": "Подготовка: Добавляем user3",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('user3', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -137,15 +145,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Добавляем четвертого пользователя",
+					"name": "Подготовка: Добавляем user4",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('user4', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -167,7 +176,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"User3\",\r\n    \"email\": \"user3@mail.ru\"\r\n}",
+							"raw": "{\r\n    \"name\": \"User4\",\r\n    \"email\": \"user4@mail.ru\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -179,15 +188,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Добавляем коллекцию",
+					"name": "Подготовка: Добавляем категорию",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('category1', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -211,15 +221,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Добавляем событие 1",
+					"name": "Подготовка: User 1 добавляет событие 1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event1', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -231,19 +242,134 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{HOST}}/users/1/events"
+						"url": "{{HOST}}/users/{{user1}}/events"
 					},
 					"response": []
 				},
 				{
 					"name": "Подготовка: Админ публикует событие 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/events/{{event1}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"events",
+								"{{event1}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: User 1 добавляет событие 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event2', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/users/{{user1}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: User 1 добавляет событие 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event3', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/users/{{user1}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: Админ публикует событие 3",
 					"event": [
 						{
 							"listen": "test",
@@ -271,14 +397,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}/admin/events/1",
+							"raw": "{{HOST}}/admin/events/{{event3}}",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"admin",
 								"events",
-								"1"
+								"{{event3}}"
 							],
 							"query": [
 								{
@@ -292,15 +418,16 @@
 					"response": []
 				},
 				{
-					"name": "Подготовка: Пользователь 1 публикует событие",
+					"name": "Подготовка: User 3 добавляет событие 4",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event4', pm.response.json().id)\r",
+									"})"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -312,14 +439,689 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Поход в кино\",\r\n    \"annotation\": \"Возвращение короля\",\r\n    \"description\": \"хочу в кино\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2028-09-25 22:36:48\"\r\n    }",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{HOST}}/users/1/events"
+						"url": "{{HOST}}/users/{{user3}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: Админ публикует событие 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success;\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/events/{{event4}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"events",
+								"{{event4}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: User 3 добавляет событие 5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event5', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/users/{{user3}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: Админ публикует событие 5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success;\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/events/{{event5}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"events",
+								"{{event5}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: User 3 добавляет событие 6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event6', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/users/{{user3}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: Админ публикует событие 6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success;\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/events/{{event6}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"events",
+								"{{event6}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: User 3 добавляет событие 7",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('event7', pm.response.json().id)\r",
+									"}) "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": {{category1}},\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/users/{{user3}}/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Подготовка: Админ публикует событие 7",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success;\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/events/{{event7}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"events",
+								"{{event7}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 1 для события 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment1', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"пупсоскот\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user1}}/comments?event={{event4}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user1}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event4}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 1 для события 5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment2', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"таймобобр\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user1}}/comments?event={{event5}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user1}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event5}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 1 для события 6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success\r",
+									"    pm.collectionVariables.set('comment3', pm.response.json().id)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"буран\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user1}}/comments?event={{event6}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user1}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event6}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 3 для события 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment5', pm.response.json().id)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"не пойду\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user3}}/comments?event={{event1}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user3}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event1}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 3 для события 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment6', pm.response.json().id)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user3}}/comments?event={{event3}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user3}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event3}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 4 для события 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment7', pm.response.json().id)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user4}}/comments?event={{event3}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user4}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event3}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Комментарий от пользователя 4 для события 7",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"An access token is returned\", () => {\r",
+									"    pm.response.to.be.success \r",
+									"    pm.collectionVariables.set('comment8', pm.response.json().id)\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/{{user4}}/comments?event={{event7}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"{{user4}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event7}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновляем комментарий 8",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(function() {\r",
+									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"editable\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{HOST}}/admin/comments/{{comment8 }}"
 					},
 					"response": []
 				}
@@ -362,7 +1164,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/2/comments?event=1000",
+									"raw": "{{HOST}}/users/2/comments?event=100000",
 									"host": [
 										"{{HOST}}"
 									],
@@ -374,7 +1176,7 @@
 									"query": [
 										{
 											"key": "event",
-											"value": "1000"
+											"value": "100000"
 										}
 									]
 								}
@@ -412,19 +1214,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/2/comments?event=2",
+									"raw": "{{HOST}}/users/{{user2}}/comments?event={{event2}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"2",
+										"{{user2}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "2"
+											"value": "{{event2}}"
 										}
 									]
 								}
@@ -462,13 +1264,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/200/comments?event=1",
+									"raw": "{{HOST}}/users/20000/comments?event=1",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"200",
+										"20000",
 										"comments"
 									],
 									"query": [
@@ -511,19 +1313,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/1/comments?event=1",
+									"raw": "{{HOST}}/users/{{user1}}/comments?event={{event1}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"1",
+										"{{user1}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event1}}"
 										}
 									]
 								}
@@ -559,9 +1361,9 @@
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const source = JSON.parse(pm.request.body.raw);\r",
 											"    const target = pm.response.json()\r",
+											"    const eventIdVar= pm.collectionVariables.get('event7')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
 											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
-											"    pm.expect(target.eventId).equal(1,'Событие');\r",
 											"    pm.expect(target.authorName).equal('User2','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"});\r",
@@ -586,19 +1388,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/2/comments?event=1",
+									"raw": "{{HOST}}/users/{{user2}}/comments?event={{event7}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"2",
+										"{{user2}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event7}}"
 										}
 									]
 								}
@@ -606,7 +1408,7 @@
 							"response": []
 						},
 						{
-							"name": "Корректный комментарий от третьего пользователя",
+							"name": "Корректный комментарий от первого пользователя",
 							"event": [
 								{
 									"listen": "test",
@@ -634,10 +1436,10 @@
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const source = JSON.parse(pm.request.body.raw);\r",
 											"    const target = pm.response.json()\r",
+											"    const eventIdVar= pm.collectionVariables.get('event7')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
 											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
-											"    pm.expect(target.eventId).equal(1,'Событие');\r",
-											"    pm.expect(target.authorName).equal('User3','Пользователь');\r",
+											"    pm.expect(target.authorName).equal('User1','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"});\r",
 											"\r",
@@ -661,19 +1463,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/3/comments?event=1",
+									"raw": "{{HOST}}/users/{{user1}}/comments?event={{event7}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"3",
+										"{{user1}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event7}}"
 										}
 									]
 								}
@@ -711,19 +1513,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/2/comments?event=1",
+									"raw": "{{HOST}}/users/{{user2}}/comments?event={{event7}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"2",
+										"{{user2}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event7}}"
 										}
 									]
 								}
@@ -762,19 +1564,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/4/comments?event=1",
+									"raw": "{{HOST}}/users/{{user4}}/comments?event={{event1}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"4",
+										"{{user4}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event1}}"
 										}
 									]
 								}
@@ -788,8 +1590,8 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Должен вернуться ответ CONFLICT\", function() {\r",
-											"    pm.response.to.have.status(404);\r",
+											"pm.test(\"Должен вернуться ответ BAD REQUEST\", function() {\r",
+											"    pm.response.to.have.status(400);\r",
 											"}); \r",
 											"\r",
 											"\r",
@@ -813,19 +1615,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/4/comments?event=1",
+									"raw": "{{HOST}}/users/{{user4}}/comments?event={{event1}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"4",
+										"{{user4}}",
 										"comments"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "{{event1}}"
 										}
 									]
 								}
@@ -838,7 +1640,7 @@
 					"name": "Обновление комментария",
 					"item": [
 						{
-							"name": "Пользователь 2 обновляет комментарий 1",
+							"name": "Пользователь 1 обновляет комментарий 1",
 							"event": [
 								{
 									"listen": "test",
@@ -866,10 +1668,10 @@
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const source = JSON.parse(pm.request.body.raw);\r",
 											"    const target = pm.response.json()\r",
+											"    const eventIdVar= pm.collectionVariables.get('event4')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
 											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
-											"    pm.expect(target.eventId).equal(1,'Событие');\r",
-											"    pm.expect(target.authorName).equal('User2','Пользователь');\r",
+											"    pm.expect(target.authorName).equal('User1','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"    pm.expect(target.modified).equal(true,'Был ли модифицирован');\r",
 											"});\r",
@@ -893,20 +1695,21 @@
 									}
 								},
 								"url": {
-									"raw": "{{HOST}}/users/2/comments/1?event=1",
+									"raw": "{{HOST}}/users/{{user1}}/comments/{{comment1}}",
 									"host": [
 										"{{HOST}}"
 									],
 									"path": [
 										"users",
-										"2",
+										"{{user1}}",
 										"comments",
-										"1"
+										"{{comment1}}"
 									],
 									"query": [
 										{
 											"key": "event",
-											"value": "1"
+											"value": "",
+											"disabled": true
 										}
 									]
 								}
@@ -944,24 +1747,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "{{HOST}}/users/3/comments/1?event=1",
-									"host": [
-										"{{HOST}}"
-									],
-									"path": [
-										"users",
-										"3",
-										"comments",
-										"1"
-									],
-									"query": [
-										{
-											"key": "event",
-											"value": "1"
-										}
-									]
-								}
+								"url": "{{HOST}}/users/{{user3}}/comments/{{comment1}}"
 							},
 							"response": []
 						},
@@ -997,24 +1783,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "{{HOST}}/users/2/comments/1?event=1",
-									"host": [
-										"{{HOST}}"
-									],
-									"path": [
-										"users",
-										"2",
-										"comments",
-										"1"
-									],
-									"query": [
-										{
-											"key": "event",
-											"value": "1"
-										}
-									]
-								}
+								"url": "{{HOST}}/users/{{user2}}/comments/{{comment1}}"
 							},
 							"response": []
 						},
@@ -1025,8 +1794,8 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Должен вернуться ответ CONFLICT\", function() {\r",
-											"    pm.response.to.have.status(409);\r",
+											"pm.test(\"Должен вернуться ответ BAD REQUEST\", function() {\r",
+											"    pm.response.to.have.status(400);\r",
 											"    pm.response.to.be.withBody; \r",
 											"    pm.response.to.be.json;\r",
 											"}); \r",
@@ -1050,24 +1819,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "{{HOST}}/users/2/comments/1?event=1",
-									"host": [
-										"{{HOST}}"
-									],
-									"path": [
-										"users",
-										"2",
-										"comments",
-										"1"
-									],
-									"query": [
-										{
-											"key": "event",
-											"value": "1"
-										}
-									]
-								}
+								"url": "{{HOST}}/users/{{user2}}/comments/{{comment1}}"
 							},
 							"response": []
 						}
@@ -1077,7 +1829,7 @@
 					"name": "Удаляем комментарий",
 					"item": [
 						{
-							"name": "Тест: Попытка удалить чужой комментарий",
+							"name": "Попытка удалить чужой комментарий",
 							"event": [
 								{
 									"listen": "test",
@@ -1105,12 +1857,12 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/users/3/comments/1"
+								"url": "{{HOST}}/users/{{user3}}/comments/{{comment1}}"
 							},
 							"response": []
 						},
 						{
-							"name": "Тест: Пользователь 2 удаляет комментарий 1",
+							"name": "Пользователь 1 успешно удаляет комментарий 1",
 							"event": [
 								{
 									"listen": "test",
@@ -1139,12 +1891,12 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/users/2/comments/1"
+								"url": "{{HOST}}/users/{{user1}}/comments/{{comment1}}"
 							},
 							"response": []
 						},
 						{
-							"name": "Пользователь 2 удаляет комментарий 1 повторно",
+							"name": "Пользователь 1 пытается удалить комментарий 1 повторно",
 							"event": [
 								{
 									"listen": "test",
@@ -1173,927 +1925,11 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/users/2/comments/1"
+								"url": "{{HOST}}/users/{{user1}}/comments/{{comment1}}"
 							},
 							"response": []
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Подготовка объектов 2",
-			"item": [
-				{
-					"name": "Подготовка: Добавляем событие 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/1/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Добавляем событие 3",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/1/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Добавляем событие 4",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/2/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Добавляем событие 5",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/2/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Добавляем событие 6",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/2/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Добавляем событие 7",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "    {\r\n    \"title\": \"Заплыв на резиновых уточках\",\r\n    \"annotation\": \"Одевайтесь тепло, берите зонтики, чай, кофе, хорошее настроение и резиновых уточек\",\r\n    \"description\": \"Любительский заплыв на резиновых уточках в акватории Москвы-реки\",\r\n    \"category\": 1,\r\n    \"eventDate\": \"2026-09-25 22:36:48\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/users/2/events"
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/2",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"2"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 3",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/3",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"3"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 4",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/4",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"4"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 5",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/5",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"5"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 6",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/6",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"6"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Подготовка: Админ публикует событие 7",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success;\r",
-									"}); "
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n   \"stateAction\": \"PUBLISH_EVENT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/admin/events/7",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"admin",
-								"events",
-								"7"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 1 для события 4",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"пупсоскот\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/1/comments?event=4",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"1",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "4"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 1 для события 5",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"таймобобр\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/1/comments?event=5",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"1",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 1 для события 6",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"буран\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/1/comments?event=6",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"1",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "6"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 1 для события 7",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"веселье\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/1/comments?event=7",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"1",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "7"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 2 для события 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"не пойду\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/2/comments?event=1",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"2",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 2 для события 3",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/2/comments?event=3",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"2",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "3"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 2 для события 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/2/comments?event=2",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"2",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "2"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Комментарий от пользователя 3 для события 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"пойду\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/users/3/comments?event=2",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"users",
-								"3",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "event",
-									"value": "2"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Обновляем комментарий 8",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(function() {\r",
-									"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-									"}); \r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"editable\": false\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{HOST}}/admin/comments/8"
-					},
-					"response": []
 				}
 			]
 		},
@@ -2154,7 +1990,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/1"
+								"url": "{{HOST}}/admin/comments/{{comment1}}"
 							},
 							"response": []
 						},
@@ -2209,7 +2045,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/1"
+								"url": "{{HOST}}/admin/comments/{{comment1}}"
 							},
 							"response": []
 						},
@@ -2264,7 +2100,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/1"
+								"url": "{{HOST}}/admin/comments/{{comment2}}"
 							},
 							"response": []
 						}
@@ -2302,7 +2138,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/1"
+								"url": "{{HOST}}/admin/comments/{{comment1}}"
 							},
 							"response": []
 						},
@@ -2335,7 +2171,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/2"
+								"url": "{{HOST}}/admin/comments/{{comment1}}"
 							},
 							"response": []
 						}
@@ -2372,7 +2208,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(7);\r",
+											"    pm.expect(target.length).equal(8);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2489,7 +2325,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/admin/comments?comment=5,7,8",
+									"raw": "{{HOST}}/admin/comments?comment={{comment5}},{{comment6}},{{comment8}}",
 									"host": [
 										"{{HOST}}"
 									],
@@ -2500,7 +2336,7 @@
 									"query": [
 										{
 											"key": "comment",
-											"value": "5,7,8"
+											"value": "{{comment5}},{{comment6}},{{comment8}}"
 										}
 									]
 								}
@@ -2535,7 +2371,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(2);\r",
+											"    pm.expect(target.length).equal(4);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2547,7 +2383,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/admin/comments?event=6,7",
+									"raw": "{{HOST}}/admin/comments?event={{event6}},{{event7}}",
 									"host": [
 										"{{HOST}}"
 									],
@@ -2558,7 +2394,7 @@
 									"query": [
 										{
 											"key": "event",
-											"value": "6,7"
+											"value": "{{event6}},{{event7}}"
 										}
 									]
 								}
@@ -2593,7 +2429,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(2);\r",
+											"    pm.expect(target.length).equal(3);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2605,7 +2441,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/admin/comments?user=2",
+									"raw": "{{HOST}}/admin/comments?user={{user1}}",
 									"host": [
 										"{{HOST}}"
 									],
@@ -2616,7 +2452,7 @@
 									"query": [
 										{
 											"key": "user",
-											"value": "2"
+											"value": "{{user1}}"
 										}
 									]
 								}
@@ -2709,7 +2545,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(1);\r",
+											"    pm.expect(target.length).equal(5);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2721,7 +2557,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/admin/comments?text=ПУпсо",
+									"raw": "{{HOST}}/admin/comments?text=поЙдУ",
 									"host": [
 										"{{HOST}}"
 									],
@@ -2732,7 +2568,7 @@
 									"query": [
 										{
 											"key": "text",
-											"value": "ПУпсо"
+											"value": "поЙдУ"
 										}
 									]
 								}
@@ -2767,7 +2603,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(7);\r",
+											"    pm.expect(target.length).equal(8);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2910,7 +2746,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(7);\r",
+											"    pm.expect(target.length).equal(8);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2974,7 +2810,7 @@
 										}
 									}
 								},
-								"url": "{{HOST}}/admin/comments/3"
+								"url": "{{HOST}}/admin/comments/{{comment3}}"
 							},
 							"response": []
 						},
@@ -3062,7 +2898,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event=2",
+							"raw": "{{HOST}}/comments?event={{event3}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3072,7 +2908,7 @@
 							"query": [
 								{
 									"key": "event",
-									"value": "2"
+									"value": "{{event3}}"
 								}
 							]
 						}
@@ -3080,7 +2916,7 @@
 					"response": []
 				},
 				{
-					"name": "Поиск без параметров удаленного события",
+					"name": "Поиск без параметров удаленного комментария",
 					"event": [
 						{
 							"listen": "test",
@@ -3106,7 +2942,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event=4",
+							"raw": "{{HOST}}/comments?event={{event6}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3116,7 +2952,7 @@
 							"query": [
 								{
 									"key": "event",
-									"value": "4"
+									"value": "{{event6}}"
 								}
 							]
 						}
@@ -3150,7 +2986,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event=2&from=1&size=1",
+							"raw": "{{HOST}}/comments?from=1&size=1&event={{event7}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3158,10 +2994,6 @@
 								"comments"
 							],
 							"query": [
-								{
-									"key": "event",
-									"value": "2"
-								},
 								{
 									"key": "sort",
 									"value": "ASC",
@@ -3174,6 +3006,10 @@
 								{
 									"key": "size",
 									"value": "1"
+								},
+								{
+									"key": "event",
+									"value": "{{event7}}"
 								}
 							]
 						}
@@ -3195,7 +3031,7 @@
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 									"    const target = pm.response.json()\r",
-									"    pm.expect(target.length).equal(2);\r",
+									"    pm.expect(target.length).equal(3);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3207,7 +3043,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event=2&order=DESC",
+							"raw": "{{HOST}}/comments?order=DESC&event={{event7}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3215,10 +3051,6 @@
 								"comments"
 							],
 							"query": [
-								{
-									"key": "event",
-									"value": "2"
-								},
 								{
 									"key": "order",
 									"value": "DESC"
@@ -3232,6 +3064,68 @@
 									"key": "size",
 									"value": "1",
 									"disabled": true
+								},
+								{
+									"key": "event",
+									"value": "{{event7}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Поиск c сортировкой",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Должен вернуться ответ OK\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody; \r",
+									"    pm.response.to.be.json;\r",
+									"}); \r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    const target = pm.response.json()\r",
+									"    pm.expect(target.length).equal(3);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/comments?event={{event7}}&order=ASC",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "event",
+									"value": "{{event7}}"
+								},
+								{
+									"key": "order",
+									"value": "ASC"
 								}
 							]
 						}
@@ -3265,12 +3159,111 @@
 	],
 	"variable": [
 		{
-			"value": "",
-			"disabled": true
-		},
-		{
 			"key": "HOST",
 			"value": "localhost:8080"
+		},
+		{
+			"key": "user1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user3",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user4",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category1",
+			"value": ""
+		},
+		{
+			"key": "comment1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment3",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment4",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment5",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment6",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment7",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment8 ",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event3",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event4",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event5",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event6",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "event7",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "comment8",
+			"value": ""
 		}
 	]
 }
