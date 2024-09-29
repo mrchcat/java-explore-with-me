@@ -3,6 +3,7 @@ package com.github.mrchcat.explorewithme.comments.mapper;
 import com.github.mrchcat.explorewithme.comments.dto.CommentDto;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentMapper {
@@ -21,7 +22,11 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> toDto(List<Comment> comment) {
-        return comment.stream().map(CommentMapper::toDto).toList();
+    public static List<CommentDto> toDto(Iterable<Comment> comments) {
+        List<CommentDto> dtos=new ArrayList<>();
+        for(Comment cmt:comments){
+            dtos.add(CommentMapper.toDto(cmt));
+        }
+        return dtos;
     }
 }

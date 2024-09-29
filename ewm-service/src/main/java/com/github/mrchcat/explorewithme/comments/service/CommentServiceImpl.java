@@ -7,6 +7,7 @@ import com.github.mrchcat.explorewithme.comments.dto.CommentPrivateCreateDto;
 import com.github.mrchcat.explorewithme.comments.mapper.CommentMapper;
 import com.github.mrchcat.explorewithme.comments.model.Comment;
 import com.github.mrchcat.explorewithme.comments.model.CommentState;
+import com.github.mrchcat.explorewithme.comments.model.QComment;
 import com.github.mrchcat.explorewithme.comments.repository.CommentRepository;
 import com.github.mrchcat.explorewithme.event.model.Event;
 import com.github.mrchcat.explorewithme.event.repository.EventRepository;
@@ -14,6 +15,9 @@ import com.github.mrchcat.explorewithme.exception.NotFoundException;
 import com.github.mrchcat.explorewithme.exception.RulesViolationException;
 import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -74,11 +78,70 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toDto(updatedComment);
     }
 
+//    @Override
+//    public List<CommentDto> getAllForAdmin(CommentAdminSearchDto query) {
+//        var comments = commentRepository.getAllCommentsByQuery(query);
+//        return CommentMapper.toDto(comments);
+//    }
+
     @Override
-    public List<CommentDto> getAllForAdmin(CommentAdminSearchDto query) {
-        var comments = commentRepository.getAllCommentsByQuery(query);
+    public List<CommentDto> getAllForAdmin(CommentAdminSearchDto qp) {
+        BooleanBuilder builder = new BooleanBuilder();
+        List<Long> commentIds = qp.getCommentId();
+        if (commentIds != null && !commentIds.isEmpty()) {
+            Predicate inCommentList = QComment.comment.id.in(commentIds);
+            builder.and(inCommentList);
+        }
+        CommentState commentState = qp.getCommentState();
+        if (commentState != null) {
+            Predicate isCommentState = QComment.comment.state.eq(commentState);
+            builder.and(isCommentState);
+        }
+        List<Long> eventIds = qp.getEventId();
+        if (eventIds != null && !eventIds.isEmpty()) {
+            Predicate inEventList = QComment.comment.event.id.in(eventIds);
+            builder.and(inEventList);
+        }
+
+        List<Long> userIds = qp.getUserId();
+        if (userIds != null && !userIds.isEmpty()) {
+            Predicate inUserList = QComment.comment.author.id.in(userIds);
+            builder.and(inUserList);
+        }
+
+        Boolean editable = qp.getEditable();
+        if (editable != null) {
+            Predicate isEditable = QComment.comment.editable.eq(editable);
+            builder.and(isEditable);
+        }
+
+        String text = qp.getText();
+        if (text != null && !text.isEmpty()) {
+            Predicate textSearch = QComment.comment.text.likeIgnoreCase("%" + text.trim() + "%");
+            builder.and(textSearch);
+        }
+
+        var start = qp.getStart();
+        if (start != null) {
+            Predicate greaterThen = QComment.comment.lastModification.after(start);
+            Predicate equal = QComment.comment.lastModification.eq(start);
+            builder.andAnyOf(equal,greaterThen);
+        }
+        var end = qp.getEnd();
+        if (end != null) {
+            Predicate lessThen = QComment.comment.lastModification.before(end);
+            Predicate equal = QComment.comment.lastModification.eq(end);
+            builder.andAnyOf(equal,lessThen);
+        }
+        Iterable<Comment> comments;
+        if (builder.hasValue()) {
+            comments = commentRepository.findAll(builder.getValue(), qp.getPageable());
+        } else {
+            comments = commentRepository.findAll(qp.getPageable());
+        }
         return CommentMapper.toDto(comments);
     }
+
 
     @Override
     public List<CommentDto> getAllForPublic(long eventId, Pageable pageable) {
