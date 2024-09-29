@@ -23,8 +23,8 @@ public class CommentMapper {
     }
 
     public static List<CommentDto> toDto(Iterable<Comment> comments) {
-        List<CommentDto> dtos=new ArrayList<>();
-        for(Comment cmt:comments){
+        List<CommentDto> dtos = new ArrayList<>();
+        for (Comment cmt : comments) {
             dtos.add(CommentMapper.toDto(cmt));
         }
         return dtos;

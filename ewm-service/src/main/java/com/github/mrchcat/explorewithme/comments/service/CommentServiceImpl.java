@@ -17,7 +17,6 @@ import com.github.mrchcat.explorewithme.user.model.User;
 import com.github.mrchcat.explorewithme.user.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -78,12 +77,6 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toDto(updatedComment);
     }
 
-//    @Override
-//    public List<CommentDto> getAllForAdmin(CommentAdminSearchDto query) {
-//        var comments = commentRepository.getAllCommentsByQuery(query);
-//        return CommentMapper.toDto(comments);
-//    }
-
     @Override
     public List<CommentDto> getAllForAdmin(CommentAdminSearchDto qp) {
         BooleanBuilder builder = new BooleanBuilder();
@@ -125,16 +118,16 @@ public class CommentServiceImpl implements CommentService {
         if (start != null) {
             Predicate greaterThen = QComment.comment.lastModification.after(start);
             Predicate equal = QComment.comment.lastModification.eq(start);
-            builder.andAnyOf(equal,greaterThen);
+            builder.andAnyOf(equal, greaterThen);
         }
         var end = qp.getEnd();
         if (end != null) {
             Predicate lessThen = QComment.comment.lastModification.before(end);
             Predicate equal = QComment.comment.lastModification.eq(end);
-            builder.andAnyOf(equal,lessThen);
+            builder.andAnyOf(equal, lessThen);
         }
         Iterable<Comment> comments;
-        if (builder.hasValue()) {
+        if (builder.getValue() != null && builder.hasValue()) {
             comments = commentRepository.findAll(builder.getValue(), qp.getPageable());
         } else {
             comments = commentRepository.findAll(qp.getPageable());
