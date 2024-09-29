@@ -62,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentDto updateByUser(long userId, long commentId, CommentPrivateCreateDto updateDto) {
         Comment comment = getCommentForPublishedEvent(commentId);
         canUserEditComment(comment, userId);
@@ -86,6 +87,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public CommentDto updateByAdmin(long commentId, CommentAdminUpdateDto updateDto) {
         Comment comment = getComment(commentId);
         CommentState newState = updateDto.getState();
