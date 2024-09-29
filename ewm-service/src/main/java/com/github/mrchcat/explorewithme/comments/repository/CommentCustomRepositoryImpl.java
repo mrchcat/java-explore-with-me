@@ -47,6 +47,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
         }
 
         List<Long> userIds = qp.getUserId();
+        root.fetch("author");
         if (userIds != null && !userIds.isEmpty()) {
             Predicate inUserList = root.get("author").get("id").in(userIds);
             wherePredicates.add(inUserList);
