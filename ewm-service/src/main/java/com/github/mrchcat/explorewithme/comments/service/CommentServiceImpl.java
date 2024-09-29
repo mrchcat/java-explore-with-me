@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.github.mrchcat.explorewithme.comments.model.CommentState.DEAD;
+import static com.github.mrchcat.explorewithme.comments.model.CommentState.DISABLE;
 import static com.github.mrchcat.explorewithme.event.model.EventState.PUBLISHED;
 
 @Service
@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
     public void setDeadState(long userId, long commentId) {
         Comment comment = getCommentForPublishedEvent(commentId);
         canUserEditComment(comment, userId);
-        comment.setState(DEAD);
+        comment.setState(DISABLE);
         comment.setEditable(false);
         commentRepository.save(comment);
         log.info("Comment status {} was set to DEAD", comment);
@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getAllForPublic(long eventId, Pageable pageable) {
-        var comments = commentRepository.findAliveByEvent(eventId, pageable);
+        var comments = commentRepository.findEnableForPublishedEvent(eventId, pageable);
         return CommentMapper.toDto(comments);
     }
 
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setEditable(isEditable);
         } else {
             comment.setState(newState);
-            if (newState.equals(DEAD)) {
+            if (newState.equals(DISABLE)) {
                 comment.setEditable(false);
             } else {
                 comment.setEditable(isEditable);
@@ -145,14 +145,10 @@ public class CommentServiceImpl implements CommentService {
             String message = "User can not comment it's own event";
             throw new RulesViolationException(message);
         }
-        if (commentRepository.existByEventAndAuthor(event.getId(), author.getId())) {
-            String message = "User can not comment the same event twice";
-            throw new RulesViolationException(message);
-        }
     }
 
     private void canUserEditComment(Comment comment, long userId) {
-        boolean isCommentAlive = comment.getState().equals(CommentState.ALIVE);
+        boolean isCommentAlive = comment.getState().equals(CommentState.ENABLE);
         boolean isCommentEditable = comment.isEditable();
         boolean doesCommentBelongToUser = comment.getAuthor().getId() == userId;
         if (!isCommentAlive || !isCommentEditable || !doesCommentBelongToUser) {

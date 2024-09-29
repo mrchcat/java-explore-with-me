@@ -41,14 +41,12 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
         }
 
         List<Long> eventIds = qp.getEventId();
-        root.fetch("event");
         if (eventIds != null && !eventIds.isEmpty()) {
             Predicate inEventList = root.get("event").get("id").in(eventIds);
             wherePredicates.add(inEventList);
         }
 
         List<Long> userIds = qp.getUserId();
-        root.fetch("author");
         if (userIds != null && !userIds.isEmpty()) {
             Predicate inUserList = root.get("author").get("id").in(userIds);
             wherePredicates.add(inUserList);

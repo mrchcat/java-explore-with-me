@@ -39,7 +39,7 @@ public class CommentAdminController {
     @GetMapping("/comments")
     @ResponseStatus(HttpStatus.OK)
     List<CommentDto> getAllComments(@RequestParam(name = "comment", required = false) List<Long> commentIds,
-                                    @RequestParam(name = "commentState", defaultValue = "ALIVE", required = false) CommentState commentState,
+                                    @RequestParam(name = "commentState", required = false) CommentState commentState,
                                     @RequestParam(name = "event", required = false) List<Long> eventIds,
                                     @RequestParam(name = "user", required = false) List<Long> userIds,
                                     @RequestParam(name = "editable", required = false) Boolean editable,
@@ -50,7 +50,7 @@ public class CommentAdminController {
                                     @RequestParam(name = "from", defaultValue = "0", required = false) Integer from,
                                     @RequestParam(name = "size", defaultValue = "10", required = false) @Positive Integer size) {
 
-        isCorrectDateOrder(start,end);
+        isCorrectDateOrder(start, end);
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0,
                 size,
                 order, "lastModification");
