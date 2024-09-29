@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "792b1333-8a5f-4266-a491-a126a4b81026",
-		"name": "Comments",
+		"name": "Comments для отправки",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "34817112",
 		"_collection_link": "https://myteam-5362.postman.co/workspace/MyTeam~90d59427-0a41-49ba-8328-b65785fc7dc5/collection/34817112-792b1333-8a5f-4266-a491-a126a4b81026?action=share&source=collection_link&creator=34817112"
@@ -1363,7 +1363,7 @@
 											"    const target = pm.response.json()\r",
 											"    const eventIdVar= pm.collectionVariables.get('event7')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
-											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
+											"    pm.expect(target.state).equal('ENABLE','Статус');\r",
 											"    pm.expect(target.authorName).equal('User2','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"});\r",
@@ -1438,7 +1438,7 @@
 											"    const target = pm.response.json()\r",
 											"    const eventIdVar= pm.collectionVariables.get('event7')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
-											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
+											"    pm.expect(target.state).equal('ENABLE','Статус');\r",
 											"    pm.expect(target.authorName).equal('User1','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"});\r",
@@ -1670,7 +1670,7 @@
 											"    const target = pm.response.json()\r",
 											"    const eventIdVar= pm.collectionVariables.get('event4')\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
-											"    pm.expect(target.state).equal('ALIVE','Статус');\r",
+											"    pm.expect(target.state).equal('ENABLE','Статус');\r",
 											"    pm.expect(target.authorName).equal('User1','Пользователь');\r",
 											"    pm.expect(target.text).equal(source.text,'Текст');\r",
 											"    pm.expect(target.modified).equal(true,'Был ли модифицирован');\r",
@@ -1983,7 +1983,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"state\": \"DEAD\"\r\n}",
+									"raw": "{\r\n    \"state\": \"DISABLE\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2025,7 +2025,7 @@
 											"    const target = pm.response.json()\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
 											"    pm.expect(target.state).equal(source.state);\r",
-											"    pm.expect(target.editable).equal(true);\r",
+											"    pm.expect(target.editable).equal(false);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2038,7 +2038,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"state\": \"ALIVE\",\r\n    \"editable\": true\r\n}",
+									"raw": "{\r\n    \"state\": \"DISABLE\",\r\n    \"editable\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2079,7 +2079,7 @@
 											"    const source = JSON.parse(pm.request.body.raw);\r",
 											"    const target = pm.response.json()\r",
 											"    pm.expect(target.id).to.not.be.null;\r",
-											"    pm.expect(target.state).equal('ALIVE');\r",
+											"    pm.expect(target.state).equal('ENABLE');\r",
 											"    pm.expect(target.editable).equal(false);\r",
 											"});"
 										],
@@ -2101,6 +2101,61 @@
 									}
 								},
 								"url": "{{HOST}}/admin/comments/{{comment2}}"
+							},
+							"response": []
+						},
+						{
+							"name": "Обновляем комментарий 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Должен вернуться ответ OK\", function() {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.be.withBody; \r",
+											"    pm.response.to.be.json;\r",
+											"}); \r",
+											"\r",
+											"pm.test(\"Ответ должна содержать поля: id, parentId, childrenCommentsId, state, eventId, authorName, editable, text, created, isModified, lastModification, likes, dislikes\", function () {\r",
+											"    const target = pm.response.json()\r",
+											"    pm.expect(target).to.have.property('id');\r",
+											"    pm.expect(target).to.have.property('state');\r",
+											"    pm.expect(target).to.have.property('eventId');\r",
+											"    pm.expect(target).to.have.property('authorName');\r",
+											"    pm.expect(target).to.have.property('editable');\r",
+											"    pm.expect(target).to.have.property('text');\r",
+											"    pm.expect(target).to.have.property('created');\r",
+											"    pm.expect(target).to.have.property('modified');\r",
+											"    pm.expect(target).to.have.property('lastModification');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    const source = JSON.parse(pm.request.body.raw);\r",
+											"    const target = pm.response.json()\r",
+											"    pm.expect(target.id).to.not.be.null;\r",
+											"    pm.expect(target.state).equal('DISABLE');\r",
+											"    pm.expect(target.editable).equal(false);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"state\": \"DISABLE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{HOST}}/admin/comments/{{comment8}}"
 							},
 							"response": []
 						}
@@ -2487,7 +2542,7 @@
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 											"    const target = pm.response.json()\r",
-											"    pm.expect(target.length).equal(1);\r",
+											"    pm.expect(target.length).equal(2);\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2782,39 +2837,6 @@
 							"response": []
 						},
 						{
-							"name": "Подготовка: Обновляем комментарий 3",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(function() {\r",
-											"    pm.response.to.be.success; // код ответа должен быть равен 200 OK\r",
-											"}); \r",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"state\": \"DEAD\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{HOST}}/admin/comments/{{comment3}}"
-							},
-							"response": []
-						},
-						{
 							"name": "Поиск по статусу комментария",
 							"event": [
 								{
@@ -2841,7 +2863,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/admin/comments?commentState=DEAD",
+									"raw": "{{HOST}}/admin/comments?commentState=DISABLE",
 									"host": [
 										"{{HOST}}"
 									],
@@ -2852,12 +2874,77 @@
 									"query": [
 										{
 											"key": "commentState",
-											"value": "DEAD"
+											"value": "DISABLE"
 										},
 										{
 											"key": "",
 											"value": "",
 											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Поиск по нескольким параметрам",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Должен вернуться ответ OK\", function() {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.be.withBody; \r",
+											"    pm.response.to.be.json;\r",
+											"}); \r",
+											"\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    const target = pm.response.json()\r",
+											"    pm.expect(target.length).equal(1);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/admin/comments?comment={{comment1}}, {{comment5}}, {{comment7}}&commentState=ENABLE&user={{user2}},{{user3}}&editable=true&text=ой&event={{event1}}",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"admin",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "comment",
+											"value": "{{comment1}}, {{comment5}}, {{comment7}}"
+										},
+										{
+											"key": "commentState",
+											"value": "ENABLE"
+										},
+										{
+											"key": "user",
+											"value": "{{user2}},{{user3}}"
+										},
+										{
+											"key": "editable",
+											"value": "true"
+										},
+										{
+											"key": "text",
+											"value": "ой"
+										},
+										{
+											"key": "event",
+											"value": "{{event1}}"
 										}
 									]
 								}
@@ -2916,7 +3003,7 @@
 					"response": []
 				},
 				{
-					"name": "Поиск без параметров удаленного комментария",
+					"name": "Поиск без параметров неопубликованного события",
 					"event": [
 						{
 							"listen": "test",
@@ -2942,7 +3029,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event={{event6}}",
+							"raw": "{{HOST}}/comments?event={{event2}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -2952,7 +3039,51 @@
 							"query": [
 								{
 									"key": "event",
-									"value": "{{event6}}"
+									"value": "{{event2}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Поиск без параметров удаленного комментария",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Должен вернуться ответ OK\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody; \r",
+									"    pm.response.to.be.json;\r",
+									"}); \r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    const target = pm.response.json()\r",
+									"    pm.expect(target.length).equal(2);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/comments?event={{event7}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "event",
+									"value": "{{event7}}"
 								}
 							]
 						}
@@ -3031,7 +3162,7 @@
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 									"    const target = pm.response.json()\r",
-									"    pm.expect(target.length).equal(3);\r",
+									"    pm.expect(target.length).equal(2);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3043,7 +3174,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?order=DESC&event={{event7}}",
+							"raw": "{{HOST}}/comments?order=DESC&event={{event3}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3067,7 +3198,7 @@
 								},
 								{
 									"key": "event",
-									"value": "{{event7}}"
+									"value": "{{event3}}"
 								}
 							]
 						}
@@ -3089,7 +3220,7 @@
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 									"    const target = pm.response.json()\r",
-									"    pm.expect(target.length).equal(3);\r",
+									"    pm.expect(target.length).equal(2);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -3101,7 +3232,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/comments?event={{event7}}&order=ASC",
+							"raw": "{{HOST}}/comments?order=ASC&event={{event3}}",
 							"host": [
 								"{{HOST}}"
 							],
@@ -3120,12 +3251,12 @@
 									"disabled": true
 								},
 								{
-									"key": "event",
-									"value": "{{event7}}"
-								},
-								{
 									"key": "order",
 									"value": "ASC"
+								},
+								{
+									"key": "event",
+									"value": "{{event3}}"
 								}
 							]
 						}
